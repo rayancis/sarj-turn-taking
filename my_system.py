@@ -15,11 +15,9 @@ STOP rule, per 20 ms caller frame (only audio already received is used; no label
   3. speech frame, with hysteresis: becomes active when the band level is >= 10 dB above the floor, stays active
      while it is >= 6 dB above it. Every speech frame must also be louder than the baseline's absolute -42 dBFS,
      so in quiet rooms the system is never more sensitive than the baseline was.
-  4. speech run: speech frames are counted while the agent talks; a dip of up to 100 ms (a gap between syllables
-     or a consonant, which in noise falls close to the floor) does not end the run, a longer one does. Only speech
-     frames count, so dips never add evidence.
-  5. STOP once a run holds 200 ms of speech frames (the baseline's amount of evidence); one STOP per agent
-     utterance. No RESUME.
+  4. bounded evidence: STOP once the last 300 ms of agent speech hold at least 200 ms of caller speech frames
+     (the baseline's amount of evidence, at >= 2/3 occupancy). Dips between syllables (up to 100 ms) are
+     tolerated, but sparse bursts cannot add up over time. One STOP per agent utterance. No RESUME.
 State: the noise history is cleared at each scenario_start (a new call is a new acoustic environment); the
 per-utterance counter and stop flag are cleared at each agent_utterance_start.
 
@@ -37,7 +35,8 @@ SAMPLE_RATE = 16000
 FRAME_MS = 20               # each on_frame call covers 20 ms of audio
 FRAME_SAMPLES = 320
 LOUD_DB = -42               # baseline absolute level: still a minimum for speech, and the TAKE_TURN rule
-STOP_AFTER_MS = 200         # speech for this long while the agent talks -> STOP (as in the baseline)
+STOP_AFTER_MS = 200         # speech for this long while the agent talks -> STOP (as in the baseline) ...
+EVIDENCE_WINDOW_MS = 300    # ... counted within this many most recent ms of agent speech
 TAKE_TURN_AFTER_MS = 700    # quiet for this long after the caller spoke -> TAKE_TURN (baseline)
 
 BAND_HZ = (300, 3400)       # telephone speech band
@@ -46,7 +45,6 @@ FLOOR_PERCENTILE = 10       # low percentile of recent band levels = noise floor
 FLOOR_MIN_FRAMES = 5        # need 100 ms of history before any frame can count as speech
 SPEECH_ON_DB = 10.0         # band level this far above the floor starts a speech run
 SPEECH_OFF_DB = 6.0         # ... and this far above keeps it going (hysteresis)
-MAX_GAP_MS = 100            # a non-speech dip this short does not end a speech run (syllable gaps)
 MIN_LEVEL_DB = -120.0       # clamp for digital silence (log of zero)
 
 _WINDOW = np.hanning(FRAME_SAMPLES)
@@ -95,8 +93,7 @@ class MySystem(System):
         self.agent_talking = False
         self.agent_text = ""            # what the agent is saying right now (not used by this experiment)
         self.stopped = False
-        self.speech_ms = 0              # caller speech in the current run while the agent talks
-        self.gap_ms = 0                 # current non-speech dip inside that run
+        self.evidence = deque(maxlen=EVIDENCE_WINDOW_MS // FRAME_MS)   # speech flags, agent-talking frames only
         self.quiet_ms = 0               # TAKE_TURN path (baseline)
         self.caller_spoke = False
 
@@ -105,12 +102,13 @@ class MySystem(System):
         # A new call: forget the previous call's noise and any agent state left over from it.
         self.floor.reset()
         self.speech = False
-        self.agent_talking, self.stopped, self.speech_ms, self.gap_ms = False, False, 0, 0
+        self.agent_talking, self.stopped = False, False
+        self.evidence.clear()
         self.caller_spoke, self.quiet_ms = False, 0
 
     def on_agent_start(self, text, duration_ms):
         self.agent_talking, self.agent_text, self.stopped = True, text, False
-        self.speech_ms, self.gap_ms = 0, 0
+        self.evidence.clear()
 
     def on_agent_end(self):
         self.agent_talking, self.caller_spoke, self.quiet_ms = False, False, 0
@@ -134,13 +132,8 @@ class MySystem(System):
         speech = self.is_speech(caller)
 
         if self.agent_talking:
-            if speech:
-                self.speech_ms, self.gap_ms = self.speech_ms + FRAME_MS, 0
-            else:
-                self.gap_ms += FRAME_MS
-                if self.gap_ms > MAX_GAP_MS:
-                    self.speech_ms = 0
-            if self.speech_ms >= STOP_AFTER_MS and not self.stopped:
+            self.evidence.append(speech)
+            if sum(self.evidence) * FRAME_MS >= STOP_AFTER_MS and not self.stopped:
                 self.stopped = True
                 return "STOP"
             return None

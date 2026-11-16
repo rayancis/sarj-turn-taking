@@ -19,7 +19,6 @@ def steady_voice(ms_, db, f0=140.0):
 
 
 OPEN_F1 = pytest.mark.xfail(strict=True, reason="finding 1 open: floor initialised from speech")
-OPEN_F2 = pytest.mark.xfail(strict=True, reason="finding 2 open: gap rule accumulates sparse bursts")
 OPEN_F3 = pytest.mark.xfail(strict=True, reason="finding 3 open: level step read as speech")
 
 
@@ -43,7 +42,6 @@ def test_f1_control_same_voice_after_one_second_of_noise_stops():
 
 
 # ------------------------------------------------------------------ finding 2: sparse bursts accumulate
-@OPEN_F2
 @pytest.mark.parametrize("on_ms,off_ms", [(60, 100), (40, 100)])
 def test_f2_sparse_bursts_do_not_accumulate_into_a_stop(on_ms, off_ms):
     caller = mix(6000, (0, white(6000, -65)), *bursts(on_ms, off_ms, 10, -20, 2000))

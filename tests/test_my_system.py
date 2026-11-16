@@ -174,7 +174,7 @@ def test_scenario_start_clears_a_stop_left_from_the_previous_call():
     run_call(mix(3000, (0, white(3000, -65)), (1000, voice(1000, -20))), [(300, 3000)], system)
     assert system.stopped                                   # call ended mid-utterance, no agent_utterance_end
     system.on_scenario_start({})
-    assert not system.stopped and not system.agent_talking and system.speech_ms == 0 and system.gap_ms == 0
+    assert not system.stopped and not system.agent_talking and len(system.evidence) == 0
     assert len(system.floor.levels) == 0
 
 
