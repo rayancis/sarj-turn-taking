@@ -1,0 +1,110 @@
+{
+  "scope": "local real-time dev runs in one Linux cloud container; not official event runs",
+  "command": "python my_system.py --port <p> --quiet  &&  python -m ttbench.harness --data data/dev --url ws://127.0.0.1:<p> --out <run>",
+  "speed": 1.0,
+  "calls": "all 24 dev calls, default order",
+  "data": {
+    "manifest_sha256": "93a23bcd8eddd0c615488ef1089b6d252182eac71144dc2f359ad7ecb5029366",
+    "version": "0.1.0-synthetic",
+    "labels": "script_derived"
+  },
+  "host": {
+    "os": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+    "python": "3.13.18",
+    "cpus": 4,
+    "packages": {
+      "numpy": "2.5.5",
+      "websockets": "17.4",
+      "pytest": "9.2.0"
+    }
+  },
+  "runs": {
+    "baseline-bd2a3f0-rt": {
+      "system_commit": "bd2a3f0",
+      "hello_system_version": "bd2a3f0",
+      "started_utc": "2026-11-16T21:0x (Phase 1)",
+      "concurrent_load": "none",
+      "my_system_sha256": "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830",
+      "harness_version": "0.1.0",
+      "completed": true,
+      "frames_sent": 29651,
+      "max_send_lag_ms": 1.87,
+      "rtt_summary_ms": {
+        "median": 0.61,
+        "max": 2.2,
+        "n": 119
+      },
+      "protocol_errors": 0,
+      "core": 41.04462072048882,
+      "R": 0.8057083333333334,
+      "S": 0.21944444444444444,
+      "misses": 2,
+      "false_stops": 25,
+      "files_sha256": {
+        "run.json": "180a4d32f02636cfc38d6d265d031e872a4849abea84fdb3bdb1d8c377d08d5d",
+        "score.json": "0b67a692e3568b54fdd959bee91a765202ac9e21d825618c103b56fa6884eed4",
+        "log.jsonl": "81c69905d6aa47ff9ccf2902a3d48c5ded89141ae902e86621db3169e3ea0acf",
+        "report.md": "80fc822c51ee3dc08f233a4f6a8b7f3b0d6233352fad58d31f94bddbaee4dfde"
+      }
+    },
+    "e01-8f08311-rt": {
+      "system_commit": "8f08311",
+      "hello_system_version": "8f08311",
+      "started_utc": "2026-11-16 (Phase 2 clean repeat)",
+      "concurrent_load": "none",
+      "my_system_sha256": "0958413417fdc335974578ee3b42c02556c6ee7ae77cc26fcf6a19bb354a39c9",
+      "harness_version": "0.1.0",
+      "completed": true,
+      "frames_sent": 29651,
+      "max_send_lag_ms": 0.01,
+      "rtt_summary_ms": {
+        "median": 0.75,
+        "max": 1.65,
+        "n": 119
+      },
+      "protocol_errors": 0,
+      "core": 44.05405405405405,
+      "R": 1.0,
+      "S": 0.23333333333333334,
+      "misses": 0,
+      "false_stops": 18,
+      "files_sha256": {
+        "run.json": "d1e594112c895659ce2eeebb8549497d60d5e3ff2f61d7529bf9db9b188d6686",
+        "score.json": "8e1f4bd2f15a234f1df6df3791cb9e546493ba27148c851eb6bf654b2cc876c6",
+        "log.jsonl": "bc23a5ef3aa54958bd303c7b741def4c8132d62a7c9570f3f7137f590eca59f4",
+        "report.md": "83d41f3487dbc9d41583c16b3330df2a398b2c5724849130de6f96d78a9b458f"
+      }
+    },
+    "e01b-e566234-rt": {
+      "system_commit": "e566234",
+      "hello_system_version": "fd0a286 (adds tools/robustness.py only; my_system.py identical to e566234)",
+      "started_utc": "2026-11-16T23:09:03Z",
+      "ended_utc": "2026-11-16T23:18:59Z",
+      "loadavg_start": "0.23 0.29 0.18",
+      "loadavg_end": "0.25 0.20 0.18",
+      "concurrent_load": "none",
+      "my_system_sha256": "455122a19d6ec8d3923f8a11e9d749ef9feb65ada8d95213d3958acd4a43e3a4",
+      "harness_version": "0.1.0",
+      "completed": true,
+      "frames_sent": 29651,
+      "max_send_lag_ms": 2.04,
+      "rtt_summary_ms": {
+        "median": 0.98,
+        "max": 3.57,
+        "n": 119
+      },
+      "protocol_errors": 0,
+      "core": 54.71816283924844,
+      "R": 1.0,
+      "S": 0.33055555555555555,
+      "misses": 0,
+      "false_stops": 16,
+      "files_sha256": {
+        "run.json": "723a4816bde0cde8250f1b32bc485e3b46a099d52932ea29e2b6c01182602007",
+        "score.json": "7bd6c0b64e2badfb660a763ebc034dcb711f40486df03745080f35e6061c7419",
+        "log.jsonl": "9eb4bb086b6a1ff66f3805fa5b31ead634fd0869a142b25545603fd1a5f6063b",
+        "report.md": "2172d98bc130c6c3896b5ea4f2db348578136c174e76c6e2ece6d4330d04cadc"
+      }
+    }
+  }
+}

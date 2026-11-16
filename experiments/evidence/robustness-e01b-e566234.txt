@@ -1,0 +1,73 @@
+== my_system.py: synthetic matrix 48/61 as intended
+  BAD STOP syllabic  0 dB SNR in white -40                      miss
+  BAD STOP speechlike  0 dB SNR in white -40                    miss
+  BAD STOP syllabic  3 dB SNR in white -40                      miss
+  BAD STOP speechlike  3 dB SNR in white -40                    miss
+  BAD STOP syllabic  6 dB SNR in white -40                      miss
+  BAD STOP speechlike  6 dB SNR in white -40                    miss
+  ok  STOP syllabic 10 dB SNR in white -40                      +260 ms
+  ok  STOP speechlike 10 dB SNR in white -40                    +280 ms
+  ok  STOP syllabic 15 dB SNR in white -40                      +220 ms
+  ok  STOP speechlike 15 dB SNR in white -40                    +240 ms
+  ok  STOP syllabic 20 dB SNR in white -40                      +180 ms
+  ok  STOP speechlike 20 dB SNR in white -40                    +240 ms
+  ok  STOP syllabic  0 dB SNR in rumble -40                     +540 ms
+  ok  STOP speechlike  0 dB SNR in rumble -40                   +280 ms
+  ok  STOP syllabic  3 dB SNR in rumble -40                     +540 ms
+  ok  STOP speechlike  3 dB SNR in rumble -40                   +280 ms
+  ok  STOP syllabic  6 dB SNR in rumble -40                     +180 ms
+  ok  STOP speechlike  6 dB SNR in rumble -40                   +240 ms
+  ok  STOP syllabic 10 dB SNR in rumble -40                     +180 ms
+  ok  STOP speechlike 10 dB SNR in rumble -40                   +240 ms
+  ok  STOP syllabic 15 dB SNR in rumble -40                     +180 ms
+  ok  STOP speechlike 15 dB SNR in rumble -40                   +220 ms
+  ok  STOP syllabic 20 dB SNR in rumble -40                     +180 ms
+  ok  STOP speechlike 20 dB SNR in rumble -40                   +180 ms
+  ok  STOP speechlike gain -12 dB (voice -34, noise -62)        +240 ms
+  ok  STOP speechlike gain -6 dB (voice -28, noise -56)         +220 ms
+  ok  STOP speechlike gain +0 dB (voice -22, noise -50)         +220 ms
+  ok  STOP speechlike gain +6 dB (voice -16, noise -44)         +180 ms
+  ok  STOP onset sub-frame offset 0 ms                          +220 ms
+  ok  STOP onset sub-frame offset 7 ms                          +213 ms
+  ok  STOP onset sub-frame offset 13 ms                         +227 ms
+  ok  STOP cold start: steady voice from frame 0                +180 ms
+  ok  STOP cold start: steady voice in -40 noise                +180 ms
+  ok  STOP cold start: syllabic voice from frame 0              +180 ms
+  ok  STOP cold start: syllabic voice in -40 noise              +180 ms
+  ok  STOP cold start: speechlike voice from frame 0            +260 ms
+  ok  STOP cold start: speechlike voice in -40 noise            +260 ms
+  BAD KEEP laughter 100 voiced/100 breath ms                    stop@2200
+  BAD KEEP laughter 80 voiced/120 breath ms                     stop@2220
+  BAD KEEP laughter 120 voiced/80 breath ms                     stop@2180
+  BAD KEEP laughter in -45 noise                                stop@2220
+  ok  KEEP two coughs                                           kept
+  ok  KEEP sparse voiced bursts 40/100 ms                       kept
+  ok  KEEP sparse voiced bursts 60/100 ms                       kept
+  ok  KEEP sparse voiced bursts 80/80 ms                        kept
+  ok  KEEP noise step white -65 -> -45                          kept
+  ok  KEEP noise step white -65 -> -35                          kept
+  ok  KEEP noise step white -65 -> -25                          kept
+  ok  KEEP steady white -40 from frame 0                        kept
+  ok  KEEP steady white -30 from frame 0                        kept
+  ok  STOP voice 15 dB over new level after white step          +240 ms
+  ok  KEEP noise step rumble -65 -> -45                         kept
+  ok  KEEP noise step rumble -65 -> -35                         kept
+  ok  KEEP noise step rumble -65 -> -25                         kept
+  ok  KEEP steady rumble -40 from frame 0                       kept
+  ok  KEEP steady rumble -30 from frame 0                       kept
+  ok  STOP voice 15 dB over new level after rumble step         +220 ms
+  BAD KEEP engine drone -35 from frame 0                        stop@480
+  BAD KEEP engine step -65 -> -35                               stop@3180
+  BAD STOP speechlike 12 dB over engine -38                     early@480
+  ok  STOP cold start: speechlike voice over engine -38         +200 ms
+  dev dev as is                          Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev gain -12 dB                        Core  67.0  R 0.884  S 0.494  miss 1  FS 10  err 0
+  dev gain -6 dB                         Core  57.5  R 1.000  S 0.358  miss 0  FS 14  err 0
+  dev gain +6 dB                         Core  49.8  R 1.000  S 0.303  miss 0  FS 17  err 0
+  dev shift +3 ms                        Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev shift +7 ms                        Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev shift +10 ms                       Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev shift +13 ms                       Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev shift +17 ms                       Core  54.7  R 1.000  S 0.331  miss 0  FS 16  err 0
+  dev +white noise -50 dBFS on caller    Core  54.7  R 1.000  S 0.331  miss 0  FS 15  err 0
+  dev +white noise -40 dBFS on caller    Core  57.5  R 1.000  S 0.358  miss 0  FS 14  err 0
