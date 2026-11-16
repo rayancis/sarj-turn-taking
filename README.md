@@ -1,5 +1,8 @@
 # Teach a voice agent when to talk
 
+> Team setup, verified baseline and development workflow: [PROJECT.md](PROJECT.md).
+> The original kit is preserved in commit `0915ace`; its evaluation interface is unchanged.
+
 **Sarj AI Hackathon · Human-Like Turn Taking · Starter Kit**
 
 Voice agents are good at *what* to say and bad at *when*. They stop mid-sentence because someone coughed, talk over a

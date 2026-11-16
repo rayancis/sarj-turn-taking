@@ -1,0 +1,10 @@
+# Versions installed for the verified Windows / Python 3.12 baseline environment.
+# requirements.txt remains the original kit's minimum dependency specification.
+colorama==0.4.6
+iniconfig==2.3.1
+numpy==2.5.5
+packaging==26.3
+pluggy==1.7.0
+Pygments==2.21.0
+pytest==9.2.0
+websockets==17.4

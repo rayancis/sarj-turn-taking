@@ -4,3 +4,33 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *-heard.wav
+
+# Local source archives, generated output and machine-specific files
+.local/
+*.zip
+recordings/
+
+# Credentials must never be committed
+.env
+.env.*
+!.env.example
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+
+# Only the supplied, already tracked dev audio is approved for this repository.
+# New recordings require an explicit rights and privacy review before adding.
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.m4a
+*.pcm
+*.raw
+data/checkpoint/
+data/final/
+data/hidden/

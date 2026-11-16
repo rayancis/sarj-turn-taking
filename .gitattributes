@@ -1,0 +1,2 @@
+# Preserve kit bytes, especially JSON files covered by manifest SHA-256 values.
+* -text
