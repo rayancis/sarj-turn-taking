@@ -1,0 +1,308 @@
+"""Tests for the local demo (demo/server.py): the page must show the real detector's decisions, unchanged.
+
+The central property: feeding a scenario through the demo, in whatever uneven steps the browser's playhead produces
+(including pauses), gives exactly the decisions of tools/replay.py, which mirrors the kit's harness and server.
+"""
+from __future__ import annotations
+
+import json
+import random
+import sys
+import threading
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+import pytest
+
+KIT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(KIT / "demo"))
+sys.path.insert(0, str(KIT / "tools"))
+
+import server as demo  # noqa: E402
+from replay import replay  # noqa: E402
+from ttbench.dataset import lay_out_stream, load_split  # noqa: E402
+
+from .fixtures import write_split  # noqa: E402
+
+DEV = KIT / "data" / "dev"
+
+PROBE = '''
+from ttbench.server import System
+
+class MySystem(System):
+    instances = []
+
+    def __init__(self):
+        self.calls, self.n = [], 0
+        MySystem.instances.append(self)
+
+    def on_scenario_start(self, context):
+        self.calls.append(("scenario_start", dict(context)))
+
+    def on_agent_start(self, text, duration_ms):
+        self.calls.append(("agent_start", text, duration_ms))
+
+    def on_agent_end(self):
+        self.calls.append(("agent_end",))
+
+    def on_frame(self, agent, caller):
+        self.n += 1
+        self.calls.append(("frame", agent.dtype.str, agent.shape, caller.shape,
+                           int(agent.astype("int64").sum()), int(caller.astype("int64").sum())))
+        return {MODE}
+'''
+
+
+def probe_source(tmp_path: Path, mode: str = "'STOP' if self.n == 60 else None", name: str = "probe") -> str:
+    """Write a recording test system; its on_frame returns `mode`. Returns a model source spec for it."""
+    path = tmp_path / f"{name}.py"
+    path.write_text(PROBE.replace("{MODE}", mode), encoding="utf-8")
+    return f"file:{path}"
+
+
+def probe(tmp_path: Path, mode: str, name: str) -> demo.Model:
+    return demo.Model(name, probe_source(tmp_path, mode, name))
+
+
+def decisions_of(log):
+    return [(l["stream_ms"], l["msg"]["decision"]) for l in log if l["dir"] == "rx" and l["msg"].get("type") == "decision"]
+
+
+def run_uneven(sess: demo.DetectorSession, rng: random.Random, on_step=None):
+    """Advance like a browser would: uneven steps, repeated playheads (pause) and occasional backward values."""
+    t = 0.0
+    while not sess.done:
+        r = rng.random()
+        if r < 0.1:
+            sess.advance(t)                                   # paused: same playhead again
+        elif r < 0.15:
+            sess.advance(max(0.0, t - 37))                    # out-of-order report: must feed nothing
+        t += rng.choice([1, 3, 15, 16.7, 20, 21, 33, 60, 140, 400])
+        sess.advance(t)
+        if on_step:
+            on_step()
+
+
+# ------------------------------------------------------------------------------------------------ real detectors
+@pytest.fixture(scope="module")
+def dev_app():
+    return demo.DemoApp(DEV, demo.DEFAULT_MODELS)
+
+
+def test_default_models_load_from_the_repository(dev_app):
+    cur = dev_app.models["current"]
+    assert cur.available, cur.error
+    assert cur.sha256 == demo.hashlib.sha256((KIT / "my_system.py").read_bytes()).hexdigest()
+    base = dev_app.models["baseline"]
+    if not base.available:
+        pytest.skip(f"git history not available: {base.error}")
+    # the exact file of the recorded baseline run (experiments/evidence/runs.json)
+    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))
+    assert base.sha256 == runs["runs"]["baseline-bd2a3f0-rt"]["my_system_sha256"]
+    assert base.revision == "bd2a3f0" and base.name == "Baseline"
+
+
+@pytest.mark.parametrize("model_id", list(demo.DEFAULT_MODELS))
+def test_demo_decisions_equal_offline_replay_on_every_dev_call(dev_app, model_id):
+    """Uneven polling, pauses and stale playheads never change what the detector decides, on all 24 calls; and an
+    event's verdict, once shown, never differs from the final official verdict."""
+    model = dev_app.models[model_id]
+    if not model.available:
+        pytest.skip(model.error)
+    rng = random.Random(7)
+    for sid, scen in dev_app.data.scenarios.items():
+        sess = demo.DetectorSession(model, scen)
+        scorer = demo.Scorer(scen.label, dev_app.data.thresholds)
+        shown: dict[str, dict] = {}
+
+        def remember():
+            for e in scorer.evaluate(sess.decisions, sess.fed_ms, sess.done)["events"]:
+                if e["closed"]:
+                    shown.setdefault(e["event_id"], e)
+
+        run_uneven(sess, rng, remember)
+        log, _ = replay(model.new_system, lay_out_stream(load_split(DEV, [sid])))
+        assert [(d["stream_ms"], d["decision"]) for d in sess.decisions] == decisions_of(log), sid
+        assert not sess.errors and not sess.failed
+        final = {e["event_id"]: e for e in scorer.evaluate(sess.decisions, sess.fed_ms, True)["events"]}
+        for eid, early in shown.items():
+            assert {k: early[k] for k in ("outcome", "credit")} == {k: final[eid][k] for k in ("outcome", "credit")}, eid
+
+
+@pytest.mark.parametrize("model_id,run", [("current", "e01b-e566234-rt"), ("baseline", "baseline-bd2a3f0-rt")])
+def test_demo_matches_the_recorded_realtime_runs(dev_app, model_id, run):
+    """Per call, the demo gives the decisions the official real-time harness recorded for that commit in one full
+    session (arrival time = frame time + processing/network delay, so 0-20 ms later)."""
+    model = dev_app.models[model_id]
+    if not model.available:
+        pytest.skip(model.error)
+    folder = KIT / "experiments" / "evidence" / run
+    meta = json.loads((folder / "run.json").read_text(encoding="utf-8"))
+    recorded: dict[str, list] = {s["scenario_id"]: [] for s in meta["scenarios"]}
+    spans = {s["scenario_id"]: (s["start_ms"], s["start_ms"] + s["duration_ms"] + 1500) for s in meta["scenarios"]}
+    for line in (folder / "log.jsonl").read_text(encoding="utf-8").splitlines():
+        msg = json.loads(line)
+        if msg["dir"] == "rx" and msg["msg"].get("type") == "decision":
+            sid = next(k for k, (a, b) in spans.items() if a <= msg["stream_ms"] < b)
+            recorded[sid].append((msg["stream_ms"] - spans[sid][0], msg["msg"]["decision"]))
+    for sid, scen in dev_app.data.scenarios.items():
+        sess = demo.DetectorSession(model, scen)
+        sess.advance(1e9)
+        ours = [(d["stream_ms"], d["decision"]) for d in sess.decisions]
+        assert [d for _, d in ours] == [d for _, d in recorded[sid]], sid
+        assert all(0 <= r - o <= 20 for (o, _), (r, _) in zip(ours, recorded[sid])), sid
+
+
+def test_api_real_stop_and_real_keep(dev_app):
+    """Through HTTP: GI-D01 gets a real STOP inside the interruption; NV-D01 (a cough) gets no STOP and is kept."""
+    with serving(dev_app) as base:
+        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "current"})
+        r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
+        stops = [d for d in r["decisions"] if d["decision"] == "STOP"]
+        assert r["done"] and len(stops) == 1 and stops[0]["utt_id"] is not None
+        ev = r["score"]["events"][0]
+        assert ev["closed"] and ev["outcome"] == "yield" and ev["credit"] == 1.0
+
+        s = post(base, "/api/session", {"scenario": "NV-D01", "model": "current"})
+        r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
+        assert [d for d in r["decisions"] if d["decision"] == "STOP"] == []
+        assert r["score"]["events"][0]["outcome"] == "kept"
+
+
+def test_config_reports_recorded_benchmarks_not_live_scores(dev_app):
+    cfg = dev_app.config()
+    assert len(cfg["scenarios"]) == 24
+    rows = {r["commit"]: r for r in cfg["benchmark"]["rows"]}
+    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
+    assert rows["e566234"]["core"] == runs["e01b-e566234-rt"]["core"]
+    assert rows["bd2a3f0"]["core"] == runs["baseline-bd2a3f0-rt"]["core"]
+
+
+def test_timeline_keeps_ground_truth_apart_from_protocol_input(dev_app):
+    tl = dev_app.data.timeline("BC-D01")
+    proto = json.dumps(tl["protocol"], ensure_ascii=False)
+    assert "events" not in tl["protocol"] and "user_segments" not in tl["protocol"]
+    for seg in tl["ground_truth"]["user_segments"]:
+        assert seg["text"] not in proto                     # caller transcript is never presented as detector input
+
+
+# ------------------------------------------------------------------------------------------------ synthetic data
+@pytest.fixture()
+def tiny(tmp_path):
+    return write_split(tmp_path / "split")
+
+
+def test_detector_gets_exactly_the_harness_calls(tmp_path, tiny):
+    """Same calls, arguments and frame bytes as tools/replay.py; frames are int16 (320,) per channel; no labels."""
+    app = demo.DemoApp(tiny, {"probe": probe_source(tmp_path, "None")})
+    cls = app.models["probe"]._cls
+    for sid, scen in app.data.scenarios.items():
+        sess = demo.DetectorSession(app.models["probe"], scen)
+        run_uneven(sess, random.Random(3))
+        replay(cls, lay_out_stream(load_split(tiny, [sid])))
+        via_replay = cls.instances[-1].calls
+        assert sess.system.calls == via_replay, sid
+        frames = [c for c in sess.system.calls if c[0] == "frame"]
+        assert frames and all(c[1] == "<i2" and c[2] == (320,) and c[3] == (320,) for c in frames)
+        for c in sess.system.calls:
+            if c[0] == "scenario_start":
+                assert set(c[1]) == {"use_case", "language"}
+
+
+def test_decision_is_stamped_with_its_frame_time(tmp_path, tiny):
+    app = demo.DemoApp(tiny, {"probe": probe_source(tmp_path)})
+    sess = demo.DetectorSession(app.models["probe"], app.data.scenarios["GI-D90"])
+    sess.advance(59 * 20 - 1)
+    assert sess.decisions == []
+    new, _ = sess.advance(59 * 20)                         # the 60th on_frame call is frame 59
+    assert [(d["stream_ms"], d["frame"], d["decision"]) for d in new] == [(1180, 59, "STOP")]
+    assert new[0]["utt_id"] == "A1"
+
+
+def test_invalid_output_and_crash_are_reported_not_hidden(tmp_path, tiny):
+    bad = probe(tmp_path, "'MAYBE' if self.n == 3 else None", "bad")
+    sess = demo.DetectorSession(bad, demo.DevData(tiny).scenarios["GI-D90"])
+    sess.advance(10_000)
+    assert sess.decisions == [] and "MAYBE" in sess.errors[0]["error"]
+
+    crash = probe(tmp_path, "1 / 0 if self.n == 5 else None", "crash")
+    sess = demo.DetectorSession(crash, demo.DevData(tiny).scenarios["GI-D90"])
+    sess.advance(10_000)
+    assert sess.failed and sess.done and "ZeroDivisionError" in sess.errors[-1]["error"]
+
+
+def test_sessions_are_independent(tmp_path, tiny):
+    """Reset and scenario switches create new sessions; interleaving two never mixes their state."""
+    app = demo.DemoApp(tiny, {"probe": probe_source(tmp_path)})
+    a = app.new_session("GI-D90", "probe")["session_id"]
+    b = app.new_session("GI-D90", "probe")["session_id"]
+    assert a != b
+    app.advance(a, 2000)
+    rb = app.advance(b, 500)
+    assert rb["decisions"] == [] and rb["fed_ms"] == 520
+    ra = app.advance(a, 2000)
+    assert ra["decisions"] == [] and ra["fed_ms"] == 2020       # nothing re-fed, nothing re-sent
+    full = app.advance(b, 1e9)
+    assert [d["stream_ms"] for d in full["decisions"]] == [1180]
+
+
+def test_unavailable_versions_are_reported(tmp_path, tiny):
+    m = demo.Model("ghost", "git:0000000:my_system.py")
+    assert not m.available and m.error
+    (tmp_path / "broken.py").write_text("def nope(:\n", encoding="utf-8")
+    assert not demo.Model("broken", f"file:{tmp_path / 'broken.py'}").available
+    app = demo.DemoApp(tiny, {"ghost": "git:0000000:my_system.py"})
+    with pytest.raises(KeyError):
+        app.new_session("GI-D90", "ghost")
+
+
+def test_http_surface(tmp_path, tiny):
+    app = demo.DemoApp(tiny, {"probe": probe_source(tmp_path)})
+    with serving(app) as base:
+        assert base.startswith("http://127.0.0.1:")
+        page = urllib.request.urlopen(base + "/").read().decode("utf-8")
+        assert "app.js" in page
+        wav = urllib.request.urlopen(base + "/api/audio/GI-D90.wav").read()
+        assert wav == (tiny / "audio" / "GI-D90.wav").read_bytes()
+        for path in ("/api/audio/..%2Fmanifest.wav", "/api/audio/XX-D00.wav", "/../demo/server.py",
+                     "/api/scenario/nope", "/server.py"):
+            assert status(base + path) == 404, path
+        assert status(base + "/api/session/" + "0" * 32 + "/advance", {"to_ms": 1}) == 404
+        s = post(base, "/api/session", {"scenario": "GI-D90", "model": "probe"})
+        assert status(base + f"/api/session/{s['session_id']}/advance", {"to_ms": "soon"}) == 400
+        assert status(base + f"/api/session/{s['session_id']}/advance", {"to_ms": "nan"}) == 400
+        assert status(base + "/api/session", {"scenario": "GI-D90", "model": "nope"}) == 404
+
+
+def test_server_binds_to_localhost_only():
+    assert demo.HOST == "127.0.0.1"
+    assert "--host" not in demo.main.__code__.co_consts
+
+
+# ------------------------------------------------------------------------------------------------ helpers
+class serving:
+    def __init__(self, app):
+        self.srv = demo.make_server(app, 0)
+
+    def __enter__(self):
+        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+        return f"http://127.0.0.1:{self.srv.server_address[1]}"
+
+    def __exit__(self, *exc):
+        self.srv.shutdown()
+        self.srv.server_close()
+
+
+def post(base, path, body):
+    req = urllib.request.Request(base + path, json.dumps(body).encode(), {"Content-Type": "application/json"})
+    return json.loads(urllib.request.urlopen(req).read())
+
+
+def status(url, body=None):
+    req = urllib.request.Request(url, None if body is None else json.dumps(body).encode(),
+                                 {"Content-Type": "application/json"})
+    try:
+        return urllib.request.urlopen(req).status
+    except urllib.error.HTTPError as e:
+        return e.code
