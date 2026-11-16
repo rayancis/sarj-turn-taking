@@ -11,7 +11,7 @@ Read PROJECT.md, INTERFACE.md, SCORING.md and CHALLENGE.md before work.
 - Decisions must depend only on audio already received and permitted streamed
   context. Never read dev labels, caller transcripts, scripts, scenario IDs or
   future audio from inference code. Agent text supplied by the harness is allowed.
-- New work goes on one focused branch. Preserve the original baseline commit
+- After bootstrap, new implementation goes on one focused branch. Preserve the original baseline commit
   0915ace and its measurements. Make the smallest evidence-supported change.
 - The 24 supplied synthetic dev calls are diagnostic examples, not proof of
   generalisation. Do not optimise to their IDs, exact waveforms or label times.

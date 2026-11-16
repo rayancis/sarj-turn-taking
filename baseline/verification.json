@@ -1,0 +1,83 @@
+{
+  "verified_on_client_date": "2026-11-16",
+  "scope": "local Windows development run, not an official SARJ event run",
+  "original_kit_commit": "0915acee307e7e8e269d06a64eff8498b5403113",
+  "source_archive_sha256": "401ccd599f006e4d08020bd60b27436c0484d214114f402d0ca42693666125a4",
+  "dataset_manifest_sha256": "93a23bcd8eddd0c615488ef1089b6d252182eac71144dc2f359ad7ecb5029366",
+  "my_system_sha256": "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830",
+  "data_integrity": {
+    "manifest_hashes_passed": 48,
+    "audio_format_checks_passed": 24
+  },
+  "environment": {
+    "python": "3.12.10",
+    "system": "Windows",
+    "machine": "AMD64",
+    "dependencies": [
+      "colorama==0.4.6",
+      "iniconfig==2.3.1",
+      "numpy==2.5.5",
+      "packaging==26.3",
+      "pluggy==1.7.0",
+      "Pygments==2.21.0",
+      "pytest==9.2.0",
+      "websockets==17.4"
+    ],
+    "monotonic_clock": {
+      "implementation": "GetTickCount64()",
+      "resolution_seconds": 0.015625
+    }
+  },
+  "tests": {
+    "command": "$env:PYTHONUTF8=1; .venv/Scripts/python.exe -m pytest -q --basetemp=.local/pytest-full",
+    "passed": 26,
+    "elapsed_seconds": 37.8
+  },
+  "baseline_command": ".venv/Scripts/python.exe -u -m ttbench.play --calls all --name baseline-original-all-realtime",
+  "score_recomputed_from_log_matches": true,
+  "timing_caveat": {
+    "max_harness_send_lag_ms": 55.0,
+    "kit_troubleshooting_warning_threshold_ms": 20,
+    "strict_latency_validation": false,
+    "reason": "Max harness send lag exceeded the kit's 20 ms warning; retain observed results without treating latency as a precise performance claim."
+  },
+  "evidence_sha256": {
+    "run.json": "a100ae5cd7a0141925de96f44225e059f6430b5fae19cf0d9e60ab1870b66242",
+    "score.json": "1c93ab916a99b3a5ed0b17c64530297b19f9985ba76722df2dbda34f766841e4",
+    "report.md": "5e4d759aa02a017f1310ee9ce79d375a6f126fd2acc3d31f77d5c9464060e78f",
+    "log.jsonl": "60480836da322b040b5f0994ca1cae5b94316412d25cee5c9308344d1c641262"
+  },
+  "not_established": [
+    "30-minute endurance",
+    "organiser-network connection pass",
+    "hidden-set performance",
+    "human validation of synthetic labels",
+    "submission readiness"
+  ],
+  "readiness": {
+    "ready": false,
+    "reasons": [
+      "Official TEAM still unknown; my-team is the kit placeholder",
+      "WRITEUP.md is still the submission template, not a completed write-up",
+      "Venue connection and official event requirements remain unverified"
+    ]
+  },
+  "local_connection_check": {
+    "command": ".venv/Scripts/python.exe -m ttbench.check --url ws://127.0.0.1:<local-port> --out runs/connection-check-local",
+    "passed": true,
+    "completed": true,
+    "scenario_count": 6,
+    "speed": 1.0,
+    "valid_hello": true,
+    "protocol_errors": 0,
+    "rtt_summary_ms": {
+      "median": 0.0,
+      "max": 15.0,
+      "n": 31
+    },
+    "max_send_lag_ms": 12.0,
+    "system_version": "b17ccd5-dirty",
+    "source_note": "The dirty suffix reflected documentation/artifacts only; my_system.py and official tools were unchanged from original kit.",
+    "venue_connection_verified": false
+  }
+}

@@ -1,0 +1,310 @@
+{"seq": 1, "dir": "rx", "t_mono_ns": 425483125000000, "stream_ms": null, "msg": {"type": "hello", "team": "my-team", "system_version": "0915ace", "tracks": ["core", "eot"]}}
+{"seq": 2, "dir": "tx", "t_mono_ns": 425483125000000, "stream_ms": 0.0, "msg": {"type": "session_start", "session_id": "dev", "sample_rate": 16000, "frame_ms": 20, "channels": ["agent", "user"]}}
+{"seq": 3, "dir": "tx", "t_mono_ns": 425483125000000, "stream_ms": 0, "msg": {"type": "scenario_start", "scenario_id": "GI-D01", "stream_ms": 0, "context": {"use_case": "delivery scheduling", "language": "ar"}}}
+{"seq": 4, "dir": "rx", "t_mono_ns": 425483125000000, "stream_ms": 0.0, "msg": {"type": "pong", "id": 1}}
+{"seq": 5, "dir": "tx", "t_mono_ns": 425483453000000, "stream_ms": 300, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 300, "text": "السلام عليكم، معك ريم من متجر نوّار. أكلّم الأستاذ فهد؟", "duration_ms": 4760}}
+{"seq": 6, "dir": "rx", "t_mono_ns": 425488140000000, "stream_ms": 5015.0, "msg": {"type": "pong", "id": 2}}
+{"seq": 7, "dir": "tx", "t_mono_ns": 425488171000000, "stream_ms": 5060, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 5060}}
+{"seq": 8, "dir": "tx", "t_mono_ns": 425491000000000, "stream_ms": 7880, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 7890, "text": "حياك الله يا أستاذ فهد. أتصل عليك بخصوص طلبك، الطلب بيوصلك بكرة إن شاء الله بين الساعة أربع وست العصر، والمندوب بيتصل عليك قبل ما يوصل بنص ساعة تقريباً، وإذا حاب تغيّر وقت التوصيل تقدر ترد على رسالة التأكيد اللي بتوصلك.", "duration_ms": 16970}}
+{"seq": 9, "dir": "rx", "t_mono_ns": 425493125000000, "stream_ms": 10000.0, "msg": {"type": "pong", "id": 3}}
+{"seq": 10, "dir": "rx", "t_mono_ns": 425498140000000, "stream_ms": 15015.0, "msg": {"type": "pong", "id": 4}}
+{"seq": 11, "dir": "rx", "t_mono_ns": 425499968000000, "stream_ms": 16843.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 12, "dir": "rx", "t_mono_ns": 425503125000000, "stream_ms": 20000.0, "msg": {"type": "pong", "id": 5}}
+{"seq": 13, "dir": "tx", "t_mono_ns": 425508000000000, "stream_ms": 24860, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 24860}}
+{"seq": 14, "dir": "rx", "t_mono_ns": 425508140000000, "stream_ms": 25015.0, "msg": {"type": "pong", "id": 6}}
+{"seq": 15, "dir": "tx", "t_mono_ns": 425510000000000, "stream_ms": 26860, "msg": {"type": "scenario_end", "scenario_id": "GI-D01", "stream_ms": 26860}}
+{"seq": 16, "dir": "tx", "t_mono_ns": 425511500000000, "stream_ms": 28360, "msg": {"type": "scenario_start", "scenario_id": "GI-D02", "stream_ms": 28360, "context": {"use_case": "clinic appointment reminder", "language": "ar"}}}
+{"seq": 17, "dir": "tx", "t_mono_ns": 425511796000000, "stream_ms": 28660, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 28660, "text": "مساء الخير، معك سلمى من عيادات رِفاه. معي الأستاذة هند؟", "duration_ms": 5100}}
+{"seq": 18, "dir": "rx", "t_mono_ns": 425512093000000, "stream_ms": 28968.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 19, "dir": "rx", "t_mono_ns": 425513140000000, "stream_ms": 30015.0, "msg": {"type": "pong", "id": 7}}
+{"seq": 20, "dir": "tx", "t_mono_ns": 425516890000000, "stream_ms": 33760, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 33760}}
+{"seq": 21, "dir": "rx", "t_mono_ns": 425518156000000, "stream_ms": 35031.0, "msg": {"type": "pong", "id": 8}}
+{"seq": 22, "dir": "tx", "t_mono_ns": 425519937000000, "stream_ms": 36800, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 36800, "text": "أهلين أستاذة هند. حبيت أذكّرك بموعدك يوم الأحد الساعة عشرة الصبح، مع الدكتورة نورة، ونرجو الحضور قبل الموعد بربع ساعة عشان إجراءات التسجيل، ولو عندك تأمين طبي لا تنسين تجيبين البطاقة معك.", "duration_ms": 15250}}
+{"seq": 23, "dir": "rx", "t_mono_ns": 425520109000000, "stream_ms": 36984.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 24, "dir": "rx", "t_mono_ns": 425523140000000, "stream_ms": 40015.0, "msg": {"type": "pong", "id": 9}}
+{"seq": 25, "dir": "rx", "t_mono_ns": 425528140000000, "stream_ms": 45015.0, "msg": {"type": "pong", "id": 10}}
+{"seq": 26, "dir": "rx", "t_mono_ns": 425533140000000, "stream_ms": 50015.0, "msg": {"type": "pong", "id": 11}}
+{"seq": 27, "dir": "tx", "t_mono_ns": 425535171000000, "stream_ms": 52060, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 52050}}
+{"seq": 28, "dir": "tx", "t_mono_ns": 425537171000000, "stream_ms": 54060, "msg": {"type": "scenario_end", "scenario_id": "GI-D02", "stream_ms": 54060}}
+{"seq": 29, "dir": "rx", "t_mono_ns": 425537875000000, "stream_ms": 54750.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 30, "dir": "rx", "t_mono_ns": 425538140000000, "stream_ms": 55015.0, "msg": {"type": "pong", "id": 12}}
+{"seq": 31, "dir": "tx", "t_mono_ns": 425538671000000, "stream_ms": 55560, "msg": {"type": "scenario_start", "scenario_id": "GI-D03", "stream_ms": 55560, "context": {"use_case": "card activation", "language": "ar"}}}
+{"seq": 32, "dir": "tx", "t_mono_ns": 425539000000000, "stream_ms": 55860, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 55860, "text": "هلا، معك عبدالله من خدمة العملاء في البنك. أكلّم الأستاذ ماجد؟", "duration_ms": 4410}}
+{"seq": 33, "dir": "rx", "t_mono_ns": 425539171000000, "stream_ms": 56046.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 34, "dir": "rx", "t_mono_ns": 425543140000000, "stream_ms": 60015.0, "msg": {"type": "pong", "id": 13}}
+{"seq": 35, "dir": "tx", "t_mono_ns": 425543390000000, "stream_ms": 60280, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 60270}}
+{"seq": 36, "dir": "tx", "t_mono_ns": 425545171000000, "stream_ms": 62060, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 62060, "text": "يا هلا. عشان نفعّل بطاقتك الجديدة بنرسل لك الحين رمز تحقق على جوالك، والرمز صالح لمدة خمس دقايق بس، ولا تشاركه مع أي أحد حتى لو قال لك إنه موظف في البنك، وبعد ما يوصلك الرمز بأطلب منك تقراه لي رقم رقم.", "duration_ms": 16290}}
+{"seq": 37, "dir": "rx", "t_mono_ns": 425545359000000, "stream_ms": 62234.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 38, "dir": "rx", "t_mono_ns": 425548140000000, "stream_ms": 65015.0, "msg": {"type": "pong", "id": 14}}
+{"seq": 39, "dir": "rx", "t_mono_ns": 425553140000000, "stream_ms": 70015.0, "msg": {"type": "pong", "id": 15}}
+{"seq": 40, "dir": "rx", "t_mono_ns": 425558140000000, "stream_ms": 75015.0, "msg": {"type": "pong", "id": 16}}
+{"seq": 41, "dir": "tx", "t_mono_ns": 425561500000000, "stream_ms": 78360, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 78350}}
+{"seq": 42, "dir": "rx", "t_mono_ns": 425563140000000, "stream_ms": 80015.0, "msg": {"type": "pong", "id": 17}}
+{"seq": 43, "dir": "tx", "t_mono_ns": 425563500000000, "stream_ms": 80360, "msg": {"type": "scenario_end", "scenario_id": "GI-D03", "stream_ms": 80360}}
+{"seq": 44, "dir": "rx", "t_mono_ns": 425564171000000, "stream_ms": 81046.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 45, "dir": "tx", "t_mono_ns": 425565000000000, "stream_ms": 81860, "msg": {"type": "scenario_start", "scenario_id": "BC-D01", "stream_ms": 81860, "context": {"use_case": "plan renewal", "language": "ar"}}}
+{"seq": 46, "dir": "tx", "t_mono_ns": 425565296000000, "stream_ms": 82160, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 82160, "text": "السلام عليكم، معك نوف من سَنا للاتصالات. معي الأستاذ سعد؟", "duration_ms": 4780}}
+{"seq": 47, "dir": "rx", "t_mono_ns": 425568140000000, "stream_ms": 85015.0, "msg": {"type": "pong", "id": 18}}
+{"seq": 48, "dir": "tx", "t_mono_ns": 425570078000000, "stream_ms": 86940, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 86940}}
+{"seq": 49, "dir": "tx", "t_mono_ns": 425572140000000, "stream_ms": 89000, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 89010, "text": "حياك الله. حبيت أبلغك إن باقتك الحالية بتنتهي بعد ثلاث أيام، وعندنا لك باقة جديدة فيها مية قيقا إنترنت ومكالمات بدون حد داخل الشبكة، وسعرها تقريباً نفس سعر باقتك الحالية.", "duration_ms": 14480}}
+{"seq": 50, "dir": "rx", "t_mono_ns": 425573140000000, "stream_ms": 90015.0, "msg": {"type": "pong", "id": 19}}
+{"seq": 51, "dir": "rx", "t_mono_ns": 425578140000000, "stream_ms": 95015.0, "msg": {"type": "pong", "id": 20}}
+{"seq": 52, "dir": "rx", "t_mono_ns": 425583140000000, "stream_ms": 100015.0, "msg": {"type": "pong", "id": 21}}
+{"seq": 53, "dir": "tx", "t_mono_ns": 425586656000000, "stream_ms": 103500, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 103490}}
+{"seq": 54, "dir": "rx", "t_mono_ns": 425588140000000, "stream_ms": 105015.0, "msg": {"type": "pong", "id": 22}}
+{"seq": 55, "dir": "tx", "t_mono_ns": 425588640000000, "stream_ms": 105500, "msg": {"type": "scenario_end", "scenario_id": "BC-D01", "stream_ms": 105500}}
+{"seq": 56, "dir": "tx", "t_mono_ns": 425590140000000, "stream_ms": 107000, "msg": {"type": "scenario_start", "scenario_id": "BC-D02", "stream_ms": 107000, "context": {"use_case": "instalment explanation", "language": "ar"}}}
+{"seq": 57, "dir": "tx", "t_mono_ns": 425590437000000, "stream_ms": 107300, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 107300, "text": "مساء الخير، معك خالد من متجر نوّار. معي الأستاذة ريم؟", "duration_ms": 5150}}
+{"seq": 58, "dir": "rx", "t_mono_ns": 425593125000000, "stream_ms": 110000.0, "msg": {"type": "pong", "id": 23}}
+{"seq": 59, "dir": "tx", "t_mono_ns": 425595593000000, "stream_ms": 112460, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 112450}}
+{"seq": 60, "dir": "tx", "t_mono_ns": 425597125000000, "stream_ms": 114000, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 114000, "text": "هلا فيك. بس حبيت أوضح لك طريقة التقسيط: المبلغ الإجمالي ألف ومية وعشرين ريال، ينقسم على أربع دفعات، كل دفعة مئتين وثمانين ريال، أول دفعة تنخصم اليوم، والباقي كل شهر بنفس التاريخ، وقبل كل دفعة بيوصلك تذكير برسالة، وتقدر تشوف كل الدفعات من التطبيق.", "duration_ms": 21240}}
+{"seq": 61, "dir": "rx", "t_mono_ns": 425598140000000, "stream_ms": 115015.0, "msg": {"type": "pong", "id": 24}}
+{"seq": 62, "dir": "rx", "t_mono_ns": 425603125000000, "stream_ms": 120000.0, "msg": {"type": "pong", "id": 25}}
+{"seq": 63, "dir": "rx", "t_mono_ns": 425603796000000, "stream_ms": 120671.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 64, "dir": "rx", "t_mono_ns": 425608125000000, "stream_ms": 125000.0, "msg": {"type": "pong", "id": 26}}
+{"seq": 65, "dir": "rx", "t_mono_ns": 425613140000000, "stream_ms": 130015.0, "msg": {"type": "pong", "id": 27}}
+{"seq": 66, "dir": "rx", "t_mono_ns": 425618140000000, "stream_ms": 135015.0, "msg": {"type": "pong", "id": 28}}
+{"seq": 67, "dir": "tx", "t_mono_ns": 425618359000000, "stream_ms": 135240, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 135240}}
+{"seq": 68, "dir": "tx", "t_mono_ns": 425620359000000, "stream_ms": 137240, "msg": {"type": "scenario_end", "scenario_id": "BC-D02", "stream_ms": 137240}}
+{"seq": 69, "dir": "tx", "t_mono_ns": 425621875000000, "stream_ms": 138740, "msg": {"type": "scenario_start", "scenario_id": "BC-D03", "stream_ms": 138740, "context": {"use_case": "auto-pay setup", "language": "ar"}}}
+{"seq": 70, "dir": "tx", "t_mono_ns": 425622171000000, "stream_ms": 139040, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 139040, "text": "هلا، معك سارة من البنك. أكلّم الأستاذ ناصر؟", "duration_ms": 3840}}
+{"seq": 71, "dir": "rx", "t_mono_ns": 425623125000000, "stream_ms": 140000.0, "msg": {"type": "pong", "id": 29}}
+{"seq": 72, "dir": "tx", "t_mono_ns": 425626000000000, "stream_ms": 142880, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 142880}}
+{"seq": 73, "dir": "tx", "t_mono_ns": 425627328000000, "stream_ms": 144200, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 144210, "text": "حياك الله. نبي نذكرك إنك تقدر تفعّل السداد التلقائي لفاتورة البطاقة، لأن كثير من العملاء يدفعون رسوم تأخير بدون ما ينتبهون، فالتفعيل التلقائي يريحك من هالشي، وتقدر توقفه أي وقت من التطبيق، وما فيه أي رسوم على الخدمة.", "duration_ms": 17990}}
+{"seq": 74, "dir": "rx", "t_mono_ns": 425628140000000, "stream_ms": 145015.0, "msg": {"type": "pong", "id": 30}}
+{"seq": 75, "dir": "rx", "t_mono_ns": 425633140000000, "stream_ms": 150015.0, "msg": {"type": "pong", "id": 31}}
+{"seq": 76, "dir": "rx", "t_mono_ns": 425637671000000, "stream_ms": 154546.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 77, "dir": "rx", "t_mono_ns": 425638156000000, "stream_ms": 155031.0, "msg": {"type": "pong", "id": 32}}
+{"seq": 78, "dir": "rx", "t_mono_ns": 425643156000000, "stream_ms": 160031.0, "msg": {"type": "pong", "id": 33}}
+{"seq": 79, "dir": "tx", "t_mono_ns": 425645328000000, "stream_ms": 162200, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 162200}}
+{"seq": 80, "dir": "tx", "t_mono_ns": 425647328000000, "stream_ms": 164200, "msg": {"type": "scenario_end", "scenario_id": "BC-D03", "stream_ms": 164200}}
+{"seq": 81, "dir": "rx", "t_mono_ns": 425647937000000, "stream_ms": 164812.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 82, "dir": "rx", "t_mono_ns": 425648125000000, "stream_ms": 165000.0, "msg": {"type": "pong", "id": 34}}
+{"seq": 83, "dir": "tx", "t_mono_ns": 425648828000000, "stream_ms": 165700, "msg": {"type": "scenario_start", "scenario_id": "HT-D01", "stream_ms": 165700, "context": {"use_case": "callback time", "language": "ar"}}}
+{"seq": 84, "dir": "tx", "t_mono_ns": 425649140000000, "stream_ms": 166000, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 166000, "text": "السلام عليكم، معك سلمى من عيادات رِفاه. معي الأستاذ عبدالرحمن؟", "duration_ms": 5320}}
+{"seq": 85, "dir": "rx", "t_mono_ns": 425653140000000, "stream_ms": 170015.0, "msg": {"type": "pong", "id": 35}}
+{"seq": 86, "dir": "tx", "t_mono_ns": 425654437000000, "stream_ms": 171320, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 171320}}
+{"seq": 87, "dir": "tx", "t_mono_ns": 425656640000000, "stream_ms": 173520, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 173530, "text": "حياك الله. وش أنسب وقت نتصل عليك فيه عشان نأكد موعد التحاليل؟", "duration_ms": 5210}}
+{"seq": 88, "dir": "rx", "t_mono_ns": 425658140000000, "stream_ms": 175015.0, "msg": {"type": "pong", "id": 36}}
+{"seq": 89, "dir": "tx", "t_mono_ns": 425661875000000, "stream_ms": 178740, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 178740}}
+{"seq": 90, "dir": "rx", "t_mono_ns": 425663140000000, "stream_ms": 180015.0, "msg": {"type": "pong", "id": 37}}
+{"seq": 91, "dir": "rx", "t_mono_ns": 425663890000000, "stream_ms": 180765.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 92, "dir": "rx", "t_mono_ns": 425666484000000, "stream_ms": 183359.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 93, "dir": "rx", "t_mono_ns": 425668140000000, "stream_ms": 185015.0, "msg": {"type": "pong", "id": 38}}
+{"seq": 94, "dir": "rx", "t_mono_ns": 425668234000000, "stream_ms": 185109.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 95, "dir": "rx", "t_mono_ns": 425670609000000, "stream_ms": 187484.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 96, "dir": "rx", "t_mono_ns": 425673125000000, "stream_ms": 190000.0, "msg": {"type": "pong", "id": 39}}
+{"seq": 97, "dir": "tx", "t_mono_ns": 425673500000000, "stream_ms": 190380, "msg": {"type": "scenario_end", "scenario_id": "HT-D01", "stream_ms": 190380}}
+{"seq": 98, "dir": "tx", "t_mono_ns": 425675000000000, "stream_ms": 191880, "msg": {"type": "scenario_start", "scenario_id": "HT-D02", "stream_ms": 191880, "context": {"use_case": "order number", "language": "ar"}}}
+{"seq": 99, "dir": "tx", "t_mono_ns": 425675296000000, "stream_ms": 192180, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 192180, "text": "أهلين، معك فيصل من مِرسال. معي الأستاذة لمى؟", "duration_ms": 4060}}
+{"seq": 100, "dir": "rx", "t_mono_ns": 425678140000000, "stream_ms": 195015.0, "msg": {"type": "pong", "id": 40}}
+{"seq": 101, "dir": "tx", "t_mono_ns": 425679359000000, "stream_ms": 196240, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 196240}}
+{"seq": 102, "dir": "tx", "t_mono_ns": 425681093000000, "stream_ms": 197960, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 197970, "text": "ممكن تعطيني رقم الطلب لو سمحتي؟ هو سبع أرقام، تلقينه في رسالة التأكيد.", "duration_ms": 5170}}
+{"seq": 103, "dir": "rx", "t_mono_ns": 425683140000000, "stream_ms": 200015.0, "msg": {"type": "pong", "id": 41}}
+{"seq": 104, "dir": "tx", "t_mono_ns": 425686250000000, "stream_ms": 203140, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 203140}}
+{"seq": 105, "dir": "rx", "t_mono_ns": 425688140000000, "stream_ms": 205015.0, "msg": {"type": "pong", "id": 42}}
+{"seq": 106, "dir": "rx", "t_mono_ns": 425693140000000, "stream_ms": 210015.0, "msg": {"type": "pong", "id": 43}}
+{"seq": 107, "dir": "rx", "t_mono_ns": 425694578000000, "stream_ms": 211453.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 108, "dir": "rx", "t_mono_ns": 425695687000000, "stream_ms": 212562.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 109, "dir": "rx", "t_mono_ns": 425697593000000, "stream_ms": 214468.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 110, "dir": "rx", "t_mono_ns": 425698140000000, "stream_ms": 215015.0, "msg": {"type": "pong", "id": 44}}
+{"seq": 111, "dir": "rx", "t_mono_ns": 425699500000000, "stream_ms": 216375.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 112, "dir": "rx", "t_mono_ns": 425702031000000, "stream_ms": 218906.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 113, "dir": "rx", "t_mono_ns": 425703125000000, "stream_ms": 220000.0, "msg": {"type": "pong", "id": 45}}
+{"seq": 114, "dir": "tx", "t_mono_ns": 425704890000000, "stream_ms": 221780, "msg": {"type": "scenario_end", "scenario_id": "HT-D02", "stream_ms": 221780}}
+{"seq": 115, "dir": "tx", "t_mono_ns": 425706390000000, "stream_ms": 223280, "msg": {"type": "scenario_start", "scenario_id": "HT-D03", "stream_ms": 223280, "context": {"use_case": "delivery options", "language": "ar"}}}
+{"seq": 116, "dir": "tx", "t_mono_ns": 425706718000000, "stream_ms": 223580, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 223580, "text": "هلا، معك ريم من متجر نوّار. معي الأستاذة جود؟", "duration_ms": 4280}}
+{"seq": 117, "dir": "rx", "t_mono_ns": 425708140000000, "stream_ms": 225015.0, "msg": {"type": "pong", "id": 46}}
+{"seq": 118, "dir": "tx", "t_mono_ns": 425711000000000, "stream_ms": 227860, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 227860}}
+{"seq": 119, "dir": "tx", "t_mono_ns": 425712671000000, "stream_ms": 229560, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 229570, "text": "حياك الله. عندنا ثلاث خيارات للتوصيل: العادي خلال ثلاث إلى خمس أيام ومجاني، والسريع بكرة برسوم خمسة وعشرين ريال، أو تستلمينه من الفرع بنفس اليوم، وكل الخيارات تقدرين تتابعينها من التطبيق.", "duration_ms": 16170}}
+{"seq": 120, "dir": "rx", "t_mono_ns": 425713140000000, "stream_ms": 230015.0, "msg": {"type": "pong", "id": 47}}
+{"seq": 121, "dir": "rx", "t_mono_ns": 425718140000000, "stream_ms": 235015.0, "msg": {"type": "pong", "id": 48}}
+{"seq": 122, "dir": "rx", "t_mono_ns": 425720390000000, "stream_ms": 237265.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 123, "dir": "rx", "t_mono_ns": 425723140000000, "stream_ms": 240015.0, "msg": {"type": "pong", "id": 49}}
+{"seq": 124, "dir": "rx", "t_mono_ns": 425728140000000, "stream_ms": 245015.0, "msg": {"type": "pong", "id": 50}}
+{"seq": 125, "dir": "tx", "t_mono_ns": 425728859000000, "stream_ms": 245740, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 245740}}
+{"seq": 126, "dir": "tx", "t_mono_ns": 425730859000000, "stream_ms": 247740, "msg": {"type": "scenario_end", "scenario_id": "HT-D03", "stream_ms": 247740}}
+{"seq": 127, "dir": "tx", "t_mono_ns": 425732359000000, "stream_ms": 249240, "msg": {"type": "scenario_start", "scenario_id": "BG-D01", "stream_ms": 249240, "context": {"use_case": "plan offer", "language": "ar"}}}
+{"seq": 128, "dir": "tx", "t_mono_ns": 425732671000000, "stream_ms": 249540, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 249540, "text": "السلام عليكم، معك خالد من سَنا للاتصالات. معي الأستاذ تركي؟", "duration_ms": 4500}}
+{"seq": 129, "dir": "rx", "t_mono_ns": 425732859000000, "stream_ms": 249734.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 130, "dir": "rx", "t_mono_ns": 425733156000000, "stream_ms": 250031.0, "msg": {"type": "pong", "id": 51}}
+{"seq": 131, "dir": "tx", "t_mono_ns": 425737156000000, "stream_ms": 254040, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 254040}}
+{"seq": 132, "dir": "rx", "t_mono_ns": 425738140000000, "stream_ms": 255015.0, "msg": {"type": "pong", "id": 52}}
+{"seq": 133, "dir": "tx", "t_mono_ns": 425738609000000, "stream_ms": 255480, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 255490, "text": "حياك الله. عندك عرض على باقة الألياف المنزلية، سرعة خمس مية ميقا، وأول شهرين بنص السعر، والتركيب مجاني، وتقدر تحدد موعد الفني اللي يناسبك من التطبيق.", "duration_ms": 12930}}
+{"seq": 134, "dir": "rx", "t_mono_ns": 425738796000000, "stream_ms": 255671.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 135, "dir": "rx", "t_mono_ns": 425743140000000, "stream_ms": 260015.0, "msg": {"type": "pong", "id": 53}}
+{"seq": 136, "dir": "rx", "t_mono_ns": 425748140000000, "stream_ms": 265015.0, "msg": {"type": "pong", "id": 54}}
+{"seq": 137, "dir": "tx", "t_mono_ns": 425751531000000, "stream_ms": 268420, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 268420}}
+{"seq": 138, "dir": "rx", "t_mono_ns": 425753140000000, "stream_ms": 270015.0, "msg": {"type": "pong", "id": 55}}
+{"seq": 139, "dir": "tx", "t_mono_ns": 425753546000000, "stream_ms": 270420, "msg": {"type": "scenario_end", "scenario_id": "BG-D01", "stream_ms": 270420}}
+{"seq": 140, "dir": "rx", "t_mono_ns": 425754218000000, "stream_ms": 271093.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 141, "dir": "tx", "t_mono_ns": 425755046000000, "stream_ms": 271920, "msg": {"type": "scenario_start", "scenario_id": "BG-D02", "stream_ms": 271920, "context": {"use_case": "car service booking", "language": "ar"}}}
+{"seq": 142, "dir": "tx", "t_mono_ns": 425755359000000, "stream_ms": 272220, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 272220, "text": "هلا، معك نوف من مركز صيانة الوادي. معي الأستاذ بدر؟", "duration_ms": 4390}}
+{"seq": 143, "dir": "rx", "t_mono_ns": 425755531000000, "stream_ms": 272406.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 144, "dir": "rx", "t_mono_ns": 425758140000000, "stream_ms": 275015.0, "msg": {"type": "pong", "id": 56}}
+{"seq": 145, "dir": "tx", "t_mono_ns": 425759750000000, "stream_ms": 276620, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 276610}}
+{"seq": 146, "dir": "tx", "t_mono_ns": 425762531000000, "stream_ms": 279400, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 279410, "text": "حياك الله. سيارتك عليها صيانة العشرين ألف كيلو، وعندنا مواعيد متاحة يوم الأربعاء والخميس، والصيانة تاخذ تقريباً ساعتين، وفيه خصم عشرة بالمية لو حجزت هالأسبوع، وتقدر تحجز من التطبيق أو ترد على هالرقم.", "duration_ms": 16370}}
+{"seq": 147, "dir": "rx", "t_mono_ns": 425762718000000, "stream_ms": 279593.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 148, "dir": "rx", "t_mono_ns": 425763156000000, "stream_ms": 280031.0, "msg": {"type": "pong", "id": 57}}
+{"seq": 149, "dir": "rx", "t_mono_ns": 425768140000000, "stream_ms": 285015.0, "msg": {"type": "pong", "id": 58}}
+{"seq": 150, "dir": "rx", "t_mono_ns": 425773140000000, "stream_ms": 290015.0, "msg": {"type": "pong", "id": 59}}
+{"seq": 151, "dir": "rx", "t_mono_ns": 425778140000000, "stream_ms": 295015.0, "msg": {"type": "pong", "id": 60}}
+{"seq": 152, "dir": "tx", "t_mono_ns": 425778890000000, "stream_ms": 295780, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 295780}}
+{"seq": 153, "dir": "tx", "t_mono_ns": 425780890000000, "stream_ms": 297780, "msg": {"type": "scenario_end", "scenario_id": "BG-D02", "stream_ms": 297780}}
+{"seq": 154, "dir": "rx", "t_mono_ns": 425781578000000, "stream_ms": 298453.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 155, "dir": "tx", "t_mono_ns": 425782406000000, "stream_ms": 299280, "msg": {"type": "scenario_start", "scenario_id": "BG-D03", "stream_ms": 299280, "context": {"use_case": "clinic follow-up", "language": "ar"}}}
+{"seq": 156, "dir": "tx", "t_mono_ns": 425782718000000, "stream_ms": 299580, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 299580, "text": "مساء الخير، معك سلمى من عيادات رِفاه. معي أم عبدالله؟", "duration_ms": 4730}}
+{"seq": 157, "dir": "rx", "t_mono_ns": 425783140000000, "stream_ms": 300015.0, "msg": {"type": "pong", "id": 61}}
+{"seq": 158, "dir": "tx", "t_mono_ns": 425787437000000, "stream_ms": 304320, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 304310}}
+{"seq": 159, "dir": "rx", "t_mono_ns": 425788140000000, "stream_ms": 305015.0, "msg": {"type": "pong", "id": 62}}
+{"seq": 160, "dir": "tx", "t_mono_ns": 425789640000000, "stream_ms": 306520, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 306520, "text": "أهلين. حبيت أبلغك إن نتايج التحاليل طلعت، والدكتور حاب يشوفك الأسبوع الجاي عشان يشرح لك النتايج، وعندنا موعد الثلاثاء الساعة أربع أو الأربعاء الساعة عشرة الصبح.", "duration_ms": 13260}}
+{"seq": 161, "dir": "rx", "t_mono_ns": 425793140000000, "stream_ms": 310015.0, "msg": {"type": "pong", "id": 63}}
+{"seq": 162, "dir": "rx", "t_mono_ns": 425794171000000, "stream_ms": 311046.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 163, "dir": "rx", "t_mono_ns": 425798140000000, "stream_ms": 315015.0, "msg": {"type": "pong", "id": 64}}
+{"seq": 164, "dir": "tx", "t_mono_ns": 425802890000000, "stream_ms": 319780, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 319780}}
+{"seq": 165, "dir": "rx", "t_mono_ns": 425803140000000, "stream_ms": 320015.0, "msg": {"type": "pong", "id": 65}}
+{"seq": 166, "dir": "tx", "t_mono_ns": 425804890000000, "stream_ms": 321780, "msg": {"type": "scenario_end", "scenario_id": "BG-D03", "stream_ms": 321780}}
+{"seq": 167, "dir": "tx", "t_mono_ns": 425806390000000, "stream_ms": 323280, "msg": {"type": "scenario_start", "scenario_id": "NV-D01", "stream_ms": 323280, "context": {"use_case": "delivery address check", "language": "ar"}}}
+{"seq": 168, "dir": "tx", "t_mono_ns": 425806718000000, "stream_ms": 323580, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 323580, "text": "هلا، معك فيصل من مِرسال. أكلّم الأستاذ سلطان؟", "duration_ms": 3460}}
+{"seq": 169, "dir": "rx", "t_mono_ns": 425808156000000, "stream_ms": 325031.0, "msg": {"type": "pong", "id": 66}}
+{"seq": 170, "dir": "tx", "t_mono_ns": 425810171000000, "stream_ms": 327040, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 327040}}
+{"seq": 171, "dir": "tx", "t_mono_ns": 425811468000000, "stream_ms": 328340, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 328350, "text": "يا هلا. بس أبي أتأكد من العنوان: حي النرجس، شارع الأمير سعود، فيلا رقم اثنعش، وجنبها مسجد، عشان المندوب ما يتوه ويوصلك على طول.", "duration_ms": 12150}}
+{"seq": 172, "dir": "rx", "t_mono_ns": 425813140000000, "stream_ms": 330015.0, "msg": {"type": "pong", "id": 67}}
+{"seq": 173, "dir": "rx", "t_mono_ns": 425818015000000, "stream_ms": 334890.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 174, "dir": "rx", "t_mono_ns": 425818140000000, "stream_ms": 335015.0, "msg": {"type": "pong", "id": 68}}
+{"seq": 175, "dir": "rx", "t_mono_ns": 425823125000000, "stream_ms": 340000.0, "msg": {"type": "pong", "id": 69}}
+{"seq": 176, "dir": "tx", "t_mono_ns": 425823640000000, "stream_ms": 340500, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 340500}}
+{"seq": 177, "dir": "tx", "t_mono_ns": 425825640000000, "stream_ms": 342500, "msg": {"type": "scenario_end", "scenario_id": "NV-D01", "stream_ms": 342500}}
+{"seq": 178, "dir": "tx", "t_mono_ns": 425827140000000, "stream_ms": 344000, "msg": {"type": "scenario_start", "scenario_id": "NV-D02", "stream_ms": 344000, "context": {"use_case": "survey intro", "language": "ar"}}}
+{"seq": 179, "dir": "tx", "t_mono_ns": 425827437000000, "stream_ms": 344300, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 344300, "text": "أهلين، معك ريم من متجر نوّار. معي الأستاذة رهف؟", "duration_ms": 4740}}
+{"seq": 180, "dir": "rx", "t_mono_ns": 425828140000000, "stream_ms": 345015.0, "msg": {"type": "pong", "id": 70}}
+{"seq": 181, "dir": "tx", "t_mono_ns": 425832156000000, "stream_ms": 349040, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 349040}}
+{"seq": 182, "dir": "rx", "t_mono_ns": 425833140000000, "stream_ms": 350015.0, "msg": {"type": "pong", "id": 71}}
+{"seq": 183, "dir": "tx", "t_mono_ns": 425833843000000, "stream_ms": 350720, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 350720, "text": "أهلين رهف. عندنا استبيان قصير مرة، والله ما ياخذ أكثر من دقيقة، وأوعدك ما راح أسألك عن رقم جوالك ولا عن عمرك، بس عن تجربتك مع آخر طلب.", "duration_ms": 11280}}
+{"seq": 184, "dir": "rx", "t_mono_ns": 425838125000000, "stream_ms": 355000.0, "msg": {"type": "pong", "id": 72}}
+{"seq": 185, "dir": "rx", "t_mono_ns": 425843140000000, "stream_ms": 360015.0, "msg": {"type": "pong", "id": 73}}
+{"seq": 186, "dir": "tx", "t_mono_ns": 425845125000000, "stream_ms": 362000, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 362000}}
+{"seq": 187, "dir": "tx", "t_mono_ns": 425847125000000, "stream_ms": 364000, "msg": {"type": "scenario_end", "scenario_id": "NV-D02", "stream_ms": 364000}}
+{"seq": 188, "dir": "rx", "t_mono_ns": 425848140000000, "stream_ms": 365015.0, "msg": {"type": "pong", "id": 74}}
+{"seq": 189, "dir": "tx", "t_mono_ns": 425848640000000, "stream_ms": 365500, "msg": {"type": "scenario_start", "scenario_id": "NV-D03", "stream_ms": 365500, "context": {"use_case": "plan change confirmation", "language": "ar"}}}
+{"seq": 190, "dir": "tx", "t_mono_ns": 425848937000000, "stream_ms": 365800, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 365800, "text": "هلا، معك خالد من سَنا للاتصالات. معي الأستاذ يزيد؟", "duration_ms": 3570}}
+{"seq": 191, "dir": "rx", "t_mono_ns": 425850406000000, "stream_ms": 367281.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 192, "dir": "tx", "t_mono_ns": 425852515000000, "stream_ms": 369380, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 369370}}
+{"seq": 193, "dir": "rx", "t_mono_ns": 425853125000000, "stream_ms": 370000.0, "msg": {"type": "pong", "id": 75}}
+{"seq": 194, "dir": "tx", "t_mono_ns": 425854203000000, "stream_ms": 371080, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 371080, "text": "يا هلا. تم تغيير باقتك للباقة الجديدة، والتغيير بيصير فعّال من بداية الشهر الجاي، وبتوصلك رسالة فيها التفاصيل، وما فيه أي رسوم إضافية على التغيير.", "duration_ms": 12050}}
+{"seq": 195, "dir": "rx", "t_mono_ns": 425854671000000, "stream_ms": 371546.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 196, "dir": "rx", "t_mono_ns": 425858125000000, "stream_ms": 375000.0, "msg": {"type": "pong", "id": 76}}
+{"seq": 197, "dir": "rx", "t_mono_ns": 425863140000000, "stream_ms": 380015.0, "msg": {"type": "pong", "id": 77}}
+{"seq": 198, "dir": "tx", "t_mono_ns": 425866265000000, "stream_ms": 383140, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 383130}}
+{"seq": 199, "dir": "rx", "t_mono_ns": 425868140000000, "stream_ms": 385015.0, "msg": {"type": "pong", "id": 78}}
+{"seq": 200, "dir": "tx", "t_mono_ns": 425868265000000, "stream_ms": 385140, "msg": {"type": "scenario_end", "scenario_id": "NV-D03", "stream_ms": 385140}}
+{"seq": 201, "dir": "tx", "t_mono_ns": 425869750000000, "stream_ms": 386640, "msg": {"type": "scenario_start", "scenario_id": "AM-D01", "stream_ms": 386640, "context": {"use_case": "payment reminder", "language": "ar"}}}
+{"seq": 202, "dir": "tx", "t_mono_ns": 425870078000000, "stream_ms": 386940, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 386940, "text": "السلام عليكم، معك ريم من متجر نوّار. معي الأستاذ عمر؟", "duration_ms": 4900}}
+{"seq": 203, "dir": "rx", "t_mono_ns": 425873140000000, "stream_ms": 390015.0, "msg": {"type": "pong", "id": 79}}
+{"seq": 204, "dir": "tx", "t_mono_ns": 425874953000000, "stream_ms": 391840, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 391840}}
+{"seq": 205, "dir": "tx", "t_mono_ns": 425876890000000, "stream_ms": 393760, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 393760, "text": "حياك الله. حبيت أذكرك إن عندك دفعة بقيمة ثلاث مية وخمسين ريال مستحقة يوم الخميس، وتقدر تسددها من التطبيق أو من الرابط اللي بيوصلك برسالة، وإذا عندك أي استفسار أنا موجودة.", "duration_ms": 13570}}
+{"seq": 206, "dir": "rx", "t_mono_ns": 425878125000000, "stream_ms": 395000.0, "msg": {"type": "pong", "id": 80}}
+{"seq": 207, "dir": "rx", "t_mono_ns": 425883140000000, "stream_ms": 400015.0, "msg": {"type": "pong", "id": 81}}
+{"seq": 208, "dir": "rx", "t_mono_ns": 425888125000000, "stream_ms": 405000.0, "msg": {"type": "pong", "id": 82}}
+{"seq": 209, "dir": "tx", "t_mono_ns": 425890453000000, "stream_ms": 407340, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 407330}}
+{"seq": 210, "dir": "tx", "t_mono_ns": 425892468000000, "stream_ms": 409340, "msg": {"type": "scenario_end", "scenario_id": "AM-D01", "stream_ms": 409340}}
+{"seq": 211, "dir": "rx", "t_mono_ns": 425893156000000, "stream_ms": 410031.0, "msg": {"type": "pong", "id": 83}}
+{"seq": 212, "dir": "tx", "t_mono_ns": 425893968000000, "stream_ms": 410840, "msg": {"type": "scenario_start", "scenario_id": "AM-D02", "stream_ms": 410840, "context": {"use_case": "payment reminder", "language": "ar"}}}
+{"seq": 213, "dir": "tx", "t_mono_ns": 425894250000000, "stream_ms": 411140, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 411140, "text": "السلام عليكم، معك ريم من متجر نوّار. معي الأستاذ مشعل؟", "duration_ms": 4880}}
+{"seq": 214, "dir": "rx", "t_mono_ns": 425898125000000, "stream_ms": 415000.0, "msg": {"type": "pong", "id": 84}}
+{"seq": 215, "dir": "tx", "t_mono_ns": 425899140000000, "stream_ms": 416020, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 416020}}
+{"seq": 216, "dir": "tx", "t_mono_ns": 425900390000000, "stream_ms": 417280, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 417280, "text": "حياك الله. حبيت أذكرك إن عندك دفعة مستحقة يوم الخميس، وتقدر تسددها من التطبيق أو من الرابط اللي بيوصلك برسالة، وإذا سددت قبل الموعد ما فيه أي رسوم.", "duration_ms": 12840}}
+{"seq": 217, "dir": "rx", "t_mono_ns": 425903140000000, "stream_ms": 420015.0, "msg": {"type": "pong", "id": 85}}
+{"seq": 218, "dir": "rx", "t_mono_ns": 425907343000000, "stream_ms": 424218.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 219, "dir": "rx", "t_mono_ns": 425908125000000, "stream_ms": 425000.0, "msg": {"type": "pong", "id": 86}}
+{"seq": 220, "dir": "rx", "t_mono_ns": 425913140000000, "stream_ms": 430015.0, "msg": {"type": "pong", "id": 87}}
+{"seq": 221, "dir": "tx", "t_mono_ns": 425913234000000, "stream_ms": 430120, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 430120}}
+{"seq": 222, "dir": "tx", "t_mono_ns": 425915234000000, "stream_ms": 432120, "msg": {"type": "scenario_end", "scenario_id": "AM-D02", "stream_ms": 432120}}
+{"seq": 223, "dir": "tx", "t_mono_ns": 425916734000000, "stream_ms": 433620, "msg": {"type": "scenario_start", "scenario_id": "AM-D03", "stream_ms": 433620, "context": {"use_case": "terms explanation", "language": "ar"}}}
+{"seq": 224, "dir": "tx", "t_mono_ns": 425917046000000, "stream_ms": 433920, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 433920, "text": "هلا، معك عبدالله من البنك. أكلّم الأستاذ فيصل؟", "duration_ms": 3720}}
+{"seq": 225, "dir": "rx", "t_mono_ns": 425918140000000, "stream_ms": 435015.0, "msg": {"type": "pong", "id": 88}}
+{"seq": 226, "dir": "tx", "t_mono_ns": 425920750000000, "stream_ms": 437640, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 437640}}
+{"seq": 227, "dir": "tx", "t_mono_ns": 425922156000000, "stream_ms": 439020, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 439020, "text": "يا هلا. زي ما ذكرت لك قبل شوي، الرسوم السنوية مجانية أول سنة، وبعدها مية وخمسين ريال، يعني أول سنة ما راح تدفع شي، وبعد السنة الأولى تصير الرسوم مية وخمسين ريال، وتقدر تلغي البطاقة قبل نهاية السنة بدون أي رسوم.", "duration_ms": 16580}}
+{"seq": 228, "dir": "rx", "t_mono_ns": 425923140000000, "stream_ms": 440015.0, "msg": {"type": "pong", "id": 89}}
+{"seq": 229, "dir": "rx", "t_mono_ns": 425928156000000, "stream_ms": 445031.0, "msg": {"type": "pong", "id": 90}}
+{"seq": 230, "dir": "rx", "t_mono_ns": 425931687000000, "stream_ms": 448562.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 231, "dir": "rx", "t_mono_ns": 425933125000000, "stream_ms": 450000.0, "msg": {"type": "pong", "id": 91}}
+{"seq": 232, "dir": "rx", "t_mono_ns": 425938140000000, "stream_ms": 455015.0, "msg": {"type": "pong", "id": 92}}
+{"seq": 233, "dir": "tx", "t_mono_ns": 425938734000000, "stream_ms": 455600, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 455600}}
+{"seq": 234, "dir": "tx", "t_mono_ns": 425940718000000, "stream_ms": 457600, "msg": {"type": "scenario_end", "scenario_id": "AM-D03", "stream_ms": 457600}}
+{"seq": 235, "dir": "tx", "t_mono_ns": 425942234000000, "stream_ms": 459100, "msg": {"type": "scenario_start", "scenario_id": "OV-D01", "stream_ms": 459100, "context": {"use_case": "appointment booking", "language": "ar"}}}
+{"seq": 236, "dir": "tx", "t_mono_ns": 425942515000000, "stream_ms": 459400, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 459400, "text": "هلا، معك نوف من مركز صيانة الوادي. معي الأستاذ راكان؟", "duration_ms": 4450}}
+{"seq": 237, "dir": "rx", "t_mono_ns": 425943125000000, "stream_ms": 460000.0, "msg": {"type": "pong", "id": 93}}
+{"seq": 238, "dir": "tx", "t_mono_ns": 425946984000000, "stream_ms": 463860, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 463850}}
+{"seq": 239, "dir": "rx", "t_mono_ns": 425948140000000, "stream_ms": 465015.0, "msg": {"type": "pong", "id": 94}}
+{"seq": 240, "dir": "tx", "t_mono_ns": 425948390000000, "stream_ms": 465280, "msg": {"type": "agent_utterance_start", "utt_id": "A1a", "stream_ms": 465290, "text": "تحب أحجز لك موعد يوم الأحد الساعة عشرة الصبح؟", "duration_ms": 3130}}
+{"seq": 241, "dir": "tx", "t_mono_ns": 425951546000000, "stream_ms": 468420, "msg": {"type": "agent_utterance_end", "utt_id": "A1a", "stream_ms": 468420}}
+{"seq": 242, "dir": "tx", "t_mono_ns": 425952437000000, "stream_ms": 469320, "msg": {"type": "agent_utterance_start", "utt_id": "A1b", "stream_ms": 469320, "text": "وإذا ما يناسبك عندنا كمان يوم الثلاثاء بعد الظهر، ويوم الخميس من الساعة ثمان الصبح، وكل المواعيد فيها فحص مجاني.", "duration_ms": 8820}}
+{"seq": 243, "dir": "rx", "t_mono_ns": 425952750000000, "stream_ms": 469625.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 244, "dir": "rx", "t_mono_ns": 425953140000000, "stream_ms": 470015.0, "msg": {"type": "pong", "id": 95}}
+{"seq": 245, "dir": "rx", "t_mono_ns": 425958140000000, "stream_ms": 475015.0, "msg": {"type": "pong", "id": 96}}
+{"seq": 246, "dir": "tx", "t_mono_ns": 425961265000000, "stream_ms": 478140, "msg": {"type": "agent_utterance_end", "utt_id": "A1b", "stream_ms": 478140}}
+{"seq": 247, "dir": "rx", "t_mono_ns": 425963125000000, "stream_ms": 480000.0, "msg": {"type": "pong", "id": 97}}
+{"seq": 248, "dir": "tx", "t_mono_ns": 425963265000000, "stream_ms": 480140, "msg": {"type": "scenario_end", "scenario_id": "OV-D01", "stream_ms": 480140}}
+{"seq": 249, "dir": "tx", "t_mono_ns": 425964750000000, "stream_ms": 481640, "msg": {"type": "scenario_start", "scenario_id": "OV-D02", "stream_ms": 481640, "context": {"use_case": "document request", "language": "ar"}}}
+{"seq": 250, "dir": "tx", "t_mono_ns": 425965078000000, "stream_ms": 481940, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 481940, "text": "أهلين، معك سارة من البنك. معي الأستاذة أمل؟", "duration_ms": 3610}}
+{"seq": 251, "dir": "rx", "t_mono_ns": 425968140000000, "stream_ms": 485015.0, "msg": {"type": "pong", "id": 98}}
+{"seq": 252, "dir": "tx", "t_mono_ns": 425968671000000, "stream_ms": 485560, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 485550}}
+{"seq": 253, "dir": "tx", "t_mono_ns": 425970234000000, "stream_ms": 487100, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 487100, "text": "حياك الله. عشان نكمل طلب التمويل نحتاج منك صورة من الهوية الوطنية سارية المفعول، وتعريف بالراتب ما يكون أقدم من شهر، وكشف حساب لآخر ثلاث شهور.", "duration_ms": 11990}}
+{"seq": 254, "dir": "rx", "t_mono_ns": 425973125000000, "stream_ms": 490000.0, "msg": {"type": "pong", "id": 99}}
+{"seq": 255, "dir": "rx", "t_mono_ns": 425975765000000, "stream_ms": 492640.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 256, "dir": "rx", "t_mono_ns": 425978140000000, "stream_ms": 495015.0, "msg": {"type": "pong", "id": 100}}
+{"seq": 257, "dir": "tx", "t_mono_ns": 425982234000000, "stream_ms": 499100, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 499090}}
+{"seq": 258, "dir": "rx", "t_mono_ns": 425983140000000, "stream_ms": 500015.0, "msg": {"type": "pong", "id": 101}}
+{"seq": 259, "dir": "tx", "t_mono_ns": 425984234000000, "stream_ms": 501100, "msg": {"type": "scenario_end", "scenario_id": "OV-D02", "stream_ms": 501100}}
+{"seq": 260, "dir": "tx", "t_mono_ns": 425985734000000, "stream_ms": 502600, "msg": {"type": "scenario_start", "scenario_id": "OV-D03", "stream_ms": 502600, "context": {"use_case": "complaint follow-up", "language": "ar"}}}
+{"seq": 261, "dir": "tx", "t_mono_ns": 425986015000000, "stream_ms": 502900, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 502900, "text": "هلا، معك خالد من سَنا للاتصالات. معي الأستاذ فهد؟", "duration_ms": 4220}}
+{"seq": 262, "dir": "rx", "t_mono_ns": 425988125000000, "stream_ms": 505000.0, "msg": {"type": "pong", "id": 102}}
+{"seq": 263, "dir": "tx", "t_mono_ns": 425990250000000, "stream_ms": 507120, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 507120}}
+{"seq": 264, "dir": "tx", "t_mono_ns": 425991578000000, "stream_ms": 508440, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 508450, "text": "يا هلا. بخصوص البلاغ اللي رفعته عن ضعف الشبكة، حبيت أبلغك إن الفريق الفني يشتغل عليه، والمدة المتوقعة للحل من ثلاث إلى خمس أيام عمل، وبنرسل لك رسالة أول ما ينحل، ونعتذر منك على الإزعاج.", "duration_ms": 14580}}
+{"seq": 265, "dir": "rx", "t_mono_ns": 425993156000000, "stream_ms": 510031.0, "msg": {"type": "pong", "id": 103}}
+{"seq": 266, "dir": "rx", "t_mono_ns": 425998140000000, "stream_ms": 515015.0, "msg": {"type": "pong", "id": 104}}
+{"seq": 267, "dir": "rx", "t_mono_ns": 425998171000000, "stream_ms": 515046.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 268, "dir": "rx", "t_mono_ns": 426003125000000, "stream_ms": 520000.0, "msg": {"type": "pong", "id": 105}}
+{"seq": 269, "dir": "tx", "t_mono_ns": 426006171000000, "stream_ms": 523040, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 523030}}
+{"seq": 270, "dir": "rx", "t_mono_ns": 426006921000000, "stream_ms": 523796.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 271, "dir": "rx", "t_mono_ns": 426008140000000, "stream_ms": 525015.0, "msg": {"type": "pong", "id": 106}}
+{"seq": 272, "dir": "tx", "t_mono_ns": 426008171000000, "stream_ms": 525040, "msg": {"type": "scenario_end", "scenario_id": "OV-D03", "stream_ms": 525040}}
+{"seq": 273, "dir": "rx", "t_mono_ns": 426008828000000, "stream_ms": 525703.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 274, "dir": "tx", "t_mono_ns": 426009656000000, "stream_ms": 526540, "msg": {"type": "scenario_start", "scenario_id": "DV-D01", "stream_ms": 526540, "context": {"use_case": "delivery confirmation", "language": "ar"}}}
+{"seq": 275, "dir": "tx", "t_mono_ns": 426009968000000, "stream_ms": 526840, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 526840, "text": "هلا، معك فيصل من مِرسال. معي الأخ عبدالله؟", "duration_ms": 3480}}
+{"seq": 276, "dir": "rx", "t_mono_ns": 426013140000000, "stream_ms": 530015.0, "msg": {"type": "pong", "id": 107}}
+{"seq": 277, "dir": "tx", "t_mono_ns": 426013437000000, "stream_ms": 530320, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 530320}}
+{"seq": 278, "dir": "tx", "t_mono_ns": 426015140000000, "stream_ms": 532000, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 532000, "text": "يا هلا. طلبك طلع من المستودع اليوم الصبح، والمفروض يوصلك خلال يومين، والمندوب بيتواصل معك على نفس الرقم، ولو ما رديت عليه بيحاول مرة ثانية بعد ساعة.", "duration_ms": 12100}}
+{"seq": 279, "dir": "rx", "t_mono_ns": 426018140000000, "stream_ms": 535015.0, "msg": {"type": "pong", "id": 108}}
+{"seq": 280, "dir": "rx", "t_mono_ns": 426019125000000, "stream_ms": 536000.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 281, "dir": "rx", "t_mono_ns": 426023140000000, "stream_ms": 540015.0, "msg": {"type": "pong", "id": 109}}
+{"seq": 282, "dir": "tx", "t_mono_ns": 426027218000000, "stream_ms": 544100, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 544100}}
+{"seq": 283, "dir": "rx", "t_mono_ns": 426028125000000, "stream_ms": 545000.0, "msg": {"type": "pong", "id": 110}}
+{"seq": 284, "dir": "tx", "t_mono_ns": 426029234000000, "stream_ms": 546100, "msg": {"type": "scenario_end", "scenario_id": "DV-D01", "stream_ms": 546100}}
+{"seq": 285, "dir": "tx", "t_mono_ns": 426030718000000, "stream_ms": 547600, "msg": {"type": "scenario_start", "scenario_id": "DV-D02", "stream_ms": 547600, "context": {"use_case": "car service reminder", "language": "ar"}}}
+{"seq": 286, "dir": "tx", "t_mono_ns": 426031015000000, "stream_ms": 547900, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 547900, "text": "مساء الخير، معك نوف من مركز صيانة الوادي. معي الأخ حمد؟", "duration_ms": 4800}}
+{"seq": 287, "dir": "rx", "t_mono_ns": 426031203000000, "stream_ms": 548078.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 288, "dir": "rx", "t_mono_ns": 426033140000000, "stream_ms": 550015.0, "msg": {"type": "pong", "id": 111}}
+{"seq": 289, "dir": "tx", "t_mono_ns": 426035828000000, "stream_ms": 552700, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 552700}}
+{"seq": 290, "dir": "tx", "t_mono_ns": 426038078000000, "stream_ms": 554960, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 554960, "text": "أهلين. حبيت أذكرك إن موعد تغيير الزيت لسيارتك بكرة الساعة تسع الصبح، والفحص بيشمل الفرامل والإطارات، والمدة تقريباً ساعة، وإذا تبي نغير الموعد كلمنا قبلها بيوم.", "duration_ms": 13700}}
+{"seq": 291, "dir": "rx", "t_mono_ns": 426038140000000, "stream_ms": 555015.0, "msg": {"type": "pong", "id": 112}}
+{"seq": 292, "dir": "rx", "t_mono_ns": 426038265000000, "stream_ms": 555140.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 293, "dir": "rx", "t_mono_ns": 426043140000000, "stream_ms": 560015.0, "msg": {"type": "pong", "id": 113}}
+{"seq": 294, "dir": "rx", "t_mono_ns": 426048125000000, "stream_ms": 565000.0, "msg": {"type": "pong", "id": 114}}
+{"seq": 295, "dir": "tx", "t_mono_ns": 426051796000000, "stream_ms": 568660, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 568660}}
+{"seq": 296, "dir": "rx", "t_mono_ns": 426053140000000, "stream_ms": 570015.0, "msg": {"type": "pong", "id": 115}}
+{"seq": 297, "dir": "tx", "t_mono_ns": 426053796000000, "stream_ms": 570660, "msg": {"type": "scenario_end", "scenario_id": "DV-D02", "stream_ms": 570660}}
+{"seq": 298, "dir": "rx", "t_mono_ns": 426054437000000, "stream_ms": 571312.0, "msg": {"type": "decision", "decision": "TAKE_TURN"}}
+{"seq": 299, "dir": "tx", "t_mono_ns": 426055281000000, "stream_ms": 572160, "msg": {"type": "scenario_start", "scenario_id": "DV-D03", "stream_ms": 572160, "context": {"use_case": "unwanted order", "language": "ar"}}}
+{"seq": 300, "dir": "tx", "t_mono_ns": 426055593000000, "stream_ms": 572460, "msg": {"type": "agent_utterance_start", "utt_id": "A0", "stream_ms": 572460, "text": "هلا، معك خالد من متجر نوّار. معي الأخ بدر؟", "duration_ms": 4100}}
+{"seq": 301, "dir": "rx", "t_mono_ns": 426058140000000, "stream_ms": 575015.0, "msg": {"type": "pong", "id": 116}}
+{"seq": 302, "dir": "tx", "t_mono_ns": 426059687000000, "stream_ms": 576560, "msg": {"type": "agent_utterance_end", "utt_id": "A0", "stream_ms": 576560}}
+{"seq": 303, "dir": "tx", "t_mono_ns": 426061078000000, "stream_ms": 577960, "msg": {"type": "agent_utterance_start", "utt_id": "A1", "stream_ms": 577960, "text": "يا هلا. حبيت أأكد معك طلب الاشتراك الشهري بخدمة التوصيل المجاني، والاشتراك بيتجدد تلقائياً كل شهر بتسعة وعشرين ريال، وتقدر تلغيه أي وقت من التطبيق.", "duration_ms": 12060}}
+{"seq": 304, "dir": "rx", "t_mono_ns": 426063125000000, "stream_ms": 580000.0, "msg": {"type": "pong", "id": 117}}
+{"seq": 305, "dir": "rx", "t_mono_ns": 426066656000000, "stream_ms": 583531.0, "msg": {"type": "decision", "decision": "STOP"}}
+{"seq": 306, "dir": "rx", "t_mono_ns": 426068140000000, "stream_ms": 585015.0, "msg": {"type": "pong", "id": 118}}
+{"seq": 307, "dir": "tx", "t_mono_ns": 426073156000000, "stream_ms": 590020, "msg": {"type": "agent_utterance_end", "utt_id": "A1", "stream_ms": 590020}}
+{"seq": 308, "dir": "rx", "t_mono_ns": 426073156000000, "stream_ms": 590031.0, "msg": {"type": "pong", "id": 119}}
+{"seq": 309, "dir": "tx", "t_mono_ns": 426075140000000, "stream_ms": 592020, "msg": {"type": "scenario_end", "scenario_id": "DV-D03", "stream_ms": 592020}}
+{"seq": 310, "dir": "tx", "t_mono_ns": 426076125000000, "stream_ms": 593000.0, "msg": {"type": "session_end"}}
