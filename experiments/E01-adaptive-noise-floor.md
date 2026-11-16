@@ -65,14 +65,15 @@ decisions), so it remains reproducible as an ablation.
 | STOP decisions sent | 25 | 23 | -2 |
 | Stop latency median / p90 | 0 / 521 ms (5 yields) | 0 / 0 ms (7 yields) | |
 | Protocol errors / ignored decisions | 0 / 0 | 0 / 0 | |
-| Max harness send lag | 1.87 ms | 17.72 ms (see limitations) | |
-| RTT median / max | 0.61 / 2.20 ms | 0.96 / 2.24 ms | |
-| Decision arrival after frame send | 0.9-2.6 ms | 1.1-4.7 ms | |
+| Max harness send lag | 1.87 ms | 17.72 ms run 1 (concurrent script); **0.01 ms** clean repeat | |
+| RTT median / max | 0.61 / 2.20 ms | 0.96 / 2.24 ms; repeat 0.75 / 1.65 ms | |
+| Decision arrival after frame send | 0.9-2.6 ms | 1.1-4.7 ms; repeat 1.0-2.3 ms | |
 | `on_frame` cost | ~6 us | mean 77 us, p99 147 us | 0.4 % of a frame |
 | End-of-turn (separate track) | 28.52 | 28.52 | 0 |
 
-The real-time E01 run produced the same 40 decisions, in the same order, as the offline replay of the same
-commit (`tools/replay.py`).
+Both real-time E01 runs (run 1, and a clean repeat with nothing else running) produced the same 40 decisions,
+in the same order, as the offline replay of the same commit (`tools/replay.py`), and the same scores to four
+decimals.
 
 ### Per-event changes
 
@@ -124,7 +125,6 @@ neighbours were **not** adopted; choosing them would be fitting 24 synthetic cal
   steady noise is treated as speech until the floor adapts (about 2.7 s with a 3 s window, 10th percentile).
 - If a caller talks continuously from the first frames of a call, the cold-start floor is speech level.
 - Echo (NV-D03), backchannels, fillers, coughs/laughter and side speech are untouched by design.
-- Max harness send lag in the E01 run was 17.7 ms (under the kit's 20 ms limit, vs 1.9 ms in the baseline
-  run). The harness is a separate process; a short analysis script ran concurrently for part of the run, the
-  likely cause. One repeat run without concurrent work would settle it.
+- Send lag: run 1 reached 17.7 ms while an analysis script ran concurrently; the clean repeat had 0.01 ms with
+  identical decisions and scores, so the spike was host load, not the algorithm.
 - Measured on a Linux cloud container, not the team's Windows laptop or the venue network.
