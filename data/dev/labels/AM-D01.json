@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "AM-D01",
+  "split": "dev",
+  "category": "AM",
+  "subtype": "ambiguous.tayyib_falling",
+  "difficulty": 2,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S006",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "35-44",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "AM-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 22690,
+    "sha256": "60641aa3f0cab15bcfdd6e1531fb694111204d0490c7c0fef1c912f3c0b24f78"
+  },
+  "context": {
+    "use_case": "payment reminder",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5200,
+      "text": "السلام عليكم، معك ريم من متجر نوّار. معي الأستاذ عمر؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7120,
+      "end_ms": 20690,
+      "text": "حياك الله. حبيت أذكرك إن عندك دفعة بقيمة ثلاث مية وخمسين ريال مستحقة يوم الخميس، وتقدر تسددها من التطبيق أو من الرابط اللي بيوصلك برسالة، وإذا عندك أي استفسار أنا موجودة.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S006",
+      "start_ms": 5550,
+      "end_ms": 6720,
+      "kind": "speech",
+      "text": "إيه، وعليكم السلام."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S006",
+      "start_ms": 13940,
+      "end_ms": 14350,
+      "kind": "backchannel",
+      "text": "طيب.",
+      "delivery": "short, falling tone, acknowledging, nothing after"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 22690,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "AM-D01.e1",
+      "kind": "interruption",
+      "expected": "EITHER",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 13940,
+      "offset_ms": 14350,
+      "window_end_ms": 14850,
+      "preferred": "KEEP",
+      "rationale": "«طيب» falling and alone: most likely acknowledgement."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#am-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

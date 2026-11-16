@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "DV-D01",
+  "split": "dev",
+  "category": "DV",
+  "subtype": "dialect.backchannel_kuwaiti",
+  "difficulty": 2,
+  "dialect": "gulf-kuwaiti",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S018",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "gulf-kuwaiti"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "phone-nb"
+    ],
+    "snr_db": 35,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "DV-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 19560,
+    "sha256": "1b1089cf06eac1a25c31a3bf1e95a30798b9dd09823bb1283fdfbf2660535d48"
+  },
+  "context": {
+    "use_case": "delivery confirmation",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 3780,
+      "text": "هلا، معك فيصل من مِرسال. معي الأخ عبدالله؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 5460,
+      "end_ms": 17560,
+      "text": "يا هلا. طلبك طلع من المستودع اليوم الصبح، والمفروض يوصلك خلال يومين، والمندوب بيتواصل معك على نفس الرقم، ولو ما رديت عليه بيحاول مرة ثانية بعد ساعة.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S018",
+      "start_ms": 4130,
+      "end_ms": 5060,
+      "kind": "speech",
+      "text": "إي نعم، هلا."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S018",
+      "start_ms": 9220,
+      "end_ms": 10480,
+      "kind": "backchannel",
+      "text": "إي إي… … زين.",
+      "delivery": "soft, acknowledging"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 19560,
+      "level_db": -35
+    }
+  ],
+  "events": [
+    {
+      "event_id": "DV-D01.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 9220,
+      "offset_ms": 10480,
+      "window_end_ms": 10980,
+      "rationale": "Kuwaiti acknowledgement: 'I'm following'."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#dv-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

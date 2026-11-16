@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "DV-D02",
+  "split": "dev",
+  "category": "DV",
+  "subtype": "dialect.backchannel_emirati",
+  "difficulty": 2,
+  "dialect": "gulf-emirati",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S019",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "35-44",
+      "dialect": "gulf-emirati"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "car"
+    ],
+    "snr_db": 12,
+    "noise_source_ids": [
+      "SYN-dev-car"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "DV-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 23060,
+    "sha256": "9a92a25ab2015041f0cd350353f29aa66f2f34e933911ddc867935e854601e1f"
+  },
+  "context": {
+    "use_case": "car service reminder",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5100,
+      "text": "مساء الخير، معك نوف من مركز صيانة الوادي. معي الأخ حمد؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7360,
+      "end_ms": 21060,
+      "text": "أهلين. حبيت أذكرك إن موعد تغيير الزيت لسيارتك بكرة الساعة تسع الصبح، والفحص بيشمل الفرامل والإطارات، والمدة تقريباً ساعة، وإذا تبي نغير الموعد كلمنا قبلها بيوم.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S019",
+      "start_ms": 5450,
+      "end_ms": 6960,
+      "kind": "speech",
+      "text": "هيه، مساء النور."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S019",
+      "start_ms": 13430,
+      "end_ms": 14850,
+      "kind": "backchannel",
+      "text": "هيه… … هيه.",
+      "delivery": "soft, acknowledging"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 23060,
+      "level_db": -12
+    }
+  ],
+  "events": [
+    {
+      "event_id": "DV-D02.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 13430,
+      "offset_ms": 14850,
+      "window_end_ms": 15350,
+      "rationale": "Emirati «هيه» = yes; acknowledgement."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#dv-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "HT-D02",
+  "split": "dev",
+  "category": "HT",
+  "subtype": "hesitation.dictation",
+  "difficulty": 3,
+  "dialect": "sa-hijazi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S008",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "25-34",
+      "dialect": "sa-hijazi"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "phone-nb"
+    ],
+    "snr_db": 35,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "HT-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 29900,
+    "sha256": "3ec5b32e03fe7db3f007440df6f60f95381a7610115c9948b618d636f2c31a03"
+  },
+  "context": {
+    "use_case": "order number",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4360,
+      "text": "أهلين، معك فيصل من مِرسال. معي الأستاذة لمى؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6090,
+      "end_ms": 11260,
+      "text": "ممكن تعطيني رقم الطلب لو سمحتي؟ هو سبع أرقام، تلقينه في رسالة التأكيد.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S008",
+      "start_ms": 4710,
+      "end_ms": 5690,
+      "kind": "speech",
+      "text": "أيوه معاك."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S008",
+      "start_ms": 11760,
+      "end_ms": 26400,
+      "kind": "speech",
+      "text": "أيوه لحظة أشوفه… … ثلاثة، سبعة، تسعة … واحد، اثنين … أربعة، صفر.",
+      "delivery": "reading digits off the phone screen, in groups"
+    },
+    {
+      "seg_id": "X1",
+      "speaker_id": "S008",
+      "start_ms": 15030,
+      "end_ms": 16830,
+      "kind": "nonverbal",
+      "delivery": "synthetic taps"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 29900,
+      "level_db": -35
+    }
+  ],
+  "events": [
+    {
+      "event_id": "HT-D02.e1",
+      "kind": "end_of_turn",
+      "expected": "TAKE_TURN",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 11760,
+      "turn_end_ms": 26400,
+      "pauses": [
+        {
+          "start_ms": 14830,
+          "end_ms": 17030,
+          "hold": "required"
+        },
+        {
+          "start_ms": 20080,
+          "end_ms": 21180,
+          "hold": "required"
+        },
+        {
+          "start_ms": 23840,
+          "end_ms": 24740,
+          "hold": "required"
+        }
+      ],
+      "rationale": "Dictation in groups after asking the agent to wait."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#ht-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

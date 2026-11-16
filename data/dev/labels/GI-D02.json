@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "GI-D02",
+  "split": "dev",
+  "category": "GI",
+  "subtype": "interruption.backchannel_opener",
+  "difficulty": 2,
+  "dialect": "sa-hijazi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S002",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "35-44",
+      "dialect": "sa-hijazi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "phone-nb",
+      "street"
+    ],
+    "snr_db": 12,
+    "noise_source_ids": [
+      "SYN-dev-street"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "GI-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 25690,
+    "sha256": "abab0fe477e7eb2e275cf110e7e82ec516d730ce7a993b909d6a0d8ec0bfca96"
+  },
+  "context": {
+    "use_case": "clinic appointment reminder",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5400,
+      "text": "مساء الخير، معك سلمى من عيادات رِفاه. معي الأستاذة هند؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 8440,
+      "end_ms": 23690,
+      "text": "أهلين أستاذة هند. حبيت أذكّرك بموعدك يوم الأحد الساعة عشرة الصبح، مع الدكتورة نورة، ونرجو الحضور قبل الموعد بربع ساعة عشان إجراءات التسجيل، ولو عندك تأمين طبي لا تنسين تجيبين البطاقة معك.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S002",
+      "start_ms": 5750,
+      "end_ms": 8040,
+      "kind": "speech",
+      "text": "أيوه أنا هند، مساء النور."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S002",
+      "start_ms": 14100,
+      "end_ms": 19790,
+      "kind": "speech",
+      "text": "أيوه… … بس أبغى أغيّر الموعد لو سمحتي، الأحد ما يناسبني."
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "traffic",
+      "start_ms": 0,
+      "end_ms": 25690,
+      "level_db": -12
+    }
+  ],
+  "events": [
+    {
+      "event_id": "GI-D02.e1",
+      "kind": "interruption",
+      "expected": "STOP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 14100,
+      "offset_ms": 19790,
+      "evident_ms": 16030,
+      "deadline_ms": 17530,
+      "rationale": "«أيوه» alone is an acknowledgement; «بس» turns it into a request."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#gi-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

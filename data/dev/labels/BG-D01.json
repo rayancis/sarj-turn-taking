@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BG-D01",
+  "split": "dev",
+  "category": "BG",
+  "subtype": "background.tv",
+  "difficulty": 1,
+  "dialect": "gulf-qatari",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S010",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "35-44",
+      "dialect": "gulf-qatari"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "tv"
+    ],
+    "snr_db": 35,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "BG-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 21180,
+    "sha256": "8bc009f40c380c03c4ef4580bc5ac9aa24c2ae05012084db9f58728bd87d298d"
+  },
+  "context": {
+    "use_case": "plan offer",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4800,
+      "text": "السلام عليكم، معك خالد من سَنا للاتصالات. معي الأستاذ تركي؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6250,
+      "end_ms": 19180,
+      "text": "حياك الله. عندك عرض على باقة الألياف المنزلية، سرعة خمس مية ميقا، وأول شهرين بنص السعر، والتركيب مجاني، وتقدر تحدد موعد الفني اللي يناسبك من التطبيق.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S010",
+      "start_ms": 5150,
+      "end_ms": 5850,
+      "kind": "speech",
+      "text": "إيه، تفضل."
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 21180,
+      "level_db": -35
+    },
+    {
+      "kind": "tv_speech",
+      "start_ms": 0,
+      "end_ms": 21180,
+      "level_db": -12
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BG-D01.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [],
+      "onset_ms": 6750,
+      "offset_ms": 18180,
+      "window_end_ms": 18680,
+      "rationale": "Distant formal-Arabic TV speech; not the caller."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#bg-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

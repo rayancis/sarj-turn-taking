@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "GI-D01",
+  "split": "dev",
+  "category": "GI",
+  "subtype": "interruption.correction",
+  "difficulty": 1,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S001",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "GI-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 26860,
+    "sha256": "a458b7d2d2afe22c23cad30aa87db9ba4b16a2b1111c1b85b279f05f71827639"
+  },
+  "context": {
+    "use_case": "delivery scheduling",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5060,
+      "text": "السلام عليكم، معك ريم من متجر نوّار. أكلّم الأستاذ فهد؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7890,
+      "end_ms": 24860,
+      "text": "حياك الله يا أستاذ فهد. أتصل عليك بخصوص طلبك، الطلب بيوصلك بكرة إن شاء الله بين الساعة أربع وست العصر، والمندوب بيتصل عليك قبل ما يوصل بنص ساعة تقريباً، وإذا حاب تغيّر وقت التوصيل تقدر ترد على رسالة التأكيد اللي بتوصلك.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S001",
+      "start_ms": 5410,
+      "end_ms": 7490,
+      "kind": "speech",
+      "text": "وعليكم السلام، إيه معك."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S001",
+      "start_ms": 16630,
+      "end_ms": 19020,
+      "kind": "speech",
+      "text": "لا لا … لحظة، بكرة أنا مو بالرياض.",
+      "delivery": "firm and a little fast, cutting in"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 26860,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "GI-D01.e1",
+      "kind": "interruption",
+      "expected": "STOP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 16630,
+      "offset_ms": 19020,
+      "evident_ms": 17050,
+      "deadline_ms": 18550,
+      "rationale": "A plain correction: repeated «لا», then new information."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#gi-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

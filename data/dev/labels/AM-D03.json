@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "AM-D03",
+  "split": "dev",
+  "category": "AM",
+  "subtype": "ambiguous.khalas",
+  "difficulty": 3,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S003",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "45-54",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "AM-D03.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 23980,
+    "sha256": "eff511b4d24ad6513141a1327b2816072f92a334fa81c4d54d82a31f3371ff97"
+  },
+  "context": {
+    "use_case": "terms explanation",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4020,
+      "text": "هلا، معك عبدالله من البنك. أكلّم الأستاذ فيصل؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 5400,
+      "end_ms": 21980,
+      "text": "يا هلا. زي ما ذكرت لك قبل شوي، الرسوم السنوية مجانية أول سنة، وبعدها مية وخمسين ريال، يعني أول سنة ما راح تدفع شي، وبعد السنة الأولى تصير الرسوم مية وخمسين ريال، وتقدر تلغي البطاقة قبل نهاية السنة بدون أي رسوم.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S003",
+      "start_ms": 4370,
+      "end_ms": 5000,
+      "kind": "speech",
+      "text": "إيه نعم."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S003",
+      "start_ms": 14690,
+      "end_ms": 16540,
+      "kind": "speech",
+      "text": "خلاص خلاص، … فهمت.",
+      "delivery": "fast, slightly impatient"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 23980,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "AM-D03.e1",
+      "kind": "interruption",
+      "expected": "EITHER",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 14690,
+      "offset_ms": 16540,
+      "window_end_ms": 17040,
+      "preferred": "STOP",
+      "evident_ms": 15810,
+      "rationale": "«خلاص خلاص» after a repetition: mostly heard as 'enough'."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#am-d03",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "harness_version": "0.1.0",
+  "url": "ws://127.0.0.1:8773",
+  "speed": 1.0,
+  "session_id": "dev",
+  "official": true,
+  "frames_planned": 29651,
+  "errors": [],
+  "rtt_ms": [
+    0.53,
+    0.32,
+    0.47,
+    0.24,
+    0.27,
+    0.85,
+    0.31,
+    0.66,
+    0.72,
+    0.88,
+    0.79,
+    0.94,
+    0.6,
+    0.73,
+    0.66,
+    0.65,
+    0.8,
+    0.79,
+    0.95,
+    0.27,
+    0.31,
+    0.22,
+    0.25,
+    0.91,
+    0.81,
+    0.43,
+    0.8,
+    0.37,
+    0.69,
+    0.49,
+    0.64,
+    0.57,
+    0.28,
+    0.55,
+    0.25,
+    0.24,
+    0.29,
+    0.86,
+    1.17,
+    0.93,
+    0.91,
+    0.72,
+    0.83,
+    0.98,
+    0.31,
+    0.49,
+    0.79,
+    0.61,
+    0.27,
+    0.27,
+    0.22,
+    0.76,
+    0.81,
+    0.31,
+    0.43,
+    0.49,
+    0.66,
+    0.47,
+    1.67,
+    0.7,
+    0.29,
+    0.28,
+    0.43,
+    0.31,
+    0.75,
+    0.77,
+    0.4,
+    0.77,
+    0.98,
+    0.89,
+    0.76,
+    0.73,
+    0.91,
+    0.84,
+    0.39,
+    0.39,
+    0.63,
+    0.44,
+    0.28,
+    0.24,
+    0.25,
+    0.48,
+    0.78,
+    1.03,
+    0.63,
+    0.44,
+    0.45,
+    0.74,
+    0.85,
+    0.89,
+    0.66,
+    0.69,
+    0.76,
+    0.73,
+    1.36,
+    0.76,
+    0.52,
+    1.45,
+    0.36,
+    0.76,
+    1.58,
+    0.23,
+    0.78,
+    0.27,
+    1.16,
+    1.03,
+    1.18,
+    0.33,
+    0.88,
+    0.53,
+    0.33,
+    0.86,
+    1.19,
+    0.96,
+    0.65,
+    1.23,
+    1.19,
+    0.78,
+    0.32
+  ],
+  "hello": {
+    "type": "hello",
+    "team": "B1-any-sound",
+    "system_version": "reference",
+    "tracks": [
+      "core",
+      "eot"
+    ]
+  },
+  "completed": true,
+  "frames_sent": 29651,
+  "max_send_lag_ms": 0.52,
+  "decisions_received": 42,
+  "frame_bytes": 1280,
+  "gap_ms": 1500,
+  "scenarios": [
+    {
+      "scenario_id": "GI-D01",
+      "opaque_id": "GI-D01",
+      "start_ms": 0,
+      "duration_ms": 26860
+    },
+    {
+      "scenario_id": "GI-D02",
+      "opaque_id": "GI-D02",
+      "start_ms": 28360,
+      "duration_ms": 25700
+    },
+    {
+      "scenario_id": "GI-D03",
+      "opaque_id": "GI-D03",
+      "start_ms": 55560,
+      "duration_ms": 24800
+    },
+    {
+      "scenario_id": "BC-D01",
+      "opaque_id": "BC-D01",
+      "start_ms": 81860,
+      "duration_ms": 23640
+    },
+    {
+      "scenario_id": "BC-D02",
+      "opaque_id": "BC-D02",
+      "start_ms": 107000,
+      "duration_ms": 30240
+    },
+    {
+      "scenario_id": "BC-D03",
+      "opaque_id": "BC-D03",
+      "start_ms": 138740,
+      "duration_ms": 25460
+    },
+    {
+      "scenario_id": "HT-D01",
+      "opaque_id": "HT-D01",
+      "start_ms": 165700,
+      "duration_ms": 24680
+    },
+    {
+      "scenario_id": "HT-D02",
+      "opaque_id": "HT-D02",
+      "start_ms": 191880,
+      "duration_ms": 29900
+    },
+    {
+      "scenario_id": "HT-D03",
+      "opaque_id": "HT-D03",
+      "start_ms": 223280,
+      "duration_ms": 24460
+    },
+    {
+      "scenario_id": "BG-D01",
+      "opaque_id": "BG-D01",
+      "start_ms": 249240,
+      "duration_ms": 21180
+    },
+    {
+      "scenario_id": "BG-D02",
+      "opaque_id": "BG-D02",
+      "start_ms": 271920,
+      "duration_ms": 25860
+    },
+    {
+      "scenario_id": "BG-D03",
+      "opaque_id": "BG-D03",
+      "start_ms": 299280,
+      "duration_ms": 22500
+    },
+    {
+      "scenario_id": "NV-D01",
+      "opaque_id": "NV-D01",
+      "start_ms": 323280,
+      "duration_ms": 19220
+    },
+    {
+      "scenario_id": "NV-D02",
+      "opaque_id": "NV-D02",
+      "start_ms": 344000,
+      "duration_ms": 20000
+    },
+    {
+      "scenario_id": "NV-D03",
+      "opaque_id": "NV-D03",
+      "start_ms": 365500,
+      "duration_ms": 19640
+    },
+    {
+      "scenario_id": "AM-D01",
+      "opaque_id": "AM-D01",
+      "start_ms": 386640,
+      "duration_ms": 22700
+    },
+    {
+      "scenario_id": "AM-D02",
+      "opaque_id": "AM-D02",
+      "start_ms": 410840,
+      "duration_ms": 21280
+    },
+    {
+      "scenario_id": "AM-D03",
+      "opaque_id": "AM-D03",
+      "start_ms": 433620,
+      "duration_ms": 23980
+    },
+    {
+      "scenario_id": "OV-D01",
+      "opaque_id": "OV-D01",
+      "start_ms": 459100,
+      "duration_ms": 21040
+    },
+    {
+      "scenario_id": "OV-D02",
+      "opaque_id": "OV-D02",
+      "start_ms": 481640,
+      "duration_ms": 19460
+    },
+    {
+      "scenario_id": "OV-D03",
+      "opaque_id": "OV-D03",
+      "start_ms": 502600,
+      "duration_ms": 22440
+    },
+    {
+      "scenario_id": "DV-D01",
+      "opaque_id": "DV-D01",
+      "start_ms": 526540,
+      "duration_ms": 19560
+    },
+    {
+      "scenario_id": "DV-D02",
+      "opaque_id": "DV-D02",
+      "start_ms": 547600,
+      "duration_ms": 23060
+    },
+    {
+      "scenario_id": "DV-D03",
+      "opaque_id": "DV-D03",
+      "start_ms": 572160,
+      "duration_ms": 19860
+    }
+  ],
+  "rtt_summary_ms": {
+    "median": 0.66,
+    "max": 1.67,
+    "n": 119
+  },
+  "dataset": {
+    "path": "data/dev",
+    "manifest_sha256": "93a23bcd8eddd0c615488ef1089b6d252182eac71144dc2f359ad7ecb5029366"
+  }
+}

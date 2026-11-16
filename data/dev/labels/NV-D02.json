@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "NV-D02",
+  "split": "dev",
+  "category": "NV",
+  "subtype": "nonverbal.laugh",
+  "difficulty": 2,
+  "dialect": "sa-hijazi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S008",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "25-34",
+      "dialect": "sa-hijazi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "NV-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 20000,
+    "sha256": "90aa8f1fbacfd7802c77a8db02a69232efa7058725bb2cd628621ba111e7e326"
+  },
+  "context": {
+    "use_case": "survey intro",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5040,
+      "text": "أهلين، معك ريم من متجر نوّار. معي الأستاذة رهف؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6720,
+      "end_ms": 18000,
+      "text": "أهلين رهف. عندنا استبيان قصير مرة، والله ما ياخذ أكثر من دقيقة، وأوعدك ما راح أسألك عن رقم جوالك ولا عن عمرك، بس عن تجربتك مع آخر طلب.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S008",
+      "start_ms": 5390,
+      "end_ms": 6320,
+      "kind": "speech",
+      "text": "أيوه أنا."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S008",
+      "start_ms": 12000,
+      "end_ms": 12810,
+      "kind": "nonverbal",
+      "text": "ههههه",
+      "delivery": "just a short amused laugh, no words at all"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 20000,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "NV-D02.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 12000,
+      "offset_ms": 12810,
+      "window_end_ms": 13310,
+      "rationale": "Laughter at the agent's line: rapport, not a bid for the floor."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#nv-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "OV-D01",
+  "split": "dev",
+  "category": "OV",
+  "subtype": "overlap.simultaneous_start",
+  "difficulty": 2,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S016",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "OV-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 21040,
+    "sha256": "df00dc000661fc3e3f81e511b7e0f6283cfc59262fd23bc1ac12cd506b735f08"
+  },
+  "context": {
+    "use_case": "appointment booking",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4750,
+      "text": "هلا، معك نوف من مركز صيانة الوادي. معي الأستاذ راكان؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1a",
+      "start_ms": 6190,
+      "end_ms": 9320,
+      "text": "تحب أحجز لك موعد يوم الأحد الساعة عشرة الصبح؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1b",
+      "start_ms": 10220,
+      "end_ms": 19040,
+      "text": "وإذا ما يناسبك عندنا كمان يوم الثلاثاء بعد الظهر، ويوم الخميس من الساعة ثمان الصبح، وكل المواعيد فيها فحص مجاني.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S016",
+      "start_ms": 5100,
+      "end_ms": 5790,
+      "kind": "speech",
+      "text": "إيه هلا."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S016",
+      "start_ms": 10300,
+      "end_ms": 12430,
+      "kind": "speech",
+      "text": "إيه الأحد … زين، احجزه.",
+      "delivery": "answering straight away"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 21040,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "OV-D01.e1",
+      "kind": "interruption",
+      "expected": "STOP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 10300,
+      "offset_ms": 12430,
+      "evident_ms": 11240,
+      "deadline_ms": 12740,
+      "rationale": "Both start at once; it is the answer to the agent's question."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#ov-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "NV-D03",
+  "split": "dev",
+  "category": "NV",
+  "subtype": "nonverbal.echo",
+  "difficulty": 4,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S015",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "speakerphone"
+    ],
+    "snr_db": 30,
+    "echo": {
+      "level_db": -18,
+      "delay_ms": 220
+    },
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "NV-D03.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 19630,
+    "sha256": "375323e1dc5a70bf85d96de854af87c1f71bd0122be50bb97e53ed4e022d7cd4"
+  },
+  "context": {
+    "use_case": "plan change confirmation",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 3870,
+      "text": "هلا، معك خالد من سَنا للاتصالات. معي الأستاذ يزيد؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 5580,
+      "end_ms": 17630,
+      "text": "يا هلا. تم تغيير باقتك للباقة الجديدة، والتغيير بيصير فعّال من بداية الشهر الجاي، وبتوصلك رسالة فيها التفاصيل، وما فيه أي رسوم إضافية على التغيير.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S015",
+      "start_ms": 4220,
+      "end_ms": 5180,
+      "kind": "speech",
+      "text": "إيه معك، تفضل."
+    },
+    {
+      "seg_id": "X1",
+      "speaker_id": "S015",
+      "start_ms": 8080,
+      "end_ms": 9280,
+      "kind": "nonverbal",
+      "delivery": "synthetic breath"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 10580,
+      "end_ms": 11280,
+      "level_db": -10
+    },
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 19630,
+      "level_db": -30
+    }
+  ],
+  "events": [
+    {
+      "event_id": "NV-D03.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [],
+      "onset_ms": 5880,
+      "offset_ms": 16630,
+      "window_end_ms": 17130,
+      "rationale": "Speakerphone: the agent's own voice comes back; nobody new is talking."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#nv-d03",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

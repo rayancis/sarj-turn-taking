@@ -1,0 +1,676 @@
+{
+  "team": "B1-any-sound",
+  "system_version": "reference",
+  "official_speed": true,
+  "speed": 1.0,
+  "thresholds": {
+    "T_full_ms": 300,
+    "T_dead_ms": 1500,
+    "E_full_ms": 600,
+    "E_dead_ms": 2000,
+    "E_miss_ms": 3000,
+    "hiccup_ms": 500,
+    "keep_tail_ms": 500,
+    "agent_tail_ms": 200,
+    "anticipate_ms": 300
+  },
+  "label_status": [
+    "script_derived"
+  ],
+  "core": {
+    "R": 0.8055583333333334,
+    "S": 0.21944444444444444,
+    "F": 0.3449264816807181,
+    "A": 1.0,
+    "core_score": 41.04338335126463
+  },
+  "eot": {
+    "attempted": true,
+    "P": 0.16666666666666666,
+    "Q": 0.9884999999999999,
+    "n_events": 2,
+    "eot_score": 28.52402250757466
+  },
+  "categories": {
+    "AM": {
+      "R": 0.8889,
+      "S": 1.0,
+      "n_stop": 1,
+      "stop_yielded": 1,
+      "n_keep": 0,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 3
+    },
+    "BC": {
+      "R": null,
+      "S": 0.2,
+      "n_stop": 0,
+      "stop_yielded": 0,
+      "n_keep": 5,
+      "keep_passed": 1,
+      "n_scenarios": 3,
+      "protected_clean": 3
+    },
+    "BG": {
+      "R": null,
+      "S": 0.0,
+      "n_stop": 0,
+      "stop_yielded": 0,
+      "n_keep": 4,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 1
+    },
+    "DV": {
+      "R": 1.0,
+      "S": 0.0,
+      "n_stop": 1,
+      "stop_yielded": 1,
+      "n_keep": 2,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 2
+    },
+    "GI": {
+      "R": 0.3333333333333333,
+      "S": 0.3333333333333333,
+      "n_stop": 3,
+      "stop_yielded": 1,
+      "n_keep": 0,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 1
+    },
+    "HT": {
+      "R": null,
+      "S": 0.0,
+      "n_stop": 0,
+      "stop_yielded": 0,
+      "n_keep": 1,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 3
+    },
+    "NV": {
+      "R": null,
+      "S": 0.2222222222222222,
+      "n_stop": 0,
+      "stop_yielded": 0,
+      "n_keep": 3,
+      "keep_passed": 1,
+      "n_scenarios": 3,
+      "protected_clean": 2
+    },
+    "OV": {
+      "R": 1.0,
+      "S": 0.0,
+      "n_stop": 2,
+      "stop_yielded": 2,
+      "n_keep": 1,
+      "keep_passed": 0,
+      "n_scenarios": 3,
+      "protected_clean": 3
+    }
+  },
+  "latency_ms": {
+    "n": 5,
+    "median": 0.0,
+    "p90": 522.2
+  },
+  "rates": {
+    "agent_speech_min": 7.191,
+    "false_stops": 25,
+    "hiccups": 0,
+    "false_stops_per_min": 3.477,
+    "misses": 2,
+    "n_stop_events": 7,
+    "unattributed_decisions": 0,
+    "ignored_decisions": 0
+  },
+  "slices": {
+    "najdi": {
+      "n_scenarios": 12,
+      "R": 0.7963,
+      "S": 0.5714285714285714,
+      "F": 0.6653784689944746
+    },
+    "other_dialects": {
+      "n_scenarios": 12,
+      "R": 0.5,
+      "S": 0.07142857142857142,
+      "F": 0.125
+    },
+    "clean_audio": {
+      "n_scenarios": 13,
+      "R": 1.0,
+      "S": 0.5714285714285714,
+      "F": 0.7272727272727273
+    },
+    "noisy_or_phone": {
+      "n_scenarios": 11,
+      "R": 0.44445,
+      "S": 0.2857142857142857,
+      "F": 0.3478277882668284
+    },
+    "scripted": {
+      "n_scenarios": 24,
+      "R": 0.8055583333333334,
+      "S": 0.21944444444444444,
+      "F": 0.3449264816807181
+    },
+    "naturalistic": null,
+    "dialect_gap": 0.5403784689944746,
+    "noise_gap": 0.3794449390058989
+  },
+  "rtt_ms": {
+    "median": 0.66,
+    "max": 1.67,
+    "n": 119
+  },
+  "protocol_errors": 0,
+  "events": [
+    {
+      "event_id": "GI-D01.e1",
+      "category": "GI",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "yield",
+      "latency_ms": 0.0,
+      "credit": 1.0,
+      "detail": "stopped at 16841 ms (0 ms after evident)",
+      "scenario_id": "GI-D01"
+    },
+    {
+      "event_id": "GI-D02.e1",
+      "category": "GI",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "miss",
+      "latency_ms": null,
+      "credit": 0.0,
+      "detail": "did not stop in time (or resumed over the caller)",
+      "scenario_id": "GI-D02"
+    },
+    {
+      "event_id": "GI-D03.e1",
+      "category": "GI",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "miss",
+      "latency_ms": null,
+      "credit": 0.0,
+      "detail": "did not stop in time (or resumed over the caller)",
+      "scenario_id": "GI-D03"
+    },
+    {
+      "event_id": "BC-D01.e1",
+      "category": "BC",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "kept",
+      "credit": 1.0,
+      "detail": "kept speaking",
+      "scenario_id": "BC-D01"
+    },
+    {
+      "event_id": "BC-D02.e1",
+      "category": "BC",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 13661 ms",
+      "scenario_id": "BC-D02"
+    },
+    {
+      "event_id": "BC-D02.e2",
+      "category": "BC",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 13661 ms)",
+      "scenario_id": "BC-D02"
+    },
+    {
+      "event_id": "BC-D02.e3",
+      "category": "BC",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 13661 ms)",
+      "scenario_id": "BC-D02"
+    },
+    {
+      "event_id": "BC-D03.e1",
+      "category": "BC",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 15802 ms",
+      "scenario_id": "BC-D03"
+    },
+    {
+      "event_id": "HT-D01.e1",
+      "category": "HT",
+      "expected": "TAKE_TURN",
+      "kind": "end_of_turn",
+      "outcome": "eot",
+      "patience_items": [
+        {
+          "item": "pause 14480-15380",
+          "passed": false,
+          "take_turn_at": 15081.609999999986
+        },
+        {
+          "item": "while the caller speaks",
+          "passed": false,
+          "take_turn_at": 19422.28
+        }
+      ],
+      "latency_ms": 612.2,
+      "credit": 0.9948,
+      "detail": "TAKE_TURN 612 ms after turn end",
+      "scenario_id": "HT-D01"
+    },
+    {
+      "event_id": "HT-D02.e1",
+      "category": "HT",
+      "expected": "TAKE_TURN",
+      "kind": "end_of_turn",
+      "outcome": "eot",
+      "patience_items": [
+        {
+          "item": "pause 14830-17030",
+          "passed": true
+        },
+        {
+          "item": "pause 20080-21180",
+          "passed": false,
+          "take_turn_at": 20682.48000000001
+        },
+        {
+          "item": "pause 23840-24740",
+          "passed": false,
+          "take_turn_at": 24480.820000000007
+        },
+        {
+          "item": "while the caller speaks",
+          "passed": false,
+          "take_turn_at": 19581.309999999998
+        }
+      ],
+      "latency_ms": 641.6,
+      "credit": 0.9822,
+      "detail": "TAKE_TURN 642 ms after turn end",
+      "scenario_id": "HT-D02"
+    },
+    {
+      "event_id": "HT-D03.e1",
+      "category": "HT",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 14002 ms",
+      "scenario_id": "HT-D03"
+    },
+    {
+      "event_id": "BG-D01.e1",
+      "category": "BG",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 6422 ms)",
+      "scenario_id": "BG-D01"
+    },
+    {
+      "event_id": "BG-D02.e1",
+      "category": "BG",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 7662 ms)",
+      "scenario_id": "BG-D02"
+    },
+    {
+      "event_id": "BG-D02.e2",
+      "category": "BG",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 7662 ms)",
+      "scenario_id": "BG-D02"
+    },
+    {
+      "event_id": "BG-D03.e1",
+      "category": "BG",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 11761 ms",
+      "scenario_id": "BG-D03"
+    },
+    {
+      "event_id": "NV-D01.e1",
+      "category": "NV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 11622 ms",
+      "scenario_id": "NV-D01"
+    },
+    {
+      "event_id": "NV-D02.e1",
+      "category": "NV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "kept",
+      "credit": 1.0,
+      "detail": "kept speaking",
+      "scenario_id": "NV-D02"
+    },
+    {
+      "event_id": "NV-D03.e1",
+      "category": "NV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 6042 ms",
+      "scenario_id": "NV-D03"
+    },
+    {
+      "event_id": "AM-D01.e1",
+      "category": "AM",
+      "expected": "EITHER",
+      "kind": "interruption",
+      "outcome": "kept",
+      "behaviour": "KEEP",
+      "credit": 1.0,
+      "detail": "kept speaking",
+      "scenario_id": "AM-D01"
+    },
+    {
+      "event_id": "AM-D02.e1",
+      "category": "AM",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "yield",
+      "latency_ms": 522.2,
+      "credit": 0.8889,
+      "detail": "stopped at 13382 ms (522 ms after evident)",
+      "scenario_id": "AM-D02"
+    },
+    {
+      "event_id": "AM-D03.e1",
+      "category": "AM",
+      "expected": "EITHER",
+      "kind": "interruption",
+      "outcome": "yield",
+      "behaviour": "STOP",
+      "latency_ms": 0.0,
+      "credit": 1.0,
+      "detail": "stopped at 14942 ms",
+      "scenario_id": "AM-D03"
+    },
+    {
+      "event_id": "OV-D01.e1",
+      "category": "OV",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "yield",
+      "latency_ms": 0.0,
+      "credit": 1.0,
+      "detail": "stopped at 10522 ms (0 ms after evident)",
+      "scenario_id": "OV-D01"
+    },
+    {
+      "event_id": "OV-D02.e1",
+      "category": "OV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 10982 ms",
+      "scenario_id": "OV-D02"
+    },
+    {
+      "event_id": "OV-D03.e1",
+      "category": "OV",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "yield",
+      "latency_ms": 0.0,
+      "credit": 1.0,
+      "detail": "stopped at 12441 ms (0 ms after evident)",
+      "scenario_id": "OV-D03"
+    },
+    {
+      "event_id": "DV-D01.e1",
+      "category": "DV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "false stop at 9462 ms",
+      "scenario_id": "DV-D01"
+    },
+    {
+      "event_id": "DV-D02.e1",
+      "category": "DV",
+      "expected": "KEEP",
+      "kind": "interruption",
+      "outcome": "false_stop",
+      "credit": 0.0,
+      "detail": "agent was already silent (stopped at 7542 ms)",
+      "scenario_id": "DV-D02"
+    },
+    {
+      "event_id": "DV-D03.e1",
+      "category": "DV",
+      "expected": "STOP",
+      "kind": "interruption",
+      "outcome": "yield",
+      "latency_ms": 0.0,
+      "credit": 1.0,
+      "detail": "stopped at 11381 ms (0 ms after evident)",
+      "scenario_id": "DV-D03"
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "GI-D01",
+      "category": "GI",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "GI-D02",
+      "category": "GI",
+      "credit": 0.0,
+      "spurious_stops": [
+        601.2,
+        8621.9
+      ],
+      "spurious_weight": 2.0
+    },
+    {
+      "scenario_id": "GI-D03",
+      "category": "GI",
+      "credit": 0.0,
+      "spurious_stops": [
+        482.4,
+        6681.1
+      ],
+      "spurious_weight": 2.0
+    },
+    {
+      "scenario_id": "BC-D01",
+      "category": "BC",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "BC-D02",
+      "category": "BC",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "BC-D03",
+      "category": "BC",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "HT-D01",
+      "category": "HT",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "HT-D02",
+      "category": "HT",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "HT-D03",
+      "category": "HT",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "BG-D01",
+      "category": "BG",
+      "credit": 0.0,
+      "spurious_stops": [
+        481.3,
+        6422.1
+      ],
+      "spurious_weight": 2.0
+    },
+    {
+      "scenario_id": "BG-D02",
+      "category": "BG",
+      "credit": 0.0,
+      "spurious_stops": [
+        481.1,
+        7661.9
+      ],
+      "spurious_weight": 2.0
+    },
+    {
+      "scenario_id": "BG-D03",
+      "category": "BG",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "NV-D01",
+      "category": "NV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "NV-D02",
+      "category": "NV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "NV-D03",
+      "category": "NV",
+      "credit": 0.0,
+      "spurious_stops": [
+        1761.9
+      ],
+      "spurious_weight": 1.0
+    },
+    {
+      "scenario_id": "AM-D01",
+      "category": "AM",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "AM-D02",
+      "category": "AM",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "AM-D03",
+      "category": "AM",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "OV-D01",
+      "category": "OV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "OV-D02",
+      "category": "OV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "OV-D03",
+      "category": "OV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "DV-D01",
+      "category": "DV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    },
+    {
+      "scenario_id": "DV-D02",
+      "category": "DV",
+      "credit": 0.0,
+      "spurious_stops": [
+        482.4,
+        7542.5
+      ],
+      "spurious_weight": 2.0
+    },
+    {
+      "scenario_id": "DV-D03",
+      "category": "DV",
+      "credit": 1.0,
+      "spurious_stops": [],
+      "spurious_weight": 0
+    }
+  ]
+}

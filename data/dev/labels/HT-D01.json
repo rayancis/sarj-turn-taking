@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "HT-D01",
+  "split": "dev",
+  "category": "HT",
+  "subtype": "hesitation.filled_pause",
+  "difficulty": 2,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S007",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "55-64",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "HT-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 24670,
+    "sha256": "f5e3798f9362924347534a27eb00b5ec3ef869883e862edfb1d09fe6a2309033"
+  },
+  "context": {
+    "use_case": "callback time",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5620,
+      "text": "السلام عليكم، معك سلمى من عيادات رِفاه. معي الأستاذ عبدالرحمن؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7830,
+      "end_ms": 13040,
+      "text": "حياك الله. وش أنسب وقت نتصل عليك فيه عشان نأكد موعد التحاليل؟",
+      "is_question": true
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S007",
+      "start_ms": 5970,
+      "end_ms": 7430,
+      "kind": "speech",
+      "text": "إيه نعم، وعليكم السلام."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S007",
+      "start_ms": 13640,
+      "end_ms": 21170,
+      "kind": "speech",
+      "text": "اممم… … بعد المغرب … يعني تقريباً الساعة سبع.",
+      "delivery": "thinking it over, unhurried"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 24670,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "HT-D01.e1",
+      "kind": "end_of_turn",
+      "expected": "TAKE_TURN",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 13640,
+      "turn_end_ms": 21170,
+      "pauses": [
+        {
+          "start_ms": 14480,
+          "end_ms": 15380,
+          "hold": "required"
+        },
+        {
+          "start_ms": 16990,
+          "end_ms": 17690,
+          "hold": "optional"
+        }
+      ],
+      "rationale": "Filled pause then silence: still answering."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#ht-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

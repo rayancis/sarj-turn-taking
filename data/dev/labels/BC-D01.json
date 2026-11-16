@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BC-D01",
+  "split": "dev",
+  "category": "BC",
+  "subtype": "backchannel.single",
+  "difficulty": 1,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S004",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "18-24",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "BC-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 23630,
+    "sha256": "771d725b9ed0efc8962389199cc7c2e0ad4c485714346a931195319681022421"
+  },
+  "context": {
+    "use_case": "plan renewal",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5080,
+      "text": "السلام عليكم، معك نوف من سَنا للاتصالات. معي الأستاذ سعد؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7150,
+      "end_ms": 21630,
+      "text": "حياك الله. حبيت أبلغك إن باقتك الحالية بتنتهي بعد ثلاث أيام، وعندنا لك باقة جديدة فيها مية قيقا إنترنت ومكالمات بدون حد داخل الشبكة، وسعرها تقريباً نفس سعر باقتك الحالية.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S004",
+      "start_ms": 5430,
+      "end_ms": 6750,
+      "kind": "speech",
+      "text": "إيه، وعليكم السلام."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S004",
+      "start_ms": 12400,
+      "end_ms": 12710,
+      "kind": "backchannel",
+      "text": "إيه.",
+      "delivery": "soft, very short, falling tone, just acknowledging"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 23630,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BC-D01.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 12400,
+      "offset_ms": 12710,
+      "window_end_ms": 13210,
+      "rationale": "The textbook acknowledgement at a phrase boundary."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#bc-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

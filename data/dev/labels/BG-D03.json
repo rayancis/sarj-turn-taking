@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BG-D03",
+  "split": "dev",
+  "category": "BG",
+  "subtype": "background.same_dialect_side_speech",
+  "difficulty": 4,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S012",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "35-44",
+      "dialect": "sa-najdi"
+    },
+    {
+      "speaker_id": "S013",
+      "role": "background_person",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "8-11",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "household"
+    ],
+    "snr_db": 25,
+    "noise_source_ids": [
+      "SYN-dev-household"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "BG-D03.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 22500,
+    "sha256": "1f473c6bb2c5f85c53f199c2a0239a330814ccab9812c66a967bf6a772c1f5ed"
+  },
+  "context": {
+    "use_case": "clinic follow-up",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5030,
+      "text": "مساء الخير، معك سلمى من عيادات رِفاه. معي أم عبدالله؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7240,
+      "end_ms": 20500,
+      "text": "أهلين. حبيت أبلغك إن نتايج التحاليل طلعت، والدكتور حاب يشوفك الأسبوع الجاي عشان يشرح لك النتايج، وعندنا موعد الثلاثاء الساعة أربع أو الأربعاء الساعة عشرة الصبح.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S012",
+      "start_ms": 5380,
+      "end_ms": 6840,
+      "kind": "speech",
+      "text": "إيه نعم، مساء النور."
+    },
+    {
+      "seg_id": "X1",
+      "speaker_id": "S013",
+      "start_ms": 11360,
+      "end_ms": 15050,
+      "kind": "side_speech",
+      "text": "يُمّه! وين الشاحن؟ يُمّه!",
+      "delivery": "shouting to their mother from across the room"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 22500,
+      "level_db": -25
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BG-D03.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "X1"
+      ],
+      "onset_ms": 11360,
+      "offset_ms": 15050,
+      "window_end_ms": 15550,
+      "rationale": "A child calling someone in the room; the caller says nothing."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#bg-d03",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

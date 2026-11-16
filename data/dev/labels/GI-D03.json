@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "GI-D03",
+  "split": "dev",
+  "category": "GI",
+  "subtype": "interruption.single_word",
+  "difficulty": 4,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S003",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "45-54",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "car"
+    ],
+    "snr_db": 15,
+    "noise_source_ids": [
+      "SYN-dev-car"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "GI-D03.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 24790,
+    "sha256": "8a4a5c2617b7b8668756bebddf548546203af4c7fe7f9e3e9f5bc8eedbcd842e"
+  },
+  "context": {
+    "use_case": "card activation",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4710,
+      "text": "هلا، معك عبدالله من خدمة العملاء في البنك. أكلّم الأستاذ ماجد؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6500,
+      "end_ms": 22790,
+      "text": "يا هلا. عشان نفعّل بطاقتك الجديدة بنرسل لك الحين رمز تحقق على جوالك، والرمز صالح لمدة خمس دقايق بس، ولا تشاركه مع أي أحد حتى لو قال لك إنه موظف في البنك، وبعد ما يوصلك الرمز بأطلب منك تقراه لي رقم رقم.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S003",
+      "start_ms": 5060,
+      "end_ms": 6100,
+      "kind": "speech",
+      "text": "إيه نعم، تفضل."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S003",
+      "start_ms": 12240,
+      "end_ms": 12690,
+      "kind": "speech",
+      "text": "لحظة.",
+      "delivery": "firm, one word, asking the agent to hold on"
+    },
+    {
+      "seg_id": "X1",
+      "speaker_id": "S003",
+      "start_ms": 12790,
+      "end_ms": 14790,
+      "kind": "nonverbal",
+      "delivery": "synthetic rustle"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 24790,
+      "level_db": -15
+    }
+  ],
+  "events": [
+    {
+      "event_id": "GI-D03.e1",
+      "kind": "interruption",
+      "expected": "STOP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 12240,
+      "offset_ms": 12690,
+      "evident_ms": 12690,
+      "deadline_ms": 14190,
+      "rationale": "One firm word asking the agent to hold on."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#gi-d03",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "NV-D01",
+  "split": "dev",
+  "category": "NV",
+  "subtype": "nonverbal.cough",
+  "difficulty": 1,
+  "dialect": "sa-northern",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S014",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "45-54",
+      "dialect": "sa-northern"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "NV-D01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 19220,
+    "sha256": "02e4c0561771cdf1c76e0ebed45c1e067bb3f9b15a6a0e8b6b325b37bcd5ace8"
+  },
+  "context": {
+    "use_case": "delivery address check",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 3760,
+      "text": "هلا، معك فيصل من مِرسال. أكلّم الأستاذ سلطان؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 5070,
+      "end_ms": 17220,
+      "text": "يا هلا. بس أبي أتأكد من العنوان: حي النرجس، شارع الأمير سعود، فيلا رقم اثنعش، وجنبها مسجد، عشان المندوب ما يتوه ويوصلك على طول.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S014",
+      "start_ms": 4110,
+      "end_ms": 4670,
+      "kind": "speech",
+      "text": "إيه نعم."
+    },
+    {
+      "seg_id": "X1",
+      "speaker_id": "S014",
+      "start_ms": 11440,
+      "end_ms": 11820,
+      "kind": "nonverbal",
+      "delivery": "synthetic cough"
+    },
+    {
+      "seg_id": "X2",
+      "speaker_id": "S014",
+      "start_ms": 12120,
+      "end_ms": 12500,
+      "kind": "nonverbal",
+      "delivery": "synthetic cough"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 19220,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "NV-D01.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [],
+      "onset_ms": 11440,
+      "offset_ms": 12500,
+      "window_end_ms": 13000,
+      "rationale": "Coughing; not trying to speak."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#nv-d01",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

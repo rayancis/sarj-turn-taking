@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BG-D02",
+  "split": "dev",
+  "category": "BG",
+  "subtype": "background.street_transients",
+  "difficulty": 2,
+  "dialect": "sa-southern",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S011",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-southern"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "street",
+      "phone-nb"
+    ],
+    "snr_db": 8,
+    "noise_source_ids": [
+      "SYN-dev-street"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "BG-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 25860,
+    "sha256": "4da1ee75163939506856aa62773e77e7b25839bb0ee57f44470692167cb26d8b"
+  },
+  "context": {
+    "use_case": "car service booking",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4690,
+      "text": "هلا، معك نوف من مركز صيانة الوادي. معي الأستاذ بدر؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7490,
+      "end_ms": 23860,
+      "text": "حياك الله. سيارتك عليها صيانة العشرين ألف كيلو، وعندنا مواعيد متاحة يوم الأربعاء والخميس، والصيانة تاخذ تقريباً ساعتين، وفيه خصم عشرة بالمية لو حجزت هالأسبوع، وتقدر تحجز من التطبيق أو ترد على هالرقم.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S011",
+      "start_ms": 5040,
+      "end_ms": 7090,
+      "kind": "speech",
+      "text": "إيه معك، أنا بالشارع بس تفضلي."
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "horn",
+      "start_ms": 11280,
+      "end_ms": 11680,
+      "level_db": 4
+    },
+    {
+      "kind": "motorbike",
+      "start_ms": 14880,
+      "end_ms": 16880,
+      "level_db": 2
+    },
+    {
+      "kind": "traffic",
+      "start_ms": 0,
+      "end_ms": 25860,
+      "level_db": -8
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BG-D02.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "X1"
+      ],
+      "onset_ms": 11280,
+      "offset_ms": 11680,
+      "window_end_ms": 12180,
+      "rationale": "A car horn; nothing said."
+    },
+    {
+      "event_id": "BG-D02.e2",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "X2"
+      ],
+      "onset_ms": 14880,
+      "offset_ms": 16880,
+      "window_end_ms": 17380,
+      "rationale": "A motorbike passing; nothing said."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#bg-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

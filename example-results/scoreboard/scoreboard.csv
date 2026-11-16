@@ -1,0 +1,4 @@
+run,team,core,R,S,eot,lat_median,lat_p90,false_stops_per_min,misses,dialect_gap,noise_gap,rtt_median,GI,BC,HT,BG,NV,AM,OV,DV
+example-dev,T00-example,58.6,0.83,0.4,28.3,166.2,1393.5,2.225,1,0.41,0.19,0.75,0.67,0.5,0.75,0.57,0.83,1.0,0.83,0.67
+B1-dev,B1-any-sound,41.0,0.81,0.22,28.5,0.0,522.2,3.477,2,0.54,0.38,0.66,0.33,0.5,0.75,0.14,0.5,1.0,0.83,0.5
+B0-dev,B0-never-stop,8.0,0.0,1.0,,,,0.0,7,0.0,0.0,0.61,0.5,1.0,1.0,1.0,1.0,0.75,0.67,0.83

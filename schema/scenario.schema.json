@@ -1,0 +1,756 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sarj.ai/hackathon/turn-taking/scenario.schema.json",
+  "title": "Turn-taking benchmark scenario (labels + metadata)",
+  "description": "One labelled scenario. One JSON per stereo WAV (ch0 = agent, ch1 = user). All times are milliseconds from the first audio sample of this scenario.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "split",
+    "category",
+    "difficulty",
+    "dialect",
+    "speakers",
+    "agent_voice",
+    "acoustic",
+    "audio",
+    "context",
+    "agent_utterances",
+    "user_segments",
+    "events",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "scenario_id": {
+      "type": "string",
+      "pattern": "^((GI|BC|HT|BG|NV|AM|OV|DV|NX)-(D|C|H)[0-9]{2}|R[0-9]{2})$"
+    },
+    "split": {
+      "enum": [
+        "dev",
+        "smoke",
+        "checkpoint",
+        "hidden",
+        "reserve"
+      ]
+    },
+    "category": {
+      "$ref": "#/$defs/category"
+    },
+    "subtype": {
+      "type": "string",
+      "description": "Free-text refinement, dot-separated, e.g. backchannel.multiword_agreement"
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "description": "1 easy, 2 medium, 3 hard, 4 adversarial"
+    },
+    "dialect": {
+      "$ref": "#/$defs/dialect"
+    },
+    "pair_with": {
+      "type": "string",
+      "description": "scenario_id of the minimal-pair partner, if any"
+    },
+    "showcase": {
+      "type": "boolean",
+      "default": false
+    },
+    "speakers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "speaker_id",
+          "role",
+          "source",
+          "gender",
+          "age_band",
+          "dialect"
+        ],
+        "properties": {
+          "speaker_id": {
+            "type": "string",
+            "pattern": "^S[0-9]{3}$"
+          },
+          "role": {
+            "enum": [
+              "caller",
+              "background_person"
+            ]
+          },
+          "source": {
+            "enum": [
+              "human",
+              "synthetic",
+              "voice_converted"
+            ]
+          },
+          "gender": {
+            "enum": [
+              "f",
+              "m"
+            ]
+          },
+          "age_band": {
+            "enum": [
+              "8-11",
+              "12-17",
+              "18-24",
+              "25-34",
+              "35-44",
+              "45-54",
+              "55-64",
+              "65+"
+            ]
+          },
+          "dialect": {
+            "$ref": "#/$defs/dialect"
+          },
+          "consent_id": {
+            "type": "string",
+            "description": "Required when source is human or voice_converted. Points to the signed consent record; never the person's name."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "source": {
+                  "enum": [
+                    "human",
+                    "voice_converted"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "consent_id"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "agent_voice": {
+      "enum": [
+        "agent-f1",
+        "agent-m1"
+      ]
+    },
+    "acoustic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conditions"
+      ],
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "quiet",
+              "ac-hum",
+              "phone-nb",
+              "car",
+              "street",
+              "cafe",
+              "tv",
+              "household",
+              "speakerphone"
+            ]
+          }
+        },
+        "snr_db": {
+          "type": "number",
+          "description": "Caller speech to noise, measured on the final mix"
+        },
+        "echo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level_db",
+            "delay_ms"
+          ],
+          "properties": {
+            "level_db": {
+              "type": "number",
+              "maximum": 0
+            },
+            "delay_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "noise_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of the noise recordings used (never shared between dev and hidden)"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "sample_rate",
+        "channels",
+        "duration_ms",
+        "sha256"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "pattern": "\\.wav$"
+        },
+        "sample_rate": {
+          "const": 16000
+        },
+        "channels": {
+          "const": [
+            "agent",
+            "user"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "use_case",
+        "language"
+      ],
+      "properties": {
+        "use_case": {
+          "type": "string"
+        },
+        "language": {
+          "const": "ar"
+        }
+      }
+    },
+    "agent_utterances": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "utt_id",
+          "start_ms",
+          "end_ms",
+          "text"
+        ],
+        "properties": {
+          "utt_id": {
+            "type": "string",
+            "pattern": "^A[0-9][a-z]?$"
+          },
+          "start_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "is_question": {
+            "type": "boolean"
+          },
+          "words": {
+            "$ref": "#/$defs/words"
+          }
+        }
+      }
+    },
+    "user_segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "seg_id",
+          "speaker_id",
+          "start_ms",
+          "end_ms",
+          "kind"
+        ],
+        "properties": {
+          "seg_id": {
+            "type": "string",
+            "pattern": "^U[0-9][a-z]?$|^X[0-9]+$"
+          },
+          "speaker_id": {
+            "type": "string"
+          },
+          "start_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "kind": {
+            "enum": [
+              "speech",
+              "backchannel",
+              "filler",
+              "nonverbal",
+              "side_speech",
+              "echo"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "What was actually said (verbatim, dialect spelling). Omit for nonverbal/echo."
+          },
+          "delivery": {
+            "type": "string",
+            "description": "e.g. soft, falling; loud; lengthened"
+          },
+          "words": {
+            "$ref": "#/$defs/words"
+          }
+        }
+      }
+    },
+    "background_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "start_ms",
+          "end_ms"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "tv_speech",
+              "tv_music",
+              "radio",
+              "babble",
+              "traffic",
+              "horn",
+              "motorbike",
+              "door",
+              "dishes",
+              "water",
+              "child_speech",
+              "adult_speech",
+              "ac_hum",
+              "phone_handling",
+              "other"
+            ]
+          },
+          "start_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "level_db": {
+            "type": "number",
+            "description": "Relative to the caller's U0 speech level"
+          },
+          "noise_source_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "script_ref",
+        "production_mode",
+        "rendered_on",
+        "reviewed_by"
+      ],
+      "properties": {
+        "script_ref": {
+          "type": "string",
+          "description": "e.g. B-benchmark-spec.md#gi-d02, script version"
+        },
+        "production_mode": {
+          "enum": [
+            "human",
+            "synthetic",
+            "hybrid"
+          ]
+        },
+        "rendered_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewed_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Reviewer role IDs (e.g. REV-HIJ-1), not names"
+        },
+        "gating_annotators": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "notes": {
+          "type": "string"
+        },
+        "label_status": {
+          "enum": [
+            "script_derived",
+            "human_validated"
+          ],
+          "description": "script_derived = computed from the script and the synthetic placement, NOT checked by native listeners"
+        }
+      }
+    },
+    "elicitation": {
+      "enum": [
+        "scripted",
+        "naturalistic"
+      ],
+      "default": "scripted",
+      "description": "naturalistic = cut from an unscripted session, every vocalisation labelled (B §8)"
+    }
+  },
+  "$defs": {
+    "category": {
+      "enum": [
+        "GI",
+        "BC",
+        "HT",
+        "BG",
+        "NV",
+        "AM",
+        "OV",
+        "DV",
+        "NX"
+      ],
+      "description": "NX = naturalistic cut with mixed events; every event in an NX scenario must carry its own category"
+    },
+    "dialect": {
+      "enum": [
+        "sa-najdi",
+        "sa-hijazi",
+        "sa-southern",
+        "sa-eastern",
+        "sa-northern",
+        "gulf-kuwaiti",
+        "gulf-emirati",
+        "gulf-bahraini",
+        "gulf-qatari",
+        "msa"
+      ]
+    },
+    "words": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "w",
+          "start_ms",
+          "end_ms"
+        ],
+        "properties": {
+          "w": {
+            "type": "string"
+          },
+          "start_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "kind",
+        "expected",
+        "onset_ms",
+        "rationale"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^.+\\.e[0-9]+$"
+        },
+        "kind": {
+          "enum": [
+            "interruption",
+            "end_of_turn"
+          ]
+        },
+        "expected": {
+          "enum": [
+            "STOP",
+            "KEEP",
+            "EITHER",
+            "TAKE_TURN"
+          ]
+        },
+        "preferred": {
+          "enum": [
+            "STOP",
+            "KEEP",
+            null
+          ]
+        },
+        "segment_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "onset_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evident_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deadline_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "window_end_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "KEEP/EITHER: offset_ms + 500"
+        },
+        "turn_end_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "start_ms",
+              "end_ms",
+              "hold"
+            ],
+            "properties": {
+              "start_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hold": {
+                "enum": [
+                  "required",
+                  "optional"
+                ]
+              }
+            }
+          }
+        },
+        "annotation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "n_annotators": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "votes": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "evident_spread_ms": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "max - min of annotators' gated evident points"
+            }
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "GI",
+            "BC",
+            "HT",
+            "BG",
+            "NV",
+            "AM",
+            "OV",
+            "DV"
+          ],
+          "description": "Overrides the scenario category for scoring. Required in NX scenarios."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "expected": {
+                "const": "STOP"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "offset_ms",
+              "evident_ms",
+              "deadline_ms"
+            ],
+            "properties": {
+              "kind": {
+                "const": "interruption"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "expected": {
+                "enum": [
+                  "KEEP",
+                  "EITHER"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "offset_ms",
+              "window_end_ms"
+            ],
+            "properties": {
+              "kind": {
+                "const": "interruption"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "expected": {
+                "const": "EITHER"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "preferred"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "expected": {
+                "const": "TAKE_TURN"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "turn_end_ms",
+              "pauses"
+            ],
+            "properties": {
+              "kind": {
+                "const": "end_of_turn"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "category": {
+            "const": "NX"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "events": {
+            "items": {
+              "required": [
+                "category"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "AM-D02",
+  "split": "dev",
+  "category": "AM",
+  "subtype": "ambiguous.tayyib_rising",
+  "difficulty": 3,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S001",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "phone-nb"
+    ],
+    "snr_db": 35,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "AM-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 21280,
+    "sha256": "4fd0164441da614bff4966221b7197edf4ce1f10dd7e169ab5c3db53f256fd19"
+  },
+  "context": {
+    "use_case": "payment reminder",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5180,
+      "text": "السلام عليكم، معك ريم من متجر نوّار. معي الأستاذ مشعل؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6440,
+      "end_ms": 19280,
+      "text": "حياك الله. حبيت أذكرك إن عندك دفعة مستحقة يوم الخميس، وتقدر تسددها من التطبيق أو من الرابط اللي بيوصلك برسالة، وإذا سددت قبل الموعد ما فيه أي رسوم.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S001",
+      "start_ms": 5530,
+      "end_ms": 6040,
+      "kind": "speech",
+      "text": "إيه نعم."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S001",
+      "start_ms": 11730,
+      "end_ms": 14230,
+      "kind": "speech",
+      "text": "طيب؟ … بس كم المبلغ بالضبط؟"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 21280,
+      "level_db": -35
+    }
+  ],
+  "events": [
+    {
+      "event_id": "AM-D02.e1",
+      "kind": "interruption",
+      "expected": "STOP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 11730,
+      "offset_ms": 14230,
+      "evident_ms": 12860,
+      "deadline_ms": 14360,
+      "rationale": "Rising «طيب», a pause, then a question."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#am-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

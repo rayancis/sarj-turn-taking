@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BC-D02",
+  "split": "dev",
+  "category": "BC",
+  "subtype": "backchannel.repeated",
+  "difficulty": 2,
+  "dialect": "sa-eastern",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S005",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "25-34",
+      "dialect": "sa-eastern"
+    }
+  ],
+  "agent_voice": "agent-m1",
+  "acoustic": {
+    "conditions": [
+      "phone-nb"
+    ],
+    "snr_db": 35,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "BC-D02.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 30240,
+    "sha256": "2dcd96af28e0bde8f031b8a1d95fcc52420cc9ee91bff6c5db817feacebaf25e"
+  },
+  "context": {
+    "use_case": "instalment explanation",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5450,
+      "text": "مساء الخير، معك خالد من متجر نوّار. معي الأستاذة ريم؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7000,
+      "end_ms": 28240,
+      "text": "هلا فيك. بس حبيت أوضح لك طريقة التقسيط: المبلغ الإجمالي ألف ومية وعشرين ريال، ينقسم على أربع دفعات، كل دفعة مئتين وثمانين ريال، أول دفعة تنخصم اليوم، والباقي كل شهر بنفس التاريخ، وقبل كل دفعة بيوصلك تذكير برسالة، وتقدر تشوف كل الدفعات من التطبيق.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S005",
+      "start_ms": 5800,
+      "end_ms": 6600,
+      "kind": "speech",
+      "text": "إيه هلا."
+    },
+    {
+      "seg_id": "U1a",
+      "speaker_id": "S005",
+      "start_ms": 13430,
+      "end_ms": 14480,
+      "kind": "backchannel",
+      "text": "أها.",
+      "delivery": "soft acknowledgement"
+    },
+    {
+      "seg_id": "U1b",
+      "speaker_id": "S005",
+      "start_ms": 17920,
+      "end_ms": 18910,
+      "kind": "backchannel",
+      "text": "إيه إيه.",
+      "delivery": "quick, acknowledging"
+    },
+    {
+      "seg_id": "U1c",
+      "speaker_id": "S005",
+      "start_ms": 22070,
+      "end_ms": 22530,
+      "kind": "backchannel",
+      "text": "مم.",
+      "delivery": "closed-mouth 'mm', listening"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 30240,
+      "level_db": -35
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BC-D02.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1a"
+      ],
+      "onset_ms": 13430,
+      "offset_ms": 14480,
+      "window_end_ms": 14980,
+      "rationale": "Acknowledgement."
+    },
+    {
+      "event_id": "BC-D02.e2",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1b"
+      ],
+      "onset_ms": 17920,
+      "offset_ms": 18910,
+      "window_end_ms": 19410,
+      "rationale": "Acknowledgement."
+    },
+    {
+      "event_id": "BC-D02.e3",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1c"
+      ],
+      "onset_ms": 22070,
+      "offset_ms": 22530,
+      "window_end_ms": 23030,
+      "rationale": "Acknowledgement."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#bc-d02",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

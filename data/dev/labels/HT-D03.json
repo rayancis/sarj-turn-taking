@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "HT-D03",
+  "split": "dev",
+  "category": "HT",
+  "subtype": "hesitation.filler_during_agent",
+  "difficulty": 2,
+  "dialect": "gulf-bahraini",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S009",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "f",
+      "age_band": "18-24",
+      "dialect": "gulf-bahraini"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "quiet"
+    ],
+    "snr_db": 40,
+    "noise_source_ids": [
+      "SYN-dev-room_tone"
+    ],
+    "notes": "synthetic noise and effects (procedural / TTS); replace with field recordings"
+  },
+  "audio": {
+    "file": "HT-D03.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 24460,
+    "sha256": "37d4b2696ff953b462547a65dd364de186ea102457d5e0ff362a90b948c073bb"
+  },
+  "context": {
+    "use_case": "delivery options",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 4580,
+      "text": "هلا، معك ريم من متجر نوّار. معي الأستاذة جود؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 6290,
+      "end_ms": 22460,
+      "text": "حياك الله. عندنا ثلاث خيارات للتوصيل: العادي خلال ثلاث إلى خمس أيام ومجاني، والسريع بكرة برسوم خمسة وعشرين ريال، أو تستلمينه من الفرع بنفس اليوم، وكل الخيارات تقدرين تتابعينها من التطبيق.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S009",
+      "start_ms": 4930,
+      "end_ms": 5890,
+      "kind": "speech",
+      "text": "إيه هلا."
+    },
+    {
+      "seg_id": "U1",
+      "speaker_id": "S009",
+      "start_ms": 13790,
+      "end_ms": 14710,
+      "kind": "filler",
+      "text": "اممم…",
+      "delivery": "a low thinking hum, about one second, no words"
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 24460,
+      "level_db": -40
+    }
+  ],
+  "events": [
+    {
+      "event_id": "HT-D03.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "segment_ids": [
+        "U1"
+      ],
+      "onset_ms": 13790,
+      "offset_ms": 14710,
+      "window_end_ms": 15210,
+      "rationale": "Thinking aloud while listening; not ready to speak."
+    }
+  ],
+  "provenance": {
+    "script_ref": "B-benchmark-spec.md#ht-d03",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-14",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Synthetic audio (TTS voices + procedural noise). Labels derived from the script and the exact placement, NOT validated by native listeners."
+  }
+}

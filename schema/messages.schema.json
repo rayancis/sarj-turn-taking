@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sarj.ai/hackathon/turn-taking/messages.schema.json",
+  "title": "Harness <-> system streaming protocol (JSON text frames)",
+  "description": "WebSocket. Binary frames carry audio (20 ms, 16 kHz, int16 little-endian, interleaved stereo [agent, user] = 1280 bytes). Text frames carry these JSON messages. The harness is the client; each team runs a WebSocket server.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/hello"
+    },
+    {
+      "$ref": "#/$defs/session_start"
+    },
+    {
+      "$ref": "#/$defs/scenario_start"
+    },
+    {
+      "$ref": "#/$defs/agent_utterance_start"
+    },
+    {
+      "$ref": "#/$defs/agent_utterance_end"
+    },
+    {
+      "$ref": "#/$defs/scenario_end"
+    },
+    {
+      "$ref": "#/$defs/session_end"
+    },
+    {
+      "$ref": "#/$defs/ping"
+    },
+    {
+      "$ref": "#/$defs/pong"
+    },
+    {
+      "$ref": "#/$defs/decision"
+    }
+  ],
+  "$defs": {
+    "hello": {
+      "description": "system -> harness, first message after connect",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "team",
+        "system_version"
+      ],
+      "properties": {
+        "type": {
+          "const": "hello"
+        },
+        "team": {
+          "type": "string",
+          "minLength": 1
+        },
+        "system_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "git commit hash"
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "core",
+              "eot"
+            ]
+          }
+        }
+      }
+    },
+    "session_start": {
+      "description": "harness -> system",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "session_id",
+        "sample_rate",
+        "frame_ms",
+        "channels"
+      ],
+      "properties": {
+        "type": {
+          "const": "session_start"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "sample_rate": {
+          "const": 16000
+        },
+        "frame_ms": {
+          "const": 20
+        },
+        "channels": {
+          "const": [
+            "agent",
+            "user"
+          ]
+        }
+      }
+    },
+    "scenario_start": {
+      "description": "harness -> system. scenario_id is opaque in the hidden run. stream_ms of the first frame of this scenario.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "scenario_id",
+        "stream_ms",
+        "context"
+      ],
+      "properties": {
+        "type": {
+          "const": "scenario_start"
+        },
+        "scenario_id": {
+          "type": "string"
+        },
+        "stream_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "use_case",
+            "language"
+          ],
+          "properties": {
+            "use_case": {
+              "type": "string"
+            },
+            "language": {
+              "const": "ar"
+            }
+          }
+        }
+      }
+    },
+    "agent_utterance_start": {
+      "description": "harness -> system, sent together with the first audio frame of the utterance. Real agents know their own text.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "utt_id",
+        "stream_ms",
+        "text",
+        "duration_ms"
+      ],
+      "properties": {
+        "type": {
+          "const": "agent_utterance_start"
+        },
+        "utt_id": {
+          "type": "string"
+        },
+        "stream_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "w",
+              "start_ms",
+              "end_ms"
+            ],
+            "properties": {
+              "w": {
+                "type": "string"
+              },
+              "start_ms": {
+                "type": "integer"
+              },
+              "end_ms": {
+                "type": "integer"
+              }
+            }
+          },
+          "description": "word timings relative to the utterance start"
+        }
+      }
+    },
+    "agent_utterance_end": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "utt_id",
+        "stream_ms"
+      ],
+      "properties": {
+        "type": {
+          "const": "agent_utterance_end"
+        },
+        "utt_id": {
+          "type": "string"
+        },
+        "stream_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "scenario_end": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "scenario_id",
+        "stream_ms"
+      ],
+      "properties": {
+        "type": {
+          "const": "scenario_end"
+        },
+        "scenario_id": {
+          "type": "string"
+        },
+        "stream_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "session_end": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "const": "session_end"
+        }
+      }
+    },
+    "ping": {
+      "description": "harness -> system, every 5 s; the system must answer with pong carrying the same id",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "ping"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "pong": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "pong"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "decision": {
+      "description": "system -> harness. STOP = the agent falls silent now; RESUME = it continues where it stopped; TAKE_TURN = the caller has finished. Scored at the moment it ARRIVES (harness clock). Everything except type and decision is optional and logged for diagnostics only.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "decision"
+      ],
+      "properties": {
+        "type": {
+          "const": "decision"
+        },
+        "decision": {
+          "enum": [
+            "STOP",
+            "RESUME",
+            "TAKE_TURN"
+          ]
+        },
+        "label": {
+          "enum": [
+            "interruption",
+            "backchannel",
+            "hesitation",
+            "background",
+            "nonverbal",
+            "echo",
+            "end_of_turn",
+            "other"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "transcript": {
+          "type": "string",
+          "description": "what the system heard, if it uses ASR"
+        },
+        "client_stream_ms": {
+          "type": "integer",
+          "description": "the system's own view of stream time; logged, never scored"
+        }
+      }
+    }
+  }
+}
