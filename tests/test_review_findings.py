@@ -20,9 +20,6 @@ def steady_voice(ms_, db, f0=140.0):
 
 
 
-OPEN_F3 = pytest.mark.xfail(strict=True, reason="finding 3 open: level step read as speech")
-
-
 def bursts(on_ms, off_ms, n, db, start_ms):
     return [(start_ms + k * (on_ms + off_ms), voice(on_ms, db)) for k in range(n)]
 
@@ -49,14 +46,12 @@ def test_f2_sparse_bursts_do_not_accumulate_into_a_stop(on_ms, off_ms):
 
 
 # ------------------------------------------------------------------ finding 3: abrupt background level change
-@OPEN_F3
 @pytest.mark.parametrize("make", [white, rumble], ids=["white", "rumble"])
 def test_f3_noise_step_without_speech_does_not_stop(make):
     noise = np.concatenate([make(3000, -65), make(5000, -30, seed=7)])
     assert stops(run_call(mix(8000, (0, noise)), [(300, 8000)])) == []
 
 
-@OPEN_F3
 @pytest.mark.parametrize("make", [white, rumble], ids=["white", "rumble"])
 def test_f3_control_voice_after_a_noise_step_still_stops(make):
     """The fix must not simply go deaf after a level change: a caller 15 dB above the new noise still counts."""

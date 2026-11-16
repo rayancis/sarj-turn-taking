@@ -21,7 +21,10 @@ STOP rule, per 20 ms caller frame (only audio already received is used; no label
      frame is speech only if it is periodic and louder than -42 dBFS (the baseline rule, voiced frames only).
   4. bounded evidence: STOP once the last 300 ms of agent speech hold at least 200 ms of caller speech frames
      (the baseline's amount of evidence, at >= 2/3 occupancy). Dips between syllables (up to 100 ms) are
-     tolerated, but sparse bursts cannot add up over time. One STOP per agent utterance. No RESUME.
+     tolerated, but sparse bursts cannot add up over time. Of those speech frames, at least 40 ms (2 frames)
+     must be periodic: a level change without any voicing (a noise step, a cough, a door) can never stop the
+     agent, however loud. Aperiodic noise practically never reaches the voicing threshold, while about half of
+     natural speech frames do, so 2 voiced frames out of >= 10 is a low-risk requirement for real speech. One STOP per agent utterance. No RESUME.
 State: the noise history is cleared at each scenario_start (a new call is a new acoustic environment); the
 per-utterance counter and stop flag are cleared at each agent_utterance_start.
 
@@ -41,6 +44,7 @@ FRAME_SAMPLES = 320
 LOUD_DB = -42               # baseline absolute level: still a minimum for speech, and the TAKE_TURN rule
 STOP_AFTER_MS = 200         # speech for this long while the agent talks -> STOP (as in the baseline) ...
 EVIDENCE_WINDOW_MS = 300    # ... counted within this many most recent ms of agent speech
+VOICED_EVIDENCE_MS = 40     # ... of which at least this much (2 frames) must be periodic
 TAKE_TURN_AFTER_MS = 700    # quiet for this long after the caller spoke -> TAKE_TURN (baseline)
 
 BAND_HZ = (300, 3400)       # telephone speech band
@@ -122,7 +126,7 @@ class MySystem(System):
         self.agent_talking = False
         self.agent_text = ""            # what the agent is saying right now (not used by this experiment)
         self.stopped = False
-        self.evidence = deque(maxlen=EVIDENCE_WINDOW_MS // FRAME_MS)   # speech flags, agent-talking frames only
+        self.evidence = deque(maxlen=EVIDENCE_WINDOW_MS // FRAME_MS)   # (speech, voiced) per agent-talking frame
         self.quiet_ms = 0               # TAKE_TURN path (baseline)
         self.caller_spoke = False
 
@@ -164,8 +168,10 @@ class MySystem(System):
         speech = self.is_speech(caller)
 
         if self.agent_talking:
-            self.evidence.append(speech)
-            if sum(self.evidence) * FRAME_MS >= STOP_AFTER_MS and not self.stopped:
+            self.evidence.append((speech, speech and self.voiced))
+            speech_ms = sum(s for s, _ in self.evidence) * FRAME_MS
+            voiced_ms = sum(v for _, v in self.evidence) * FRAME_MS
+            if speech_ms >= STOP_AFTER_MS and voiced_ms >= VOICED_EVIDENCE_MS and not self.stopped:
                 self.stopped = True
                 return "STOP"
             return None

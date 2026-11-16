@@ -137,6 +137,12 @@ def test_periodicity_separates_noise_from_voice():
     assert min(v) >= ms.VOICING_THRESHOLD
 
 
+def test_loud_aperiodic_sound_never_stops():
+    """A second of loud noise right over the agent: level alone is not enough without any voicing."""
+    caller = mix(6000, (0, white(6000, -65)), (2000, white(1000, -15, seed=3)))
+    assert stops(run_call(caller, [(300, 6000)])) == []
+
+
 def test_voiced_frames_do_not_enter_the_noise_floor():
     s = ms.MySystem()
     s.on_scenario_start({})
