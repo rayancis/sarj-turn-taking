@@ -127,6 +127,25 @@ def test_separate_bursts_with_longer_gaps_do_not_add_up():
     assert stops(run_call(caller, [(300, 6000)])) == []
 
 
+# ------------------------------------------------------------------ periodicity (voicing) evidence
+def test_periodicity_separates_noise_from_voice():
+    assert ms.periodicity(np.zeros(640, dtype=np.int16)) == 0.0
+    for noise in (white(2000, -40), rumble(2000, -40)):
+        v = [ms.periodicity(noise[i - 640:i]) for i in range(640, len(noise), 320)]
+        assert max(v) < ms.VOICING_THRESHOLD
+    v = [ms.periodicity(voice(1000, -30)[i - 640:i]) for i in range(640, 16000, 320)]
+    assert min(v) >= ms.VOICING_THRESHOLD
+
+
+def test_voiced_frames_do_not_enter_the_noise_floor():
+    s = ms.MySystem()
+    s.on_scenario_start({})
+    caller = mix(2000, (0, voice(2000, -25)))
+    for n in range(100):
+        s.on_frame(np.zeros(FRAME, dtype=np.int16), caller[n * FRAME:(n + 1) * FRAME])
+    assert len(s.floor.levels) == 0 and not s.floor.ready
+
+
 # ------------------------------------------------------------------ silence and digital zeros
 def test_digital_silence_is_safe():
     caller = np.zeros(SR * 4, dtype=np.int16)
@@ -161,12 +180,22 @@ def test_scenario_start_forgets_the_previous_calls_noise_floor():
     assert stops(run_call(noisy, [(300, 6000)], system, new_call=True)) == []
 
 
-def test_without_the_reset_the_carried_over_floor_would_fire():
-    """Guards the previous test: it only passes because of on_scenario_start, not by accident."""
+def _noisy_then_quiet_call(new_call):
+    """A noisy call, then a quiet call where the caller speaks at -38 dBFS soon after the agent starts."""
     system = ms.MySystem()
-    run_call(mix(4000, (0, white(4000, -65))), [(300, 3500)], system)
-    noisy = mix(6000, (0, white(6000, -34, seed=5)))
-    assert stops(run_call(noisy, [(300, 6000)], system, new_call=False)) != []
+    run_call(mix(4000, (0, white(4000, -34, seed=5))), [(300, 3500)], system)
+    quiet = mix(4000, (0, white(4000, -65)), (200, voice(3000, -38)))
+    return stops(run_call(quiet, [(100, 4000)], system, new_call=new_call))
+
+
+def test_scenario_start_forgets_a_noisy_previous_call():
+    s = _noisy_then_quiet_call(new_call=True)
+    assert len(s) == 1 and 200 <= s[0] <= 200 + 300, s
+
+
+def test_without_the_reset_the_carried_over_floor_would_hide_the_caller():
+    """Guards the previous test: the old call's high floor would make this caller inaudible."""
+    assert _noisy_then_quiet_call(new_call=False) == []
 
 
 def test_scenario_start_clears_a_stop_left_from_the_previous_call():

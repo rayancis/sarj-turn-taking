@@ -18,7 +18,8 @@ def steady_voice(ms_, db, f0=140.0):
     return x / np.sqrt(np.mean(x ** 2)) * 10 ** (db / 20) * 32768
 
 
-OPEN_F1 = pytest.mark.xfail(strict=True, reason="finding 1 open: floor initialised from speech")
+
+
 OPEN_F3 = pytest.mark.xfail(strict=True, reason="finding 3 open: level step read as speech")
 
 
@@ -27,7 +28,6 @@ def bursts(on_ms, off_ms, n, db, start_ms):
 
 
 # ------------------------------------------------------------------ finding 1: speech-contaminated initialisation
-@OPEN_F1
 @pytest.mark.parametrize("make", [steady_voice, voice], ids=["sustained", "syllabic"])
 def test_f1_voice_from_the_first_frame_of_a_call_stops(make):
     caller = mix(6000, (0, white(6000, -65)), (0, make(6000, -25)))
