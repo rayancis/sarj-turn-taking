@@ -34,3 +34,4 @@ credentials*.json
 data/checkpoint/
 data/final/
 data/hidden/
+data/aug/
