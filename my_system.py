@@ -77,6 +77,8 @@ SOFT_DB = 6.0               # evidence more than this below the caller's referen
 SOFT_STOP_MS = 1000         # ... soft speech must instead last this long ...
 SOFT_WINDOW_MS = 1400       # ... within this window
 BACKGROUND_DB = None        # evidence more than this below the reference never stops (None = no such tier)
+REL_GATE_DB = None          # once the reference is trusted, a speech frame must be within this many dB of it; this
+                            # replaces the absolute gate, so the behaviour no longer depends on microphone gain
 
 VOICING_THRESHOLD = 0.45    # periodicity at or above this = voiced frame
 PITCH_HZ = (75, 500)        # pitch periods searched
@@ -189,16 +191,24 @@ class CallerReference:
 
     def __init__(self):
         self.levels = deque(maxlen=REF_WINDOW_MS // FRAME_MS)
+        self._value = None
 
     def reset(self):
         self.levels.clear()
+        self._value = None
+
+    def add(self, level_db: float):
+        self.levels.append(level_db)
+        self._value = None
 
     @property
     def ready(self) -> bool:
         return len(self.levels) >= REF_MIN_FRAMES
 
     def value(self) -> float:
-        return float(np.percentile(np.fromiter(self.levels, float), REF_PERCENTILE))
+        if self._value is None:             # only changes while the caller has the floor
+            self._value = float(np.percentile(np.fromiter(self.levels, float), REF_PERCENTILE))
+        return self._value
 
 
 class MySystem(System):
@@ -249,7 +259,10 @@ class MySystem(System):
     def is_speech(self, caller, agent=None) -> bool:
         """Update the speech-frame state from one caller frame. The floor is computed from earlier frames only."""
         level = self.level = band_level_db(caller)
-        loud_enough = ABS_GATE_DB is None or loudness_db(caller) > ABS_GATE_DB
+        if CALLER_REF and REL_GATE_DB is not None and self.ref.ready:
+            loud_enough = level >= self.ref.value() - REL_GATE_DB
+        else:
+            loud_enough = ABS_GATE_DB is None or loudness_db(caller) > ABS_GATE_DB
         echo = bool(self.echo) and self.echo.explained(band_level_db(agent), level)
         if self.vad:
             self.vad_speech = self.vad(caller) >= VAD_THRESHOLD
@@ -305,7 +318,7 @@ class MySystem(System):
                 return "STOP"
             return None
         if CALLER_REF and speech and self.voiced:
-            self.ref.levels.append(self.level)      # the caller's own turn: remember how loud they speak
+            self.ref.add(self.level)                # the caller's own turn: remember how loud they speak
 
         # End-of-turn track: the kit baseline, unchanged (fixed loudness and a fixed stretch of quiet).
         loud = loudness_db(caller) > LOUD_DB

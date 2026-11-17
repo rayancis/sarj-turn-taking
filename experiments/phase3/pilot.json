@@ -82,6 +82,78 @@
    "set": {
     "ABS_GATE_DB": null
    }
+  },
+  {
+   "id": "H1",
+   "group": "hybrid",
+   "parent": "B1",
+   "hypothesis": "Silero speech frames + caller-relative loudness (soft tier 6 dB, 1000 ms in 1400 ms): the VAD removes non-speech and far-field sound, the caller reference handles soft acknowledgements. The two address different error classes, so the gains should add.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "H2",
+   "group": "hybrid",
+   "parent": "H1",
+   "hypothesis": "Sound more than 12 dB below the caller's own level is background (TV, another talker, echo) and should never stop the agent, however long it lasts.",
+   "set": {
+    "BACKGROUND_DB": 12.0
+   }
+  },
+  {
+   "id": "H3",
+   "group": "hybrid",
+   "parent": "C1",
+   "hypothesis": "The confirm-mode hybrid (E01b frames + VAD veto) with the caller reference, as an alternative to H1 that keeps the acoustic front end.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "G1",
+   "group": "gain",
+   "parent": "H1",
+   "hypothesis": "At -12 dB microphone gain H1 misses 4 xdev interruptions and one dev interruption: attenuated speech frames fall under the absolute -42 dBFS gate. With a neural VAD deciding what is speech and the caller reference judging loudness, the absolute gate is no longer needed; removing it should make the misses at low gain disappear without new false stops at normal gain.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  },
+  {
+   "id": "W1",
+   "group": "evidence",
+   "parent": "G1",
+   "hypothesis": "A short word with a stop closure (توقف: 120 ms + 140 ms closure + 140 ms) never reaches 200 ms of speech inside 300 ms. A 400 ms window (200 ms = half) catches it. The 2/3 occupancy was there to stop sparse non-speech bursts adding up; the VAD now handles those.",
+   "set": {
+    "EVIDENCE_WINDOW_MS": 400
+   }
+  },
+  {
+   "id": "G2",
+   "group": "gain",
+   "parent": "H1",
+   "hypothesis": "Keep what the -42 dBFS gate does at nominal gain, but make it gain-invariant: once the caller's own level is known, a speech frame must be within 20 dB of it (the absolute gate only applies before the caller has spoken). Scores should then be the same at -12, 0 and +6 dB, and close to H1 at 0 dB.",
+   "set": {
+    "REL_GATE_DB": 20.0
+   }
+  },
+  {
+   "id": "G3",
+   "group": "gain",
+   "parent": "G2",
+   "hypothesis": "On the gain-invariant detector: sound more than 12 dB below the caller's level is background (TV, another talker, echo) and never stops the agent.",
+   "set": {
+    "BACKGROUND_DB": 12.0
+   }
+  },
+  {
+   "id": "W2",
+   "group": "evidence",
+   "parent": "G2",
+   "hypothesis": "400 ms evidence window (as W1) on the gain-invariant detector, for short words with a stop closure.",
+   "set": {
+    "EVIDENCE_WINDOW_MS": 400
+   }
   }
  ]
 }

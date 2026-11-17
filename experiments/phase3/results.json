@@ -7059,5 +7059,6300 @@
   },
   "seconds": 25.1,
   "hypothesis": "With a caller-relative reference in place the absolute -42 dBFS gate should no longer be needed."
+ },
+ "H1": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true
+  },
+  "result": {
+   "dev": {
+    "core": 75.96360829289812,
+    "R": 0.99375,
+    "S": 0.5805555555555556,
+    "false_stops": 10,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 164.32845947860108,
+    "p99_us": 475.892,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.4444444444444444,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.975
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 160.8144055185375,
+    "p99_us": 431.4670699999997,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 82.14018691588785,
+    "R": 0.83,
+    "S": 0.775,
+    "false_stops": 5,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 290.0,
+    "mean_us": 173.0242089980102,
+    "p99_us": 476.02,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 1.0,
+     "DV": 1.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      0.525
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      0.855
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      0.86
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 86.52931854199683,
+    "R": 0.7777777777777778,
+    "S": 0.975,
+    "false_stops": 1,
+    "misses": 4,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 160.6182268494789,
+    "p99_us": 420.9322999999998,
+    "categories": {
+     "BC": 0.875,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 75.90231510117522,
+    "R": 0.99125,
+    "S": 0.5805555555555556,
+    "false_stops": 10,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 175.80069259046914,
+    "p99_us": 501.6165,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.4444444444444444,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.965
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 93.59004797942325,
+    "R": 0.9441666666666666,
+    "S": 0.9277777777777778,
+    "false_stops": 3,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 174.77176640184518,
+    "p99_us": 467.84877999999986,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.995
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 1
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 31.9,
+  "hypothesis": "Silero speech frames + caller-relative loudness (soft tier 6 dB, 1000 ms in 1400 ms): the VAD removes non-speech and far-field sound, the caller reference handles soft acknowledgements. The two address different error classes, so the gains should add."
+ },
+ "H2": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "BACKGROUND_DB": 12.0
+  },
+  "result": {
+   "dev": {
+    "core": 77.92132639791937,
+    "R": 0.99375,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 160.65175710768608,
+    "p99_us": 424.02750000000003,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.975
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 156.66746847770375,
+    "p99_us": 339.2598699999998,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 82.14018691588785,
+    "R": 0.83,
+    "S": 0.775,
+    "false_stops": 5,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 290.0,
+    "mean_us": 174.3169279282318,
+    "p99_us": 525.841,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 1.0,
+     "DV": 1.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      0.525
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      0.855
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      0.86
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 86.52931854199683,
+    "R": 0.7777777777777778,
+    "S": 0.975,
+    "false_stops": 1,
+    "misses": 4,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 190.15784926533402,
+    "p99_us": 504.56881999999996,
+    "categories": {
+     "BC": 0.875,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 75.90231510117522,
+    "R": 0.99125,
+    "S": 0.5805555555555556,
+    "false_stops": 10,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 180.3917888098209,
+    "p99_us": 504.0505,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.4444444444444444,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.965
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 93.59004797942325,
+    "R": 0.9441666666666666,
+    "S": 0.9277777777777778,
+    "false_stops": 3,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 170.8414923543482,
+    "p99_us": 449.94591999999983,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.995
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 1
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 31.8,
+  "hypothesis": "Sound more than 12 dB below the caller's own level is background (TV, another talker, echo) and should never stop the agent, however long it lasts."
+ },
+ "H3": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "confirm",
+   "CALLER_REF": true
+  },
+  "result": {
+   "dev": {
+    "core": 76.11599297012303,
+    "R": 1.0,
+    "S": 0.5805555555555556,
+    "false_stops": 10,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 234.37496010252605,
+    "p99_us": 487.617,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.4444444444444444,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 231.54476136169484,
+    "p99_us": 516.5570699999996,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 81.01944154488517,
+    "R": 0.8841666666666667,
+    "S": 0.7125,
+    "false_stops": 6,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 251.8548571717649,
+    "p99_us": 641.5475,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 1.0,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      0.87
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 82.97872340425532,
+    "R": 0.7222222222222222,
+    "S": 0.975,
+    "false_stops": 1,
+    "misses": 5,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 243.0993487100632,
+    "p99_us": 614.0378999999998,
+    "categories": {
+     "BC": 0.875,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 67.21714818266543,
+    "R": 1.0,
+    "S": 0.49027777777777776,
+    "false_stops": 12,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 253.67480439108294,
+    "p99_us": 645.629,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      0.6
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 88.3298392732355,
+    "R": 0.8888888888888888,
+    "S": 0.8777777777777779,
+    "false_stops": 4,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 292.4699474628395,
+    "p99_us": 691.9314099999999,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "matrix_ok": 43,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in white -40",
+    "speechlike  0 dB SNR in white -40",
+    "syllabic  3 dB SNR in white -40",
+    "speechlike  3 dB SNR in white -40",
+    "syllabic  6 dB SNR in white -40",
+    "speechlike  6 dB SNR in white -40",
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 47.7,
+  "hypothesis": "The confirm-mode hybrid (E01b frames + VAD veto) with the caller reference, as an alternative to H1 that keeps the acoustic front end."
+ },
+ "G1": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "ABS_GATE_DB": null
+  },
+  "result": {
+   "dev": {
+    "core": 67.1563981042654,
+    "R": 1.0,
+    "S": 0.4652777777777778,
+    "false_stops": 13,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 158.70263316582916,
+    "p99_us": 433.6505,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.0,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 92.31411862990811,
+    "R": 0.9444444444444444,
+    "S": 0.9027777777777779,
+    "false_stops": 4,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 172.49251768323936,
+    "p99_us": 524.2903,
+    "categories": {
+     "BC": 0.625,
+     "BG": 1.0,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      0.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 1
+   },
+   "dev@-12": {
+    "core": 65.49753208292202,
+    "R": 0.9166666666666666,
+    "S": 0.49027777777777776,
+    "false_stops": 12,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 150.00201467066876,
+    "p99_us": 452.49350000000004,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      0.6
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@-12": {
+    "core": 94.72437490861238,
+    "R": 0.9997222222222222,
+    "S": 0.9,
+    "false_stops": 3,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 163.71895989236288,
+    "p99_us": 518.4240999999994,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.995
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 67.1563981042654,
+    "R": 1.0,
+    "S": 0.4652777777777778,
+    "false_stops": 13,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 146.29171869414185,
+    "p99_us": 397.671,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.0,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 89.62733985917912,
+    "R": 0.9444444444444444,
+    "S": 0.8527777777777779,
+    "false_stops": 6,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 140.63803404237143,
+    "p99_us": 344.3254399999998,
+    "categories": {
+     "BC": 0.625,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      0.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 3
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 29.1,
+  "hypothesis": "At -12 dB microphone gain H1 misses 4 xdev interruptions and one dev interruption: attenuated speech frames fall under the absolute -42 dBFS gate. With a neural VAD deciding what is speech and the caller reference judging loudness, the absolute gate is no longer needed; removing it should make the misses at low gain disappear without new false stops at normal gain."
+ },
+ "W1": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "ABS_GATE_DB": null,
+   "EVIDENCE_WINDOW_MS": 400
+  },
+  "result": {
+   "dev": {
+    "core": 67.1563981042654,
+    "R": 1.0,
+    "S": 0.4652777777777778,
+    "false_stops": 13,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 135.78980783110183,
+    "p99_us": 342.7745,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.0,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 92.31411862990811,
+    "R": 0.9444444444444444,
+    "S": 0.9027777777777779,
+    "false_stops": 4,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 145.4074961558175,
+    "p99_us": 459.58712999999995,
+    "categories": {
+     "BC": 0.625,
+     "BG": 1.0,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      0.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 1
+   },
+   "dev@-12": {
+    "core": 65.49753208292202,
+    "R": 0.9166666666666666,
+    "S": 0.49027777777777776,
+    "false_stops": 12,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 140.92934852112913,
+    "p99_us": 363.78099999999995,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      0.6
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@-12": {
+    "core": 94.73684210526316,
+    "R": 1.0,
+    "S": 0.9,
+    "false_stops": 3,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 163.5041635913207,
+    "p99_us": 459.96059999999994,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 67.1563981042654,
+    "R": 1.0,
+    "S": 0.4652777777777778,
+    "false_stops": 13,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 151.69138528211525,
+    "p99_us": 442.4375,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.0,
+     "BG": 0.5,
+     "DV": 0.0,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.2222222222222222,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 89.62733985917912,
+    "R": 0.9444444444444444,
+    "S": 0.8527777777777779,
+    "false_stops": 6,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 167.40257406458227,
+    "p99_us": 508.4992999999998,
+    "categories": {
+     "BC": 0.625,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      0.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 3
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 28.5,
+  "hypothesis": "A short word with a stop closure (توقف: 120 ms + 140 ms closure + 140 ms) never reaches 200 ms of speech inside 300 ms. A 400 ms window (200 ms = half) catches it. The 2/3 occupancy was there to stop sparse non-speech bursts adding up; the VAD now handles those."
+ },
+ "G2": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "REL_GATE_DB": 20.0
+  },
+  "result": {
+   "dev": {
+    "core": 77.92132639791937,
+    "R": 0.99375,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 133.77265373849113,
+    "p99_us": 389.08950000000004,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.975
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 123.55864044079959,
+    "p99_us": 306.89133999999973,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 80.34550195567145,
+    "R": 0.9166666666666666,
+    "S": 0.68125,
+    "false_stops": 7,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 140.18948156891844,
+    "p99_us": 421.926,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.75,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 88.78504672897195,
+    "R": 0.8333333333333333,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 3,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 128.53123569109857,
+    "p99_us": 360.03509999999994,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 77.85634279760353,
+    "R": 0.99125,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 122.27567367036525,
+    "p99_us": 319.382,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.965
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 88.3298392732355,
+    "R": 0.8888888888888888,
+    "S": 0.8777777777777779,
+    "false_stops": 4,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 125.6415657782334,
+    "p99_us": 337.0560699999999,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 25.7,
+  "hypothesis": "Keep what the -42 dBFS gate does at nominal gain, but make it gain-invariant: once the caller's own level is known, a speech frame must be within 20 dB of it (the absolute gate only applies before the caller has spoken). Scores should then be the same at -12, 0 and +6 dB, and close to H1 at 0 dB."
+ },
+ "G3": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "REL_GATE_DB": 20.0,
+   "BACKGROUND_DB": 12.0
+  },
+  "result": {
+   "dev": {
+    "core": 77.92132639791937,
+    "R": 0.99375,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 134.35718724494959,
+    "p99_us": 368.6885,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.975
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 128.7023670767128,
+    "p99_us": 358.02255999999994,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 80.34550195567145,
+    "R": 0.9166666666666666,
+    "S": 0.68125,
+    "false_stops": 7,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 126.8527176486459,
+    "p99_us": 327.6985,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.75,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 88.78504672897195,
+    "R": 0.8333333333333333,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 3,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 127.15723705791902,
+    "p99_us": 328.6695099999998,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 77.85634279760353,
+    "R": 0.99125,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 129.86209878250312,
+    "p99_us": 351.529,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.965
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 88.3298392732355,
+    "R": 0.8888888888888888,
+    "S": 0.8777777777777779,
+    "false_stops": 4,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 149.1820982402187,
+    "p99_us": 436.2191099999996,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 26.4,
+  "hypothesis": "On the gain-invariant detector: sound more than 12 dB below the caller's level is background (TV, another talker, echo) and never stops the agent."
+ },
+ "W2": {
+  "config": {
+   "VAD": "silero",
+   "VAD_MODE": "replace",
+   "CALLER_REF": true,
+   "REL_GATE_DB": 20.0,
+   "EVIDENCE_WINDOW_MS": 400
+  },
+  "result": {
+   "dev": {
+    "core": 77.92132639791937,
+    "R": 0.99375,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 130.61836467572763,
+    "p99_us": 350.741,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.975
+     ]
+    },
+    "stray": 2
+   },
+   "xdev": {
+    "core": 97.15816545220746,
+    "R": 0.9941666666666666,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 150.41327097215103,
+    "p99_us": 397.8034499999999,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.895
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@-12": {
+    "core": 80.34550195567145,
+    "R": 0.9166666666666666,
+    "S": 0.68125,
+    "false_stops": 7,
+    "misses": 1,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 127.02261785437253,
+    "p99_us": 315.3085,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.75,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 1.0,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      0.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "xdev@-12": {
+    "core": 91.8429003021148,
+    "R": 0.8888888888888888,
+    "S": 0.95,
+    "false_stops": 2,
+    "misses": 2,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 123.29989240560396,
+    "p99_us": 323.66852999999975,
+    "categories": {
+     "BC": 0.75,
+     "BG": 1.0,
+     "GI": 1.0,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      0.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 0
+   },
+   "dev@+6": {
+    "core": 77.85634279760353,
+    "R": 0.99125,
+    "S": 0.6083333333333333,
+    "false_stops": 9,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 138.70285966746485,
+    "p99_us": 373.158,
+    "categories": {
+     "AM": 1.0,
+     "BC": 0.2,
+     "BG": 0.5,
+     "DV": 0.5,
+     "GI": 1.0,
+     "HT": 1.0,
+     "NV": 0.6666666666666666,
+     "OV": 0.0
+    },
+    "events": {
+     "GI-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e2": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D02.e3": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D03.e1": [
+      "KEEP",
+      0.0
+     ],
+     "HT-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D01.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BG-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D02.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D02.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D03.e1": [
+      "KEEP",
+      1.0
+     ],
+     "AM-D01.e1": [
+      "EITHER",
+      1.0
+     ],
+     "AM-D02.e1": [
+      "STOP",
+      1.0
+     ],
+     "AM-D03.e1": [
+      "EITHER",
+      1.0
+     ],
+     "OV-D01.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "OV-D03.e1": [
+      "STOP",
+      1.0
+     ],
+     "DV-D01.e1": [
+      "KEEP",
+      1.0
+     ],
+     "DV-D02.e1": [
+      "KEEP",
+      0.0
+     ],
+     "DV-D03.e1": [
+      "STOP",
+      0.965
+     ]
+    },
+    "stray": 2
+   },
+   "xdev@+6": {
+    "core": 93.2353959539002,
+    "R": 0.9941666666666666,
+    "S": 0.8777777777777779,
+    "false_stops": 4,
+    "misses": 0,
+    "errors": 0,
+    "latency_median": 0.0,
+    "mean_us": 129.5732597385956,
+    "p99_us": 359.4625599999998,
+    "categories": {
+     "BC": 0.75,
+     "BG": 0.75,
+     "GI": 0.8888888888888888,
+     "NV": 1.0,
+     "OV": 1.0
+    },
+    "events": {
+     "GI-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D53.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D54.e1": [
+      "STOP",
+      0.895
+     ],
+     "GI-D55.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D56.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D57.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D58.e1": [
+      "STOP",
+      1.0
+     ],
+     "GI-D59.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D51.e1": [
+      "STOP",
+      1.0
+     ],
+     "OV-D52.e1": [
+      "STOP",
+      1.0
+     ],
+     "BC-D51.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e2": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D52.e3": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D53.e1": [
+      "KEEP",
+      0.0
+     ],
+     "BC-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D55.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BC-D56.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "BG-D54.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D51.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D52.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D53.e1": [
+      "KEEP",
+      1.0
+     ],
+     "NV-D54.e1": [
+      "KEEP",
+      1.0
+     ]
+    },
+    "stray": 2
+   },
+   "matrix_ok": 49,
+   "matrix_bad": [
+    "syllabic  0 dB SNR in rumble -40",
+    "syllabic  3 dB SNR in rumble -40",
+    "syllabic  6 dB SNR in rumble -40",
+    "cold start: steady voice from frame 0",
+    "cold start: steady voice in -40 noise",
+    "cold start: syllabic voice from frame 0",
+    "cold start: syllabic voice in -40 noise",
+    "cold start: speechlike voice in -40 noise",
+    "laughter 100 voiced/100 breath ms",
+    "laughter 80 voiced/120 breath ms",
+    "laughter 120 voiced/80 breath ms",
+    "laughter in -45 noise"
+   ]
+  },
+  "seconds": 25.5,
+  "hypothesis": "400 ms evidence window (as W1) on the gain-invariant detector, for short words with a stop closure."
  }
 }
