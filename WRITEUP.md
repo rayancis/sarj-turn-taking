@@ -63,7 +63,9 @@ Every cloud API, pretrained model and dataset you used. Write "none" if there ar
 
 | Kind | Name and version | What for |
 |---|---|---|
-| <API / model / dataset> | <...> | <...> |
+| Pretrained model | Silero VAD v6 (`silero-vad` 6.2.3, MIT), `models/silero_vad.onnx`, run locally with onnxruntime | speech / non-speech decision per frame in `my_system.py` (Phase 3 candidate; pending independent review) |
+| Dataset (evaluation only) | Arabic Speech Commands Dataset, Ghandoura et al. 2021, CC BY 4.0 | human Arabic voices for the extra evaluation scenarios in `data/extra/`; no training |
+| Dataset (evaluation only) | ESC-50, Piczak 2015: only clips individually licensed CC0 or CC-BY | cough, laugh, horn, engine, rain and other non-speech sounds in `data/extra/`; no training |
 
 ## 9. Team
 
