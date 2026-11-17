@@ -20,6 +20,21 @@ Public mode serves the competition recordings only while that record exists, ser
 (SHA-256 as in `data/dev/manifest.json`; a changed file stops the server), and never starts with no playable scenario.
 Previous live version (50 Phase 3 scenarios): branch `demo-rollback/4fe3f8c-phase3-scenarios`.
 
+## Test your own audio
+
+Visitors can **record** (the agent of the selected scenario plays while they speak, so they can interrupt it) or
+**upload** an audio file (the caller side; they choose when it starts). Their audio becomes the caller channel; the
+agent channel and the agent's timing come from the selected original scenario. Both detectors then run on it
+exactly as on the 24 scenarios (tested: uploading a scenario's own caller channel reproduces its decisions exactly).
+There are no labels, so no verdict is shown.
+
+- The page converts the audio to 16 kHz mono 16-bit (what the detectors receive) and sends it once (`POST /api/custom`).
+- The server keeps it **in memory only** (never on disk, never logged), under an unguessable id that is not listed
+  anywhere, and drops it after 15 minutes; at most 20 at once; 20 new ones per minute in total; at most 60 s each.
+- The page asks for microphone permission only when Record is pressed (`Permissions-Policy: microphone=(self)`).
+  Headphones are recommended so the agent's voice does not leak into the microphone. Recording needs HTTPS (the
+  Render site) or localhost, and a current Chrome, Edge, Firefox or Safari (AudioWorklet).
+
 ## What visitors get
 
 A normal HTTPS link that opens in Chrome or Safari, on desktop or phone, with no install, account or sign-in.

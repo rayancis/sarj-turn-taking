@@ -24,7 +24,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sec = (ms) => (ms / 1000).toFixed(2);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const scenMeta = () => S.config.scenarios.find((x) => x.id === S.scenId);
+const scenMeta = () => (S.own && S.own.id === S.scenId ? S.own : S.config.scenarios.find((x) => x.id === S.scenId));
 const collection = (key) => (S.config.collections || []).find((c) => c.key === key) || {};
 
 async function api(path, body) {
@@ -456,14 +456,184 @@ function renderTiming() {
 
 function renderScenarioCard() {
   const s = scenMeta(), col = collection(s.collection);
-  $("scen-title").textContent = `${s.id} · ${s.title}`;
-  $("scen-collection").textContent = col.public ? `${col.title}` : `${col.title || s.collection} · private, team use only`;
-  $("scen-collection").className = `tag ${col.public ? "gt" : "private"}`;
+  const own = s.collection === "custom";
+  $("scen-title").textContent = own ? s.title : `${s.id} · ${s.title}`;
+  $("scen-collection").textContent = own ? "your audio · not stored" : col.public ? `${col.title}` : `${col.title || s.collection} · private, team use only`;
+  $("scen-collection").className = `tag ${own || col.public ? "gt" : "private"}`;
   $("scen-explanation").textContent = s.explanation;
   const cr = S.timeline.credits || [];
   $("scen-credits").textContent = cr.length ? `Audio: ${cr.map((c) => `${c.attribution} (${c.license})`).join(" · ")}` : "";
   const gt = S.timeline.ground_truth;
-  $("scenario-info").innerHTML = `<b>${esc(s.id)}</b> · ${esc(s.category_name)} · ${esc(gt.subtype)} · ${esc(s.acoustic.join(" + "))} · labels: ${esc(gt.label_status)}`;
+  $("scenario-info").innerHTML = own ? "Your own audio: no ground-truth labels, so there is no official verdict. Compare the two detectors' decisions."
+    : `<b>${esc(s.id)}</b> · ${esc(s.category_name)} · ${esc(gt.subtype)} · ${esc(s.acoustic.join(" + "))} · labels: ${esc(gt.label_status)}`;
+  if (!own) {                                       // default start of an uploaded caller file: 1 s into the agent's longest turn
+    const u = [...S.timeline.protocol.agent_utterances].sort((a, b) => (b.end_ms - b.start_ms) - (a.end_ms - a.start_ms))[0];
+    if (u) $("offset").value = (Math.round((u.start_ms + 1000) / 500) * 0.5).toFixed(1);
+  }
+}
+
+// ------------------------------------------------------------------------------------------------ test your own audio
+// The visitor's audio becomes the caller channel; the agent channel and agent timing come from the selected scenario.
+// Audio is converted here to 16 kHz mono 16-bit (what the detectors receive) and sent once; the server keeps it in
+// memory only and drops it within custom.ttl_s.
+const OWN = { recording: null };
+
+function ownStatus(msg, bad) {
+  const el = $("own-status");
+  el.textContent = msg || "";
+  el.className = `own-status${bad ? " bad" : ""}`;
+}
+
+function setOwnBusy(busy) {
+  $("rec").disabled = busy && !OWN.recording;
+  $("upload").disabled = busy;
+  $("upload-label").classList.toggle("disabled", busy);
+}
+
+async function to16kMono(channels, rate) {
+  const n = channels[0].length, mono = new Float32Array(n);
+  for (const ch of channels) for (let i = 0; i < n; i++) mono[i] += ch[i] / channels.length;
+  if (rate === 16000) return mono;
+  const len = Math.max(1, Math.round(n * 16000 / rate));
+  try {                                             // the browser's own resampler (band-limited)
+    const off = new OfflineAudioContext(1, len, 16000);
+    const b = off.createBuffer(1, n, rate);
+    b.getChannelData(0).set(mono);
+    const src = off.createBufferSource();
+    src.buffer = b;
+    src.connect(off.destination);
+    src.start();
+    return (await off.startRendering()).getChannelData(0).slice();
+  } catch (_) {                                     // fallback: average over the source span, then linear interpolation
+    const out = new Float32Array(len), step = rate / 16000, half = Math.max(0, Math.floor(step / 2));
+    for (let i = 0; i < len; i++) {
+      const c = i * step;
+      let acc = 0, cnt = 0;
+      for (let k = Math.floor(c) - half; k <= Math.floor(c) + half; k++) if (k >= 0 && k < n) { acc += mono[k]; cnt++; }
+      out[i] = cnt ? acc / cnt : 0;
+    }
+    return out;
+  }
+}
+
+async function submitOwnAudio(samples16k, offsetMs, how) {
+  const max = (S.config.custom && S.config.custom.max_s) || 60;
+  let x = samples16k;
+  if (x.length > max * 16000) { x = x.subarray(0, max * 16000); how += `, first ${max} s`; }
+  if (x.length < 3200) throw new Error("The audio is too short (less than 0.2 s).");
+  const pcm = new Int16Array(x.length);
+  for (let i = 0; i < x.length; i++) pcm[i] = Math.max(-32768, Math.min(32767, Math.round(x[i] * 32767)));
+  const agent = S.own && S.own.id === S.scenId ? S.own.agent_from : S.scenId;
+  ownStatus("Sending your audio to the detectors…");
+  const r = await fetch(`/api/custom?agent=${encodeURIComponent(agent)}&offset_ms=${Math.round(offsetMs)}`,
+    { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: pcm.buffer });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `${r.status} ${r.statusText}`);
+  const sec1 = (ms) => (ms / 1000).toFixed(1);
+  S.own = { id: data.scenario_id, collection: "custom", agent_from: data.agent_from, acoustic: [], category_name: "Your own audio",
+    title: `Your audio with the agent of ${data.agent_from}`, expected: [],
+    explanation: `${how}: ${sec1(data.caller_ms)} s of your audio as the caller, starting at ${sec1(data.offset_ms)} s; the agent is the ` +
+      `original agent of ${data.agent_from}. No labels: compare what Baseline and P3 decide. Not stored; deleted within ` +
+      `${Math.round(((S.config.custom && S.config.custom.ttl_s) || 900) / 60)} minutes.` };
+  let opt = $("scenario").querySelector("option[data-own]");
+  if (!opt) {
+    const g = document.createElement("optgroup");
+    g.label = "Your audio";
+    opt = document.createElement("option");
+    opt.dataset.own = "1";
+    g.appendChild(opt);
+    $("scenario").prepend(g);
+  }
+  opt.value = S.own.id;
+  opt.textContent = `Your audio · agent of ${data.agent_from}`;
+  $("scenario").value = S.own.id;
+  await loadScenario(S.own.id);
+  ownStatus("Ready: press Play to hear your audio with the agent and see both detectors' decisions.");
+}
+
+async function uploadOwn(file) {
+  if (!file) return;
+  setOwnBusy(true);
+  try {
+    ensureContext();
+    ownStatus(`Reading ${file.name}…`);
+    const decoded = await S.ctx.decodeAudioData(await file.arrayBuffer());
+    const chans = [...Array(decoded.numberOfChannels).keys()].map((c) => decoded.getChannelData(c));
+    const x = await to16kMono(chans, decoded.sampleRate);
+    await submitOwnAudio(x, Number($("offset").value || 0) * 1000, `Uploaded file`);
+  } catch (e) {
+    ownStatus(`Could not use this file: ${e.message}`, true);
+  } finally {
+    $("upload").value = "";
+    setOwnBusy(false);
+  }
+}
+
+async function toggleRecording() {
+  if (OWN.recording) { OWN.recording.stop(); return; }
+  setOwnBusy(true);
+  ensureContext();
+  const resumed = S.ctx.resume();                   // inside the click (iOS)
+  let stream = null;
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("this browser cannot record audio here");
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false } });
+    await resumed;
+    if (S.playing) await pause();
+    stopSources();
+    if (S.ctx.state !== "running") await S.ctx.resume();
+    if (!OWN.moduleLoaded) { await S.ctx.audioWorklet.addModule("recorder.js"); OWN.moduleLoaded = true; }
+    const base = S.own && S.own.id === S.scenId ? null : S.audio;  // the agent we play while recording
+    if (!base) throw new Error("select one of the 24 scenarios first: its agent is played while you record");
+    const ctx = S.ctx, mic = ctx.createMediaStreamSource(stream), node = new AudioWorkletNode(ctx, "pcm-capture");
+    const sink = ctx.createGain();
+    sink.gain.value = 0;
+    mic.connect(node).connect(sink).connect(ctx.destination);
+    const agentSrc = ctx.createBufferSource();
+    agentSrc.buffer = base.buffers.agent;
+    agentSrc.connect(ctx.destination);
+    const parts = [];
+    const finished = new Promise((resolve) => {
+      node.port.onmessage = (e) => { if (e.data.chunk) parts.push(e.data.chunk); if (e.data.done) resolve(); };
+    });
+    const startAt = ctx.currentTime + 0.2;
+    node.port.postMessage({ startAt });
+    agentSrc.start(startAt);
+    const max = (S.config.custom && S.config.custom.max_s) || 60;
+    const track = stream.getAudioTracks()[0];
+    // what you hear lags the agent by the output latency, and the microphone adds its own: remove both
+    const lag = Math.min(0.5, Math.max(0, (ctx.outputLatency || ctx.baseLatency || 0) + ((track.getSettings && track.getSettings().latency) || 0)));
+    let stopped = false;
+    const stop = () => { if (stopped) return; stopped = true; try { agentSrc.stop(); } catch (_) { /* ended */ } node.port.postMessage({ stop: true }); };
+    agentSrc.onended = stop;
+    const timer = setTimeout(stop, Math.min(max, base.buffers.agent.duration + 1) * 1000 + 300);
+    OWN.recording = { stop };
+    $("rec").textContent = "Stop recording";
+    $("rec").classList.add("recording");
+    ownStatus(`Recording… speak as the caller (the agent is playing). Stops by itself at the end of the agent's audio, or press Stop.`);
+    await finished;
+    clearTimeout(timer);
+    mic.disconnect(); node.disconnect(); sink.disconnect();
+    stream.getTracks().forEach((t) => t.stop());
+    stream = null;
+    OWN.recording = null;
+    $("rec").textContent = "Record while the agent speaks";
+    $("rec").classList.remove("recording");
+    const total = parts.reduce((a, p) => a + p.length, 0), all = new Float32Array(total);
+    let o = 0;
+    for (const p of parts) { all.set(p, o); o += p.length; }
+    const drop = Math.round(lag * ctx.sampleRate);
+    const x = await to16kMono([all.subarray(Math.min(drop, all.length))], ctx.sampleRate);
+    await submitOwnAudio(x, 0, "Recorded with the agent");
+  } catch (e) {
+    ownStatus(e && e.name === "NotAllowedError" ? "Microphone permission was refused." : `Recording failed: ${e.message}`, true);
+  } finally {
+    if (stream) stream.getTracks().forEach((t) => t.stop());
+    OWN.recording = null;
+    $("rec").textContent = "Record while the agent speaks";
+    $("rec").classList.remove("recording");
+    setOwnBusy(false);
+  }
 }
 
 function visibleVerdictKey() {
@@ -530,9 +700,9 @@ function renderEvents() {
       `<td><span class="pill ${esc(ev.expected)}">${exp}</span></td>` +
       `<td><span dir="rtl" lang="ar">${esc(words || "–")}</span><br><small>${when}</small></td>` +
       `<td>${cell("baseline")}</td><td>${cell("p3")}</td></tr>`;
-  }).join("");
+  }).join("") || `<tr><td colspan="5" class="pending">No labels for your own audio: compare the two detectors' decisions in the timeline and the log.</td></tr>`;
   const parts = DETS.map((id) => {
-    const p = S.ended && S.det[id].score && S.det[id].score.protected;
+    const p = S.ended && gt.events.length && S.det[id].score && S.det[id].score.protected;
     return p ? `${NAMES[id]}: ${p.spurious_stops.length ? p.spurious_stops.map((x) => `${sec(x)} s`).join(", ") : "none"}` : null;
   }).filter(Boolean);
   $("protected").innerHTML = parts.length ? `Stops outside labelled events (they lower Restraint): ${esc(parts.join(" · "))}.` : "";
@@ -556,7 +726,7 @@ function renderBench() {
     ["Missed genuine interruptions", B.misses, P.misses]];
   $("bench").innerHTML = lines.map(([k, x, y]) => `<tr><td>${k}</td><td class="num">${esc(x)}</td><td class="num"><b>${esc(y)}</b></td></tr>`).join("");
   $("bench-note").textContent = `Source: ${b.source}; ${b.scope}. These numbers come from the 24 original competition development ` +
-    "recordings, not from the 50 additional scenarios on this page. The Phase 3 holdout result is not an official competition score. " +
+    "recordings, not from the additional Phase 3 research scenarios. The Phase 3 holdout result is not an official competition score. " +
     "P3 is experimental, with known limitations: occasional delayed responses and missed quiet interruptions on the additional data.";
 }
 
@@ -734,6 +904,8 @@ async function init() {
   $("play").onclick = () => (S.playing ? pause() : play());
   $("reset").onclick = () => reset();
   $("scenario").onchange = (e) => loadScenario(e.target.value);
+  $("rec").onclick = () => toggleRecording();
+  $("upload").onchange = (e) => uploadOwn(e.target.files[0]);
   msel.onchange = (e) => changeListen(e.target.value);
   window.addEventListener("pagehide", () => DETS.forEach((id) => closeSession(S.det[id].session)));
   document.addEventListener("keydown", (e) => {

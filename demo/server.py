@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import re
@@ -41,11 +42,12 @@ import threading
 import time
 import types
 import uuid
+import wave
 import webbrowser
 from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import numpy as np
 
@@ -54,9 +56,9 @@ KIT = HERE.parent
 if str(KIT) not in sys.path:
     sys.path.insert(0, str(KIT))
 
-from ttbench.dataset import lay_out_stream, load_split  # noqa: E402
+from ttbench.dataset import Scenario, lay_out_stream, load_split  # noqa: E402
 from ttbench.harness import build_stream  # noqa: E402
-from ttbench.protocol import FRAME_MS, FRAME_SAMPLES, validate_client_message  # noqa: E402
+from ttbench.protocol import FRAME_MS, FRAME_SAMPLES, SAMPLE_RATE, validate_client_message  # noqa: E402
 from ttbench.score import DEFAULT_THRESHOLDS, score_scenario  # noqa: E402
 from ttbench.server import _as_messages  # noqa: E402
 
@@ -75,7 +77,7 @@ SECURITY_HEADERS = {
                                "frame-ancestors 'none'",
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "no-referrer",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Permissions-Policy": "camera=(), microphone=(self), geolocation=()",   # microphone: "test your own audio"
 }
 
 # The two detectors of the demo, each pinned to the SHA-256 of its exact file (as recorded in
@@ -143,6 +145,10 @@ class Settings:
     pace: float = 0.0                   # max stream ms fed per wall-clock ms since the session began (0 = unlimited)
     max_body: int = 65536
     max_connections: int = 64
+    custom_max_s: float = 60.0          # "test your own audio": longest caller recording accepted
+    custom_max: int = 20                # own-audio scenarios kept in memory at once (never on disk)
+    custom_ttl_s: float = 900.0         # ... and for at most this long
+    custom_per_min: float = 0.0         # new own-audio scenarios per minute, all visitors together (0 = unlimited)
 
     @classmethod
     def for_public(cls, port: int | None = None, max_sessions: int | None = None) -> "Settings":
@@ -151,7 +157,7 @@ class Settings:
                    collections=("dev",),   # served only once public hosting is authorised (demo/collections.json)
                    max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "16")), evict_idle_s=60.0,
                    session_idle_s=600.0, lookahead_ms=800, poll_ms=100, sessions_per_min=80.0, advance_per_s=20.0,
-                   pace=1.5, max_body=2048, max_connections=64)
+                   pace=1.5, max_body=2048, max_connections=64, custom_per_min=20.0)
 
 
 class Refused(Exception):
@@ -588,6 +594,91 @@ class DemoApp:
         s = self.settings
         self.create_bucket = TokenBucket(s.sessions_per_min / 60, max(5.0, s.sessions_per_min / 3)) \
             if s.sessions_per_min else None
+        # "Test your own audio": scenarios built from a visitor's recording, kept in memory only (never written to
+        # disk or logged), under an unguessable id, and dropped after custom_ttl_s.
+        self.custom: dict[str, tuple] = {}
+        self.custom_bucket = TokenBucket(s.custom_per_min / 60, max(3.0, s.custom_per_min / 4)) \
+            if s.custom_per_min else None
+
+    # --- scenarios: the catalog plus the visitor's own-audio scenarios -----------------------------------------
+    def _purge_custom(self):
+        now = time.monotonic()
+        for cid in [k for k, v in self.custom.items() if now - v[2] > self.settings.custom_ttl_s]:
+            del self.custom[cid]
+
+    def scenario(self, sid: str):
+        with self.lock:
+            self._purge_custom()
+            if sid in self.custom:
+                return self.custom[sid][0]
+        if sid in self.data.scenarios:
+            return self.data.scenarios[sid]
+        raise KeyError(f"unknown scenario {sid!r}")
+
+    def thresholds(self, sid: str) -> dict:
+        return self.data.thresholds(sid) if sid in self.data.scenarios else dict(DEFAULT_THRESHOLDS)
+
+    def timeline(self, sid: str) -> dict:
+        scen = self.scenario(sid)
+        if sid in self.data.scenarios:
+            return self.data.timeline(sid)
+        lab = scen.label
+        return {"id": sid, "duration_ms": scen.duration_ms, "collection": "custom", "credits": [],
+                "custom": lab["custom"],
+                "protocol": {"context": {"use_case": lab["context"]["use_case"], "language": "ar"},
+                             "agent_utterances": [{k: u[k] for k in ("utt_id", "start_ms", "end_ms", "text")}
+                                                  for u in lab["agent_utterances"]]},
+                "ground_truth": {"category": "", "subtype": "your own audio", "label_status": "none", "events": [],
+                                 "user_segments": [], "thresholds": self.thresholds(sid)}}
+
+    def audio_bytes(self, sid: str) -> bytes:
+        self.scenario(sid)
+        with self.lock:
+            if sid in self.custom:
+                return self.custom[sid][1]
+        return self.data.audio_path(sid).read_bytes()
+
+    def create_custom(self, agent_sid: str, offset_ms: float, pcm: bytes) -> dict:
+        """A scenario whose agent channel and agent timing come from a catalog scenario and whose caller channel is
+        the visitor's audio (16 kHz mono int16 little-endian), starting offset_ms into the call."""
+        s = self.settings
+        if agent_sid not in self.data.scenarios:
+            raise KeyError(f"unknown scenario {agent_sid!r}")
+        if len(pcm) % 2 or len(pcm) < 2 * FRAME_SAMPLES * 10:
+            raise ValueError("expected at least 0.2 s of 16-bit mono audio")
+        if len(pcm) > s.custom_max_s * SAMPLE_RATE * 2:
+            raise ValueError(f"audio longer than {s.custom_max_s:.0f} s")
+        if not np.isfinite(offset_ms):
+            raise ValueError("offset_ms must be finite")
+        if self.custom_bucket and not self.custom_bucket.take():
+            raise Refused(429, "Many people are testing their own audio right now. Please try again in a minute.")
+        base = self.data.scenarios[agent_sid]
+        caller = np.frombuffer(pcm, dtype="<i2")
+        off = int(min(max(0.0, offset_ms), base.duration_ms)) * SAMPLE_RATE // 1000
+        n = max(len(base.audio), off + len(caller))
+        n += (-n) % FRAME_SAMPLES
+        audio = np.zeros((n, 2), dtype=np.int16)
+        audio[:len(base.audio), 0] = base.audio[:, 0]          # the agent: original channel, original timing
+        audio[off:off + len(caller), 1] = caller              # the caller: the visitor's audio
+        cid = "U" + uuid.uuid4().hex
+        info = {"agent_from": agent_sid, "offset_ms": off * 1000 // SAMPLE_RATE,
+                "caller_ms": len(caller) * 1000 // SAMPLE_RATE}
+        label = {**base.label, "scenario_id": cid, "subtype": "custom", "events": [], "user_segments": [],
+                 "background_events": [], "custom": info,
+                 "audio": {**base.label["audio"], "file": None, "duration_ms": n * 1000 // SAMPLE_RATE}}
+        scen = Scenario(cid, label, audio)
+        buf = io.BytesIO()
+        with wave.open(buf, "wb") as w:                        # in memory only
+            w.setnchannels(2)
+            w.setsampwidth(2)
+            w.setframerate(SAMPLE_RATE)
+            w.writeframes(audio.astype("<i2").tobytes())
+        with self.lock:
+            self._purge_custom()
+            while len(self.custom) >= s.custom_max:
+                del self.custom[min(self.custom, key=lambda k: self.custom[k][2])]
+            self.custom[cid] = (scen, buf.getvalue(), time.monotonic())
+        return {"scenario_id": cid, "duration_ms": scen.duration_ms, **info}
 
     def config(self) -> dict:
         s = self.settings
@@ -599,7 +690,8 @@ class DemoApp:
                 "collections": [c.info(public=s.public) for c in self.data.collections],
                 "attribution": credits,
                 "models": [m.describe(public=s.public) for m in self.models.values()],
-                "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark()}
+                "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark(),
+                "custom": {"max_s": s.custom_max_s, "ttl_s": s.custom_ttl_s}}
 
     @staticmethod
     def public_benchmark() -> dict | None:
@@ -610,14 +702,12 @@ class DemoApp:
 
     def new_session(self, scenario_id: str, model_id: str) -> dict:
         s = self.settings
-        if scenario_id not in self.data.scenarios:
-            raise KeyError(f"unknown scenario {scenario_id!r}")
+        scen = self.scenario(scenario_id)
         model = self.models.get(model_id)
         if model is None or not model.available:
             raise KeyError(f"model {model_id!r} is not available")
         if self.create_bucket and not self.create_bucket.take():
             raise Refused(429, "Many people are starting the demo right now. Please try again in a few seconds.")
-        scen = self.data.scenarios[scenario_id]
         now = time.monotonic()
         with self.lock:
             for sid in [k for k, e in self.sessions.items() if now - e.last_seen > s.session_idle_s]:
@@ -631,7 +721,7 @@ class DemoApp:
             sess = DetectorSession(model, scen)
             sid = uuid.uuid4().hex
             bucket = TokenBucket(s.advance_per_s, 2 * s.advance_per_s) if s.advance_per_s else None
-            self.sessions[sid] = Entry(sess, Scorer(scen.label, self.data.thresholds(scenario_id)), now, now, bucket)
+            self.sessions[sid] = Entry(sess, Scorer(scen.label, self.thresholds(scenario_id)), now, now, bucket)
         return {"session_id": sid, "model": model.describe(public=s.public), "scenario_id": scenario_id,
                 "stream_end_ms": sess.n_frames * FRAME_MS}
 
@@ -714,14 +804,18 @@ def make_handler(app: DemoApp):
                 return self._json(app.config())
             m = re.fullmatch(r"/api/scenario/([A-Za-z0-9_-]{1,64})", path)
             if m:
-                if m.group(1) not in app.data.scenarios:
+                try:
+                    return self._json(app.timeline(m.group(1)))
+                except KeyError:
                     return self._error(404, "unknown scenario")
-                return self._json(app.data.timeline(m.group(1)))
             m = re.fullmatch(r"/api/audio/([A-Za-z0-9_-]{1,64})\.wav", path)
             if m:
-                if m.group(1) not in app.data.scenarios:
+                try:
+                    body = app.audio_bytes(m.group(1))
+                except KeyError:
                     return self._error(404, "unknown scenario")
-                return self._send(200, app.data.audio_path(m.group(1)).read_bytes(), "audio/wav", audio_cache)
+                own = m.group(1) not in app.data.scenarios
+                return self._send(200, body, "audio/wav", "no-store" if own else audio_cache)
             name = "index.html" if path == "/" else path.lstrip("/")
             m = re.fullmatch(r"[a-z_]+\.(html|js|css)", name)
             if m and (STATIC / name).is_file():
@@ -729,9 +823,19 @@ def make_handler(app: DemoApp):
             return self._error(404, "not found")
 
         def do_POST(self):  # noqa: N802
-            path = urlparse(self.path).path
+            url = urlparse(self.path)
+            path = url.path
             try:
                 length = int(self.headers.get("Content-Length") or 0)
+                if path == "/api/custom":                       # raw 16 kHz mono int16 audio, kept in memory only
+                    limit = int(app.settings.custom_max_s * SAMPLE_RATE * 2)
+                    if length < 0 or length > limit:
+                        self.close_connection = True
+                        return self._error(413, f"audio longer than {app.settings.custom_max_s:.0f} s")
+                    q = parse_qs(url.query)
+                    pcm = self.rfile.read(length)
+                    return self._json(app.create_custom(q.get("agent", [""])[0],
+                                                        float(q.get("offset_ms", ["0"])[0]), pcm))
                 if length < 0 or length > app.settings.max_body:
                     self.close_connection = True               # the unread body must not become the next request
                     return self._error(413, "request too large")

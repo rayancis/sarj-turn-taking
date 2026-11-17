@@ -13,8 +13,37 @@ const results = [];
 const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? `  (${detail})` : ""}`); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Test audio for "test your own audio": the caller channel of GI-D01, as a 48 kHz stereo upload and a 16 kHz
+// mono fake microphone (Chromium plays it as the microphone).
+const fs = require("fs"), os = require("os"), path = require("path");
+function wavFile(samples, rate, channels) {
+  const data = Buffer.alloc(samples.length * 2 * channels);
+  samples.forEach((v, i) => { for (let c = 0; c < channels; c++) data.writeInt16LE(v, (i * channels + c) * 2); });
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0); h.writeUInt32LE(36 + data.length, 4); h.write("WAVEfmt ", 8); h.writeUInt32LE(16, 16);
+  h.writeUInt16LE(1, 20); h.writeUInt16LE(channels, 22); h.writeUInt32LE(rate, 24); h.writeUInt32LE(rate * 2 * channels, 28);
+  h.writeUInt16LE(2 * channels, 32); h.writeUInt16LE(16, 34); h.write("data", 36); h.writeUInt32LE(data.length, 40);
+  return Buffer.concat([h, data]);
+}
+async function testAudio() {
+  const buf = Buffer.from(await (await fetch(new globalThis.URL("api/audio/GI-D01.wav", URL))).arrayBuffer());
+  let o = 12, dataAt = -1, size = 0;
+  while (o + 8 <= buf.length) { const id = buf.toString("ascii", o, o + 4), n = buf.readUInt32LE(o + 4); if (id === "data") { dataAt = o + 8; size = n; break; } o += 8 + n + (n & 1); }
+  const caller = [];
+  for (let i = dataAt; i + 3 < dataAt + size; i += 4) caller.push(buf.readInt16LE(i + 2));
+  const up = [];
+  for (let i = 0; i < caller.length - 1; i++) for (let k = 0; k < 3; k++) up.push(Math.round(caller[i] + (caller[i + 1] - caller[i]) * k / 3));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sarj-own-"));
+  const upload = path.join(dir, "caller-48k-stereo.wav"), mic = path.join(dir, "caller-mic.wav");
+  fs.writeFileSync(upload, wavFile(up, 48000, 2));
+  fs.writeFileSync(mic, wavFile(caller, 16000, 1));
+  return { upload, mic };
+}
+
 (async () => {
-  const browser = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] });
+  const own = await testAudio();
+  const browser = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required", "--use-fake-ui-for-media-stream",
+    "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${own.mic}`] });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
   if (LATENCY) {
     const cdp = await page.context().newCDPSession(page);
@@ -125,7 +154,33 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   check("genuine interruption detected by P3 (official scorer)", !!g && g.events.p3[0].outcome === "yield" && /P3 detected it/.test(g.headline),
     g ? `"${g.headline}"` : "not finished");
 
-  // 4. Phone-sized layout.
+  // 4. Test your own audio: upload (48 kHz stereo, resampled in the page) and record (fake microphone).
+  await page.fill("#offset", "0");
+  await page.setInputFiles("#upload", own.upload);
+  const up = await waitFor((x) => x.scenario && x.scenario.startsWith("U") && ready(x), 30000, 200);
+  check("upload creates a private own-audio scenario", !!up && /^U[0-9a-f]{32}$/.test(up.scenario),
+    up ? `${up.scenario.slice(0, 9)}…, status: ${await page.textContent("#own-status")}` : await page.textContent("#own-status"));
+  const upEnd = up && await playToEnd();
+  const upStop = upEnd && upEnd.decisions.p3.find((d) => d.decision === "STOP");
+  check("own upload: both detectors decide on it; P3 stops for the interruption (≈16.88 s as on GI-D01)",
+    !!upStop && Math.abs(upStop.stream_ms - 16880) <= 200 && upEnd.decisions.baseline.some((d) => d.decision === "STOP"),
+    upEnd ? `P3 ${JSON.stringify(upEnd.decisions.p3.map((d) => d.stream_ms))}, Baseline ${JSON.stringify(upEnd.decisions.baseline.map((d) => d.stream_ms))}` : "no result");
+  check("own audio: no labels, no verdict", !!upEnd && upEnd.events.p3.length === 0 && /No labels/.test(await page.textContent("#events")));
+  await page.screenshot({ path: `${SHOTS}/demo-own-upload.png`, fullPage: true });
+
+  await select("GI-D01");
+  await page.click("#rec");
+  const recBusy = await page.waitForFunction(() => document.getElementById("rec").textContent === "Stop recording", null,
+    { timeout: 15000 }).then(() => true, () => false);
+  check("recording starts (microphone + agent playback)", recBusy, await page.textContent("#own-status"));
+  const rec = await waitFor((x) => x.scenario && x.scenario.startsWith("U") && x.scenario !== (up && up.scenario) && ready(x), 60000, 300);
+  check("recording creates an own-audio scenario", !!rec, rec ? await page.textContent("#own-status") : await page.textContent("#own-status"));
+  const recEnd = rec && await playToEnd();
+  const recStop = recEnd && recEnd.decisions.p3.find((d) => d.decision === "STOP");
+  check("own recording: P3 stops during the agent's turn", !!recStop && recStop.utt_id === "A1",
+    recEnd ? `P3 ${JSON.stringify(recEnd.decisions.p3.map((d) => [d.stream_ms, d.utt_id]))}, Baseline ${JSON.stringify(recEnd.decisions.baseline.map((d) => d.stream_ms))}` : "no result");
+
+  // 5. Phone-sized layout.
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
   await phone.goto(URL);
   await phone.waitForFunction(() => window.sarjDemo && window.sarjDemo.snapshot().sessions.p3, null, { timeout: 30000 });

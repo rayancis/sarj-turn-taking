@@ -48,6 +48,21 @@
     <p id="scen-credits" class="note"></p>
   </section>
 
+  <section class="panel own" id="own-panel">
+    <div class="panel-head"><h2>Test your own audio</h2><span class="tag gt">processed in memory · not stored</span></div>
+    <p class="note own-help">Your audio becomes the <b>caller</b>; the <b>agent</b> is the original agent of the scenario selected above.
+      Both detectors then run on it, exactly as on the 24 scenarios. <b>Record</b> plays the agent while you speak, so you can
+      interrupt it naturally (headphones help: the agent's voice should not leak into your microphone). <b>Upload</b> takes a
+      recording of the caller side only. Your audio is used only for this test, held in the server's memory and deleted within
+      15 minutes; it is never saved to disk or logged. There are no labels for your own audio.</p>
+    <div class="own-row">
+      <button id="rec">Record while the agent speaks</button>
+      <label class="file-btn" id="upload-label">Upload audio file<input type="file" id="upload" accept="audio/*,.wav,.mp3,.m4a,.ogg,.webm"></label>
+      <label class="offset">Uploaded audio starts at <input type="number" id="offset" min="0" step="0.5" value="0"> s</label>
+    </div>
+    <div id="own-status" class="own-status" aria-live="polite"></div>
+  </section>
+
   <section class="panel status-panel">
     <div class="duel">
       <div class="det-card" id="card-baseline"><div class="det-name">Baseline</div><div class="det-status" id="st-baseline">–</div></div>
