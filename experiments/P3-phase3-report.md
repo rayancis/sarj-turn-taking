@@ -5,7 +5,7 @@
 | Branch | `claude/phase3-research` (created from `a15db7c`; not merged; `main`, `feat/demo-ui` and the demo untouched) |
 | Reference | E01b, `my_system.py` at `e566234` |
 | Candidate | **P3** = `my_system.py` at `6b4eece` (pilot experiment N1, simplified) |
-| Status | **candidate for independent review; not self-approved**. DRAFT: cells marked `RT_*` / `XB_*` are real-time and baseline numbers still being measured; they are filled in by the next commit |
+| Status | **candidate for independent review; not self-approved** |
 | Kit files changed | none (`ttbench/`, `schema/`, `data/dev/`, scoring: untouched) |
 
 All numbers below are development measurements on synthetic or re-mixed audio. None is a hidden-set result.
@@ -141,19 +141,21 @@ Decisions made by judgement rather than by the rule (disclosed):
 
 ## 6. Results
 
-Real-time rows: official harness, speed 1.0, all 24 dev calls, same container, nothing else running.
+Real-time rows: official harness, speed 1.0, all 24 dev calls, same container, the two new runs one after the other
+with no other load (only this report was being edited). Both new runs completed all 29,651 frames, and each made
+exactly the decisions of its offline replay, on the same frames (P3: 33, Silero only: 35).
 Offline rows: deterministic replay, decision stamped at its frame time (no network or processing time).
 
 | | Baseline `bd2a3f0` | E01b `e566234` | Caller-relative loudness, no model (pilot A2) | Silero only (pilot B1) | **P3 `6b4eece`** (pilot N1) |
 |---|---|---|---|---|---|
-| **dev Core, real time** | 41.04 | 54.72 | not run (not a finalist) | RT_V_CORE | **RT_P_CORE** |
-| dev R / S, real time | 0.806 / 0.219 | 1.000 / 0.331 | - | RT_V_RS | RT_P_RS |
-| dev false stops / misses, real time | 25 / 2 | 16 / 0 | - | RT_V_FSM | RT_P_FSM |
+| **dev Core, real time** | 41.04 | 54.72 | not run (not a finalist) | 60.69 | **73.41** |
+| dev R / S, real time | 0.806 / 0.219 | 1.000 / 0.331 | - | 0.993 / 0.393 | 0.993 / 0.546 |
+| dev false stops / misses, real time | 25 / 2 | 16 / 0 | - | 13 / 0 | 10 / 0 |
 | dev Core, offline | 41.04 | 54.72 | 71.43 | 60.70 | 73.42 |
 | dev R / S, offline | 0.806 / 0.219 | 1.000 / 0.331 | 1.000 / 0.518 | 0.994 / 0.393 | 0.994 / 0.546 |
 | dev false stops / misses, offline | 25 / 2 | 16 / 0 | 13 / 0 | 13 / 0 | 10 / 0 |
-| xdev Core (R / S), offline | XB_CORE | 62.15 (0.889 / 0.478) | 78.50 (0.889 / 0.703) | 88.07 (0.944 / 0.825) | 95.83 (0.994 / 0.925) |
-| xdev false stops / misses | XB_FSM | 15 / 2 | 8 / 2 | 7 / 1 | 3 / 0 |
+| xdev Core (R / S), offline | 59.63 (0.889 / 0.449) | 62.15 (0.889 / 0.478) | 78.50 (0.889 / 0.703) | 88.07 (0.944 / 0.825) | 95.83 (0.994 / 0.925) |
+| xdev false stops / misses | 18 / 2 | 15 / 2 | 8 / 2 | 7 / 1 | 3 / 0 |
 | **holdout Core (R / S), scored once** | not scored | 58.62 (0.944 / 0.425) | 72.53 (0.889 / 0.613) | 73.02 (1.000 / 0.575) | **82.03 (0.944 / 0.725)** |
 | holdout false stops / misses | - | 16 / 1 | 11 / 2 | 12 / 0 | 9 / **1** |
 | misses at -12 dB: dev / xdev / holdout | - | 1 / 5 / 3 | 1 / 5 / 3 | 1 / 4 / 3 | **0 / 0 / 2** |
@@ -161,11 +163,11 @@ Offline rows: deterministic replay, decision stamped at its frame time (no netwo
 | generated matrix (61 cases) | 29 | 48 | 48 | 49 | 49 |
 | `on_frame` mean / p99 (offline) | ~6 us / - | 80 / 230 us | 107 / 286 us | 151 / 490 us | 152 / 405 us |
 | `on_frame` share of a 20 ms frame (p99) | - | 1.2 % | 1.4 % | 2.5 % | 2.0 % |
-| decision arrival after its frame was sent (real time) | 0.9-2.6 ms | 1.1-3.4 ms | - | RT_V_ARR | RT_P_ARR |
-| STOP time after the caller's onset, 7 dev interruptions (real time) | - | RT_E_ONSET | - | RT_V_ONSET | RT_P_ONSET |
-| scorer latency after `evident`: median / p90 | 0 / 521 ms | 0 / 0 ms | - | RT_V_LAT | RT_P_LAT |
-| max harness send lag / RTT median | 1.87 / 0.61 ms | 2.04 / 0.98 ms | - | RT_V_LAG | RT_P_LAG |
-| protocol errors | 0 | 0 | 0 (offline) | RT_V_ERR | RT_P_ERR |
+| decision arrival after its frame was sent (real time) | 0.9-2.6 ms | 1.1-3.4 ms | - | 0.9-2.3 ms | 0.9-3.1 ms |
+| STOP time after the caller's onset, 7 dev interruptions (real time) | - | 202-272 ms | - | 222-332 ms for six; 1072 ms for DV-D03 | 243-342 ms for six; 1072 ms for DV-D03 |
+| scorer latency after `evident`: median / p90 | 0 / 521 ms | 0 / 0 ms | - | 0 / 352 ms | 0 / 352 ms |
+| max harness send lag / RTT median | 1.87 / 0.61 ms | 2.04 / 0.98 ms | - | 0.02 / 0.95 ms | 0.01 / 0.88 ms |
+| protocol errors | 0 | 0 | 0 (offline) | 0 | 0 |
 
 Pilot A2 and B1 numbers were produced by the pilot code at `b27da4c`; B1 is reproduced exactly by the current file
 with `CALLER_REF=False, EVIDENCE_WINDOW_MS=300` (`experiments/phase3-final/`), A2 is not (its reference-learning rule
@@ -220,8 +222,11 @@ was replaced).
 
 - A soft, slow multi-word interruption can be missed (holdout GI-H54) or delayed (xdev GI-D54, 0.90). This is the
   direct price of the soft tier: such speech must fill 1000 ms of 1400 ms.
-- dev DV-D03 is answered about 100 ms later (credit 0.975 offline): the VAD needs longer than E01b's level test on
-  that onset.
+- **Slower reaction.** In the real-time runs the STOP comes 243-342 ms after the caller's onset for six of the seven
+  dev interruptions (E01b: 202-272 ms), and **1072 ms after onset for DV-D03** (E01b: 212 ms): Silero does not call
+  the opening «اسمع اسمع» speech for about 850 ms. The scorer still gives 0.974 because that label's `evident` is
+  720 ms after onset; with an earlier `evident` this would be a large loss. It is the VAD, not the caller tiers
+  ("Silero only" shows the same 1072 ms). The scorer's p90 latency rises from 0 to 352 ms.
 - Generated harmonic "voices" are no longer speech (five cold-start and three low-SNR cases of the 61-case matrix).
   They are not real voices; real speech from the first frame of a call was not tested and should be.
 
@@ -263,6 +268,9 @@ acknowledgements did not transfer to new speakers, and (c) the result is sensiti
 keeps P3 as the candidate because it is better than the alternatives on every set measured; the conservative fallback
 with zero misses on all three sets is "Silero only" (`CALLER_REF=False, EVIDENCE_WINDOW_MS=300`).
 
+Reaction time is the second thing to review: P3 is 20-140 ms slower than E01b on six dev interruptions and 860 ms
+slower on one (section 7). On dev this costs about 0.15 Core; on labels with an earlier `evident` it would cost more.
+
 Do not merge and do not update the demo before an independent review.
 
 ### What to investigate next (in order)
@@ -277,7 +285,9 @@ Do not merge and do not update the demo before an independent review.
 4. **Echo**: a real acoustic echo canceller (or an echo path established only while the caller is known to be
    silent), tested for double-talk safety first.
 5. **Cold start**: the first agent utterance has no caller reference (dev BG-D01 and NV-D03 stray stops).
-6. A real-time soak of 30 minutes and a run on the team's Windows laptop (onnxruntime install, CPU load).
+6. **VAD onset delay** (DV-D03): run the acoustic front end and the VAD in parallel, so that a loud, voiced onset at
+   the caller's own level does not have to wait for the model.
+7. A real-time soak of 30 minutes and a run on the team's Windows laptop (onnxruntime install, CPU load).
 
 ## Limitations
 
