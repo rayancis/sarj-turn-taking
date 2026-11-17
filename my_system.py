@@ -1,32 +1,37 @@
-"""Turn-taking system, experiment 1: adaptive noise floor + relative speech evidence for STOP.
+"""Turn-taking system, Phase 3 candidate: neural speech frames + caller-relative loudness for STOP.
 
-    python -m ttbench.play --calls all         # official real-time run on all 24 dev calls
+    python -m ttbench.play --calls all             # official real-time run on all 24 dev calls
     python tools/replay.py --system my_system.py   # fast offline replay (diagnostic only)
 
-Hypothesis. The kit's loudness baseline treats any caller-channel energy above a fixed -42 dBFS as speech, so steady
-background noise above that level (car, street) makes the agent stop about 200 ms into every utterance. Judging
-caller sound relative to an estimate of the noise floor, instead of only against a fixed level, should remove
-those stops without making the system slower to react to a real caller.
+What changed from E01b, and why (experiments/P3-phase3-report.md has the measurements):
+  E01b decides "speech" from level above a noise floor plus periodicity. Its remaining false stops were sounds
+  that are loud and periodic but are not the caller taking the floor: non-speech (horn, cough, laughter, noise
+  onsets), other people (TV, a voice across the room, the agent's own echo) and short soft acknowledgements.
 
 STOP rule, per 20 ms caller frame (only audio already received is used; no labels, ids or transcripts):
-  1. band level: energy in 300-3400 Hz (the telephone speech band; also ignores low rumble and hum), in dB.
-  2. noise floor: the 10th percentile of the band levels of the last 150 *aperiodic* frames of this call (3 s when
-     nothing periodic is heard). Periodic (voiced) frames never enter it, so a voice cannot become the "noise",
-     even when it is there from the first frame. The floor is trusted once it holds 5 aperiodic frames.
-     Periodicity: normalised autocorrelation of the last 40 ms (300-3400 Hz, magnitude compressed to the power
-     0.67), peak over 75-500 Hz pitch periods, voiced when >= 0.45.
-  3. speech frame, with hysteresis: becomes active when the band level is >= 10 dB above the floor, stays active
-     while it is >= 6 dB above it. Every speech frame must also be louder than the baseline's absolute -42 dBFS,
-     so in quiet rooms the system is never more sensitive than the baseline was. Until the floor is trusted, a
-     frame is speech only if it is periodic and louder than -42 dBFS (the baseline rule, voiced frames only).
-  4. bounded evidence: STOP once the last 300 ms of agent speech hold at least 200 ms of caller speech frames
-     (the baseline's amount of evidence, at >= 2/3 occupancy). Dips between syllables (up to 100 ms) are
-     tolerated, but sparse bursts cannot add up over time. Of those speech frames, at least 40 ms (2 frames)
-     must be periodic: a level change without any voicing (a noise step, a cough, a door) can never stop the
-     agent, however loud. Aperiodic noise practically never reaches the voicing threshold, while about half of
-     natural speech frames do, so 2 voiced frames out of >= 10 is a low-risk requirement for real speech. One STOP per agent utterance. No RESUME.
-State: the noise history is cleared at each scenario_start (a new call is a new acoustic environment); the
-per-utterance counter and stop flag are cleared at each agent_utterance_start.
+  1. speech frame: a pretrained neural VAD (Silero VAD v6, MIT, 2.3 MB ONNX, CPU) says speech (probability >= 0.5).
+     It replaces E01b's level + periodicity test: it rejects non-speech and reverberant far-field sound, and it
+     bridges stop closures inside words.
+  2. caller reference: the 90th percentile of the 300-3400 Hz band level of the speech frames heard while the
+     agent was silent (the caller's own turns, last 15 s). It is trusted after 10 such frames (200 ms).
+  3. loudness is judged against that reference, not against a fixed level, so microphone gain does not matter:
+       - a speech frame must be within 20 dB of the reference (before the caller has spoken: the kit baseline's
+         absolute -42 dBFS);
+       - the audio given to the VAD is scaled so that the reference sits at -22 dB (limited to -12..+24 dB), so a
+         quiet line looks like a normal one to the model.
+  4. evidence, counted over agent-talking frames only:
+       fast  STOP when the last 400 ms hold >= 200 ms of speech frames whose level (90th percentile) is no more
+             than 6 dB below the reference: the caller is speaking as loudly as they normally do.
+       soft  quieter speech (an acknowledgement, someone else in the room, an echo) must instead fill 1000 ms of
+             the last 1400 ms. A short "إيه" never does; a soft but sustained interruption still stops the agent,
+             about a second later.
+     Until the reference is trusted only the fast rule applies (with the absolute gate). One STOP per agent
+     utterance. No RESUME.
+State: the reference and the VAD's recurrent state are cleared at each scenario_start; the evidence window and the
+stop flag at each agent_utterance_start.
+
+VAD = None gives E01b's acoustic front end (noise floor + periodicity) under the same evidence rules; with
+CALLER_REF = False and EVIDENCE_WINDOW_MS = 300 as well it is E01b decision for decision (tests/test_my_system.py).
 
 The end-of-turn path (TAKE_TURN, a separate leaderboard) is the kit baseline, unchanged.
 """
@@ -41,48 +46,36 @@ TEAM = "my-team"            # placeholder until the official team name is known
 SAMPLE_RATE = 16000
 FRAME_MS = 20               # each on_frame call covers 20 ms of audio
 FRAME_SAMPLES = 320
-LOUD_DB = -42               # baseline absolute level: still a minimum for speech, and the TAKE_TURN rule
+LOUD_DB = -42               # baseline absolute level: the TAKE_TURN rule, and the STOP gate before a reference exists
 STOP_AFTER_MS = 200         # speech for this long while the agent talks -> STOP (as in the baseline) ...
-EVIDENCE_WINDOW_MS = 300    # ... counted within this many most recent ms of agent speech
-VOICED_EVIDENCE_MS = 40     # ... of which at least this much (2 frames) must be periodic
+EVIDENCE_WINDOW_MS = 400    # ... counted within this many most recent ms of agent speech
+VOICED_EVIDENCE_MS = 40     # acoustic front end only: this much of the evidence must be periodic
 TAKE_TURN_AFTER_MS = 700    # quiet for this long after the caller spoke -> TAKE_TURN (baseline)
 
+VAD = "silero"              # "silero": neural speech frames (neural_vad.py); None: E01b's acoustic front end
+VAD_THRESHOLD = 0.5         # speech probability at or above this = speech frame
+VAD_NORMALIZE_DB = -22.0    # the VAD's input is scaled so the caller's reference sits at this band level; None = off
+VAD_NORMALIZE_RANGE_DB = (-12.0, 24.0)   # limits of that scaling
+
+CALLER_REF = True           # judge loudness against the caller's own earlier speech (gain-invariant)
+REF_WINDOW_MS = 15000       # caller-turn speech frames remembered for the reference
+REF_MIN_FRAMES = 10         # ... needed before the reference is trusted
+REF_PERCENTILE = 90
+REL_GATE_DB = 20.0          # once the reference is trusted, a speech frame must be within this many dB of it
+ABS_GATE_DB = LOUD_DB       # until then (and when REL_GATE_DB is None) it must be louder than this absolute level
+SOFT_DB = 6.0               # evidence more than this below the reference is "soft": not a fast STOP
+SOFT_STOP_MS = 1000         # ... soft speech must instead last this long ...
+SOFT_WINDOW_MS = 1400       # ... within this window
+
 BAND_HZ = (300, 3400)       # telephone speech band
+MIN_LEVEL_DB = -120.0       # clamp for digital silence (log of zero)
+
+# Acoustic front end (VAD = None), as in E01b
 FLOOR_WINDOW_MS = 3000      # noise-floor memory
 FLOOR_PERCENTILE = 10       # low percentile of recent band levels = noise floor
 FLOOR_MIN_FRAMES = 5        # need 100 ms of history before any frame can count as speech
 SPEECH_ON_DB = 10.0         # band level this far above the floor starts a speech run
 SPEECH_OFF_DB = 6.0         # ... and this far above keeps it going (hysteresis)
-MIN_LEVEL_DB = -120.0       # clamp for digital silence (log of zero)
-
-# --- Phase 3 options. With these defaults the detector is E01b, decision for decision. ---------------------
-ABS_GATE_DB = LOUD_DB       # a speech frame must be louder than this absolute level; None = no absolute gate
-VAD = None                  # None, "silero" or "ten": pretrained neural VAD (neural_vad.py)
-VAD_MODE = "replace"        # "replace": a frame is speech when the VAD says so (no level/periodicity test);
-                            # "confirm": E01b speech frames, and a STOP also needs VAD_CONFIRM_MS of VAD speech
-VAD_THRESHOLD = 0.5
-VAD_CONFIRM_MS = 100
-VAD_NORMALIZE_DB = None     # scale the VAD's input so the caller's reference level sits at this band level (None = off)
-VAD_NORMALIZE_RANGE_DB = (-12.0, 24.0)   # limits of that scaling
-ECHO_GATE = False           # ignore caller frames that are explained by the agent's own delayed voice
-ECHO_MAX_LAG_MS = 500       # longest echo delay searched
-ECHO_HISTORY = 50           # agent-active frames kept per lag (1 s)
-ECHO_MIN_FRAMES = 15        # ... of which this many are needed before a lag can be trusted
-ECHO_SPREAD_DB = 3.0        # caller level follows the delayed agent level within this robust spread = echo
-ECHO_MARGIN_DB = 6.0        # a frame this far above the predicted echo is not explained by it
-AGENT_ACTIVE_DB = -50.0     # agent frames above this band level can produce an echo
-CALLER_REF = False          # judge loudness against the caller's own earlier speech (gain-invariant)
-REF_WINDOW_MS = 15000       # caller-turn speech frames remembered for the reference
-REF_MIN_FRAMES = 10         # ... needed before the reference is trusted
-REF_PERCENTILE = 90
-SOFT_DB = 6.0               # evidence more than this below the caller's reference is "soft": not a fast STOP
-SOFT_STOP_MS = 1000         # ... soft speech must instead last this long ...
-SOFT_WINDOW_MS = 1400       # ... within this window
-BACKGROUND_DB = None        # evidence more than this below the reference never stops (None = no such tier)
-REF_UNGATED = False         # learn the reference from speech frames before any loudness gate (needed at low gain)
-REL_GATE_DB = None          # once the reference is trusted, a speech frame must be within this many dB of it; this
-                            # replaces the absolute gate, so the behaviour no longer depends on microphone gain
-
 VOICING_THRESHOLD = 0.45    # periodicity at or above this = voiced frame
 PITCH_HZ = (75, 500)        # pitch periods searched
 VOICING_EXPONENT = 0.67     # spectral magnitude compression before autocorrelation (generalised autocorrelation)
@@ -145,50 +138,6 @@ class NoiseFloor:
         self.levels.append(level_db)
 
 
-class EchoTracker:
-    """Is the caller frame just the agent's own voice coming back (speakerphone, line echo)?
-
-    An echo's level follows the agent's level a fixed delay earlier, minus a fixed loss. For every lag up to
-    ECHO_MAX_LAG_MS it keeps the last ECHO_HISTORY differences (caller level - agent level at that lag), taken while
-    the agent frame was active. If the differences at the best lag stay within a small robust spread (median
-    absolute deviation), an echo path exists with that delay and loss; a caller frame is then "explained" when it
-    is no louder than the predicted echo plus a margin. A caller talking over the echo is louder than the
-    prediction, so it is not explained. Only levels are compared, so the room's response and phase do not matter.
-    """
-
-    def __init__(self):
-        self.lags = ECHO_MAX_LAG_MS // FRAME_MS + 1
-        self.reset()
-
-    def reset(self):
-        self.agent = deque([MIN_LEVEL_DB] * (self.lags + 1), maxlen=self.lags + 1)   # newest last
-        self.diff = np.full((self.lags, ECHO_HISTORY), np.nan)
-        self.pos = np.zeros(self.lags, dtype=int)
-        self.count = np.zeros(self.lags, dtype=int)
-        self.lag, self.loss = None, 0.0
-
-    def explained(self, agent_level: float, caller_level: float) -> bool:
-        self.agent.append(agent_level)
-        past = np.fromiter(self.agent, float)[::-1][:self.lags]       # past[d] = agent level d frames ago
-        active = past > AGENT_ACTIVE_DB
-        idx = np.nonzero(active)[0]
-        self.diff[idx, self.pos[idx]] = caller_level - past[idx]
-        self.pos[idx] = (self.pos[idx] + 1) % ECHO_HISTORY
-        self.count[idx] += 1
-        ready = self.count >= ECHO_MIN_FRAMES
-        self.lag = None
-        if ready.any():
-            med = np.nanmedian(self.diff[ready], axis=1)
-            spread = 1.4826 * np.nanmedian(np.abs(self.diff[ready] - med[:, None]), axis=1)
-            best = int(np.argmin(spread))
-            if spread[best] <= ECHO_SPREAD_DB:
-                self.lag, self.loss = int(np.nonzero(ready)[0][best]), float(med[best])
-        if self.lag is None:
-            return False
-        near = past[max(0, self.lag - 1):self.lag + 2]                 # the room smears the echo over time
-        return bool(near.max() > AGENT_ACTIVE_DB and caller_level <= near.max() + self.loss + ECHO_MARGIN_DB)
-
-
 class CallerReference:
     """The caller's own speaking level: a high percentile of their speech-frame levels while the agent is silent."""
 
@@ -216,37 +165,33 @@ class CallerReference:
 
 class MySystem(System):
     def __init__(self):
-        self.floor = NoiseFloor()
         self.vad = None
         if VAD:
             import neural_vad
-            self.vad = neural_vad.load(VAD)
-        self.vad_speech = False         # current frame: the neural VAD says speech
-        self.echo = EchoTracker() if ECHO_GATE else None
+            self.vad = neural_vad.load(VAD)     # the model file is read once per process (see __main__)
+        self.floor = NoiseFloor()               # acoustic front end only
         self.ref = CallerReference()
-        self.level = MIN_LEVEL_DB       # current caller frame band level
-        self.candidate = False          # current frame looks like speech before any loudness gate
-        self.speech = False             # caller speech-frame state (with hysteresis)
-        self.voiced = False             # current caller frame is periodic
+        self.level = MIN_LEVEL_DB       # band level of the current caller frame
+        self.candidate = False          # the current frame is speech, before any loudness gate
+        self.speech = False             # ... and loud enough to count as evidence
+        self.voiced = False             # acoustic front end: the current frame is periodic
         self.prev_caller = np.zeros(FRAME_SAMPLES, dtype=np.int16)   # previous frame, for the 40 ms analysis
         self.agent_talking = False
-        self.agent_text = ""            # what the agent is saying right now (not used by this experiment)
+        self.agent_text = ""            # what the agent is saying right now (not used)
         self.stopped = False
         window_ms = max(EVIDENCE_WINDOW_MS, SOFT_WINDOW_MS) if CALLER_REF else EVIDENCE_WINDOW_MS
-        self.evidence = deque(maxlen=window_ms // FRAME_MS)   # (speech, voiced, vad, level) per agent-talking frame
+        self.evidence = deque(maxlen=window_ms // FRAME_MS)   # (speech, voiced, level) per agent-talking frame
         self.quiet_ms = 0               # TAKE_TURN path (baseline)
         self.caller_spoke = False
 
     # --- what is happening in the call -------------------------------------------------------------------
     def on_scenario_start(self, context):
-        # A new call: forget the previous call's noise and any agent state left over from it.
+        # A new call: a new caller, microphone and room. Forget the previous call entirely.
         self.floor.reset()
         self.ref.reset()
         if self.vad:
             self.vad.reset()
-        if self.echo:
-            self.echo.reset()
-        self.speech = self.voiced = self.vad_speech = False
+        self.candidate = self.speech = self.voiced = False
         self.prev_caller = np.zeros(FRAME_SAMPLES, dtype=np.int16)
         self.agent_talking, self.stopped = False, False
         self.evidence.clear()
@@ -260,76 +205,68 @@ class MySystem(System):
         self.agent_talking, self.caller_spoke, self.quiet_ms = False, False, 0
 
     # --- caller speech evidence ---------------------------------------------------------------------------
-    def is_speech(self, caller, agent=None) -> bool:
-        """Update the speech-frame state from one caller frame. The floor is computed from earlier frames only."""
+    def is_speech(self, caller) -> bool:
+        """Update the speech-frame state from one caller frame, using only this and earlier frames."""
         level = self.level = band_level_db(caller)
-        if CALLER_REF and REL_GATE_DB is not None and self.ref.ready:
+        trusted = CALLER_REF and self.ref.ready
+        if trusted and REL_GATE_DB is not None:
             loud_enough = level >= self.ref.value() - REL_GATE_DB
         else:
             loud_enough = ABS_GATE_DB is None or loudness_db(caller) > ABS_GATE_DB
-        echo = bool(self.echo) and self.echo.explained(band_level_db(agent), level)
+
         if self.vad:
             x = caller
-            if VAD_NORMALIZE_DB is not None and CALLER_REF and self.ref.ready:     # a quiet line looks nominal to the VAD
-                g = float(np.clip(VAD_NORMALIZE_DB - self.ref.value(), *VAD_NORMALIZE_RANGE_DB))
-                x = np.clip(caller.astype(np.float64) * 10 ** (g / 20), -32768, 32767)
-            self.vad_speech = self.vad(x) >= VAD_THRESHOLD
-            if VAD_MODE == "replace":                 # the VAD decides; "voiced" evidence is the VAD itself
-                self.candidate = self.vad_speech and not echo
-                self.speech = self.voiced = self.candidate and loud_enough
-                return self.speech
+            if trusted and VAD_NORMALIZE_DB is not None:        # a quiet line looks like a normal one to the model
+                gain_db = float(np.clip(VAD_NORMALIZE_DB - self.ref.value(), *VAD_NORMALIZE_RANGE_DB))
+                x = np.clip(caller.astype(np.float64) * 10 ** (gain_db / 20), -32768, 32767)
+            self.candidate = self.vad(x) >= VAD_THRESHOLD
+            self.speech = self.voiced = self.candidate and loud_enough
+            return self.speech
+
+        # Acoustic front end (E01b): level above a noise floor learnt from aperiodic frames, plus periodicity.
         self.voiced = periodicity(np.concatenate([self.prev_caller, caller])) >= VOICING_THRESHOLD
         self.prev_caller = caller
         if self.floor.ready:
-            threshold = SPEECH_OFF_DB if self.speech else SPEECH_ON_DB
-            self.candidate = self.voiced and level - self.floor.value() >= SPEECH_ON_DB and not echo
-            self.speech = loud_enough and level - self.floor.value() >= threshold
+            above = level - self.floor.value()
+            self.candidate = self.voiced and above >= SPEECH_ON_DB
+            self.speech = loud_enough and above >= (SPEECH_OFF_DB if self.speech else SPEECH_ON_DB)
         else:                           # no trusted noise estimate yet: baseline rule, periodic frames only
             self.candidate = False
             self.speech = loud_enough and self.voiced
         if not self.voiced:
             self.floor.add(level)
-        if echo:
-            self.speech = False
         return self.speech
 
     def should_stop(self) -> bool:
-        """STOP rule on the evidence window (frames heard while the agent talks)."""
+        """The STOP rule on the evidence window (frames heard while the agent talks)."""
         frames = list(self.evidence)
         recent = frames[-(EVIDENCE_WINDOW_MS // FRAME_MS):]
 
         def enough(fr, need_ms):
-            ok = sum(f[0] for f in fr) * FRAME_MS >= need_ms and sum(f[1] for f in fr) * FRAME_MS >= VOICED_EVIDENCE_MS
-            if ok and self.vad and VAD_MODE == "confirm":
-                ok = sum(f[2] for f in fr) * FRAME_MS >= VAD_CONFIRM_MS
-            return ok
+            return (sum(f[0] for f in fr) * FRAME_MS >= need_ms
+                    and sum(f[1] for f in fr) * FRAME_MS >= VOICED_EVIDENCE_MS)
 
         fast = enough(recent, STOP_AFTER_MS)
         if not (CALLER_REF and self.ref.ready):
             return fast
-        ref = self.ref.value()
-
-        def rel(fr):                    # how loud the speech in these frames is, relative to the caller's own level
-            return float(np.percentile([f[3] for f in fr if f[0]], REF_PERCENTILE)) - ref
-
-        if fast and rel(recent) >= -SOFT_DB:
-            return True                 # as loud as the caller normally speaks: stop at once
-        if enough(frames, SOFT_STOP_MS):
-            return BACKGROUND_DB is None or rel(frames) >= -BACKGROUND_DB
-        return False
+        if fast:                        # how loud is this speech, relative to the caller's own level?
+            loud = float(np.percentile([f[2] for f in recent if f[0]], REF_PERCENTILE))
+            if loud >= self.ref.value() - SOFT_DB:
+                return True             # as loud as the caller normally speaks: stop at once
+        return enough(frames, SOFT_STOP_MS)     # softer: only if it goes on
 
     # --- every 20 ms: decide ---------------------------------------------------------------------------
     def on_frame(self, agent, caller):
-        speech = self.is_speech(caller, agent)
+        speech = self.is_speech(caller)
 
         if self.agent_talking:
-            self.evidence.append((speech, speech and self.voiced, self.vad_speech, self.level))
+            self.evidence.append((speech, speech and self.voiced, self.level))
             if not self.stopped and self.should_stop():
                 self.stopped = True
                 return "STOP"
             return None
-        if CALLER_REF and (self.candidate if REF_UNGATED else speech and self.voiced):
-            self.ref.add(self.level)                # the caller's own turn: remember how loud they speak
+        if CALLER_REF and self.candidate:
+            self.ref.add(self.level)    # the caller's own turn: remember how loud they speak
 
         # End-of-turn track: the kit baseline, unchanged (fixed loudness and a fixed stretch of quiet).
         loud = loudness_db(caller) > LOUD_DB
@@ -344,5 +281,5 @@ class MySystem(System):
 
 
 if __name__ == "__main__":
-    MySystem()                  # load any model before the server accepts a connection
+    MySystem()                  # load the model before the server accepts a connection
     run(MySystem, TEAM, __file__)

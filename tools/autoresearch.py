@@ -1,7 +1,10 @@
 """Controlled, auditable experiments on my_system.py (a bounded pilot, not an open-ended search).
 
-    python tools/autoresearch.py experiments/phase3/pilot.json                 # run every experiment not yet in the table
-    python tools/autoresearch.py experiments/phase3/pilot.json --only A1,A2
+    python tools/autoresearch.py experiments/phase3-final/plan.json            # run every experiment not yet in the table
+    python tools/autoresearch.py experiments/phase3-final/plan.json --only P3
+
+The 20-experiment pilot (experiments/phase3/pilot.json and its results) used options that were removed when the
+selected candidate was simplified; it is reproducible at commit b27da4c.
 
 An experiment is a hypothesis plus ONE group of option changes on top of a parent experiment:
     {"id": "A1", "group": "gain", "parent": "E01b", "hypothesis": "...", "set": {"ABS_GATE_DB": null}}

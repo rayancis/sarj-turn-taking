@@ -6,7 +6,7 @@ fail; the marker is removed by the change that fixes it. Signals are generated (
 import numpy as np
 import pytest
 
-from tests.test_my_system import mix, rumble, run_call, stops, voice, white
+from tests.test_my_system import e01b_configuration, mix, rumble, run_call, stops, voice, white  # noqa: F401 (autouse fixture)
 
 SR = 16000
 
