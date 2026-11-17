@@ -1,0 +1,49 @@
+{
+  "dataset": "sarj-demo-public",
+  "version": "1.0.0",
+  "split": "demo",
+  "created": "2026-11-17",
+  "distribution": "public",
+  "license": "CC-BY-4.0",
+  "license_note": "Original synthetic demo material created for this project (scripts written for the demo, eSpeak NG rule-based Arabic voices, procedural noise). Contains no competition data and no recordings of people.",
+  "label_status": "script_derived",
+  "thresholds": {
+    "T_full_ms": 300,
+    "T_dead_ms": 1500,
+    "E_full_ms": 600,
+    "E_dead_ms": 2000,
+    "E_miss_ms": 3000
+  },
+  "scenarios": [
+    {
+      "scenario_id": "GI-P01",
+      "wav_sha256": "6858a1ba52bc35f0398ed2ce30ccbb416bfada92dc9613f80a492261d21a1b3e",
+      "label_sha256": "36b48e23e1d8c61ecd6fc7da0f65b430ceb00ebcef4e8e1c15b2d42bfc41f543"
+    },
+    {
+      "scenario_id": "GI-P02",
+      "wav_sha256": "889db7f3d6e22cb02aa8f3fcf38e8ba885c8f3569264a84b9edb064e62c6113c",
+      "label_sha256": "763bedab1f3afe771ccee8d59704981039718dab66b78162f46c8c6a64f4a6da"
+    },
+    {
+      "scenario_id": "BC-P01",
+      "wav_sha256": "d83850eed72431c9a80ce5eb3e97305909b3a65a682b28c45aead03ac1c0a9b6",
+      "label_sha256": "31893e2753a05c2500431170c654d3afc5e7eeceb664486098d17acd00cfa94f"
+    },
+    {
+      "scenario_id": "NV-P01",
+      "wav_sha256": "785907ed96e7b05b57a68a36a9f06e5d8d1eaf0158a6c91bc1149b34444c0909",
+      "label_sha256": "bf1d3c78391e77cb0b95f528175b855a3207df19608ad390f6964fbe9fc1e7af"
+    },
+    {
+      "scenario_id": "BG-P01",
+      "wav_sha256": "eb97e5ac570e66f417fbd0740f73560e67315ef13b1bcb1abdc2a29f276943d2",
+      "label_sha256": "28cec68bff3ea9ef6b995c78b0d5fbdd343a5cf7e1cb7e89aafd823c5e6fdf8d"
+    },
+    {
+      "scenario_id": "BG-P02",
+      "wav_sha256": "29eff776764975f636c5566ca73530f2f6ae996e3abfd4d2db47c3856da522bd",
+      "label_sha256": "61062b37c25fb7d02d67fac911c125ceeaa7034c44850940a1c05f64dfa6a465"
+    }
+  ]
+}

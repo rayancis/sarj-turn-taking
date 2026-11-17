@@ -1,0 +1,15 @@
+# Render Blueprint for the public SARJ demo (demo/DEPLOY.md). Deploys branch feat/demo-ui only.
+services:
+  - type: web
+    name: sarj-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: feat/demo-ui
+    dockerfilePath: ./demo/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: SARJ_DEMO_MAX_SESSIONS
+        value: "12"

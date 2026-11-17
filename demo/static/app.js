@@ -1,15 +1,17 @@
 "use strict";
 // SARJ demo page. The audio clock (one AudioContext for both channels) is the master: its playhead decides which
-// 20 ms frames the server feeds to the real detector. Decisions come back from the server; nothing is pre-scripted.
+// 20 ms frames the server feeds to the real detector (plus a small look-ahead on the hosted site, to absorb network
+// delay). Decisions come back from the server and are applied when playback reaches the frame time at which the
+// detector issued them; nothing is pre-scripted.
 
 const $ = (id) => document.getElementById(id);
-const POLL_MS = 15;
 
 const S = {
   config: null, models: {}, model: null, scenId: null, timeline: null, audio: null, peaks: null,
   ctx: null, nodes: null, sources: null, t0: 0, started: false, playing: false, ended: false,
   gen: 0, loopGen: null, session: null, streamEndMs: 0, fedMs: 0, done: false, decisions: [], protocolCount: 0,
   score: null, meanOnFrameUs: null, lastServerMs: null, agentMuted: false, staticLayer: null, busy: false,
+  pending: [], rtts: [], lookahead: 0, pollMs: 15, verdictKey: "",
 };
 
 // ------------------------------------------------------------------------------------------------ helpers
@@ -23,8 +25,18 @@ async function api(path, body) {
   const r = await fetch(path, opts);
   const isJson = (r.headers.get("Content-Type") || "").includes("json");
   const data = isJson ? await r.json() : await r.arrayBuffer();
-  if (!r.ok) throw new Error((isJson && data.error) || `${r.status} ${r.statusText}`);
+  if (!r.ok) {
+    const err = new Error((isJson && data.error) || `${r.status} ${r.statusText}`);
+    err.status = r.status;
+    throw err;
+  }
   return data;
+}
+
+function closeSession(id) {
+  // Free the server-side detector of a playback we abandon (best effort; the server also expires idle sessions).
+  if (!id) return;
+  try { navigator.sendBeacon(`/api/session/${id}/close`, "{}"); } catch (_) { /* ignore */ }
 }
 
 function showError(msg) {
@@ -57,7 +69,10 @@ function parseWav(buf) {
 // ------------------------------------------------------------------------------------------------ audio engine
 function ensureContext() {
   if (S.ctx) return;
-  const ctx = new AudioContext();
+  // iOS: play through the silent switch, like a media player (Safari 16.4+; ignored elsewhere).
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (_) { /* ignore */ }
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  const ctx = new Ctx();
   const mk = () => {
     const gain = ctx.createGain(), an = ctx.createAnalyser();
     an.fftSize = 1024;
@@ -69,8 +84,20 @@ function ensureContext() {
 }
 
 function makeBuffer(samples, rate) {
-  const b = S.ctx.createBuffer(1, samples.length, rate);
-  b.copyToChannel(samples, 0);
+  let b;
+  try {
+    b = S.ctx.createBuffer(1, samples.length, rate);
+  } catch (_) {
+    // Some older browsers refuse 16 kHz buffers: resample (linear) to the device rate instead.
+    const out = S.ctx.sampleRate, n = Math.floor(samples.length * out / rate), y = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const x = i * rate / out, k = Math.floor(x), f = x - k;
+      y[i] = (samples[k] || 0) * (1 - f) + (samples[k + 1] || 0) * f;
+    }
+    b = S.ctx.createBuffer(1, n, out);
+    samples = y;
+  }
+  b.getChannelData(0).set(samples);
   return b;
 }
 
@@ -109,9 +136,11 @@ function playhead() {
 async function newSession() {
   const gen = ++S.gen;
   stopSources();
+  closeSession(S.session);
   Object.assign(S, { started: false, playing: false, ended: false, session: null, fedMs: 0, done: false,
-    decisions: [], protocolCount: 0, score: null, meanOnFrameUs: null, lastServerMs: null, agentMuted: false });
-  if (S.ctx && S.ctx.state === "running") await S.ctx.suspend();
+    decisions: [], protocolCount: 0, score: null, meanOnFrameUs: null, lastServerMs: null, agentMuted: false,
+    pending: [], rtts: [] });
+  if (S.nodes) S.nodes.agent.gain.gain.value = 1;
   $("log").innerHTML = "";
   renderEvents(); renderTiming(); updatePlayButton();
   const r = await api("/api/session", { scenario: S.scenId, model: S.model });
@@ -123,21 +152,40 @@ async function newSession() {
 }
 
 async function advance(gen, toMs) {
+  const t0 = performance.now();
   const r = await api(`/api/session/${S.session}/advance`, { to_ms: toMs });
   if (gen !== S.gen) return;                       // stale response from a previous scenario/model/reset
+  S.rtts.push(performance.now() - t0);
+  if (S.rtts.length > 200) S.rtts.shift();
   const receivedAt = playhead();
   S.fedMs = r.fed_ms; S.done = r.done; S.score = r.score;
   S.meanOnFrameUs = r.mean_on_frame_us; S.lastServerMs = r.server_ms;
-  for (const p of r.protocol) logControl(p);
+  // Hold everything until playback reaches its stream time (immediately, when there is no look-ahead).
+  for (const p of r.protocol) S.pending.push({ at: p.stream_ms, kind: "ctl", item: p });
   for (const d of r.decisions) {
     d.receivedAt = receivedAt;
-    d.pageDelayMs = S.ended ? null : receivedAt - d.stream_ms;
-    S.decisions.push(d);
-    logDecision(d);
+    d.earlyMs = d.stream_ms - receivedAt;        // > 0: arrived before playback needed it
+    S.pending.push({ at: d.stream_ms, kind: "dec", item: d });
   }
-  if (r.decisions.length) updateMute();
   if (r.errors.length) showError(`Detector/protocol error: ${r.errors.map((e) => `${sec(e.stream_ms)} s ${e.error}`).join("; ")}`);
-  renderEvents(); renderTiming();
+  reveal(S.ended ? Infinity : playhead());
+  renderTiming();
+}
+
+function reveal(t) {
+  // Apply detector output whose stream time playback has reached, in stream order.
+  if (!S.pending.length || S.pending[0].at > t) return;
+  let changed = false;
+  while (S.pending.length && S.pending[0].at <= t) {
+    const { kind, item } = S.pending.shift();
+    if (kind === "ctl") { logControl(item); continue; }
+    item.pageDelayMs = S.ended && t === Infinity ? null : Math.max(0, playhead() - item.stream_ms);
+    S.decisions.push(item);
+    logDecision(item);
+    changed = true;
+  }
+  if (changed) { updateMute(); renderTiming(); }
+  renderEvents();
 }
 
 async function feedLoop(gen) {
@@ -153,19 +201,25 @@ async function feedTicks(gen) {
     const t = playhead();
     try {
       if (t >= S.timeline.duration_ms) { await finish(gen); return; }
-      if (t >= S.fedMs && !S.done) await advance(gen, t);
+      if (t + S.lookahead >= S.fedMs && !S.done) await advance(gen, t + S.lookahead);
     } catch (e) {
-      if (gen === S.gen) { showError(`Server error: ${e.message}. Press Reset.`); await pause(); }
+      if (gen !== S.gen) return;
+      if (e.status === 429) { await sleep(500); continue; }      // rate limited: just try again shortly
+      const msg = e.status === 404 ? "This playback expired on the server (idle too long). Press Reset."
+        : `Server error: ${e.message}. Press Reset.`;
+      showError(msg); await pause();
       return;
     }
-    await sleep(POLL_MS);
+    await sleep(S.pollMs);
   }
 }
 
 async function finish(gen) {
+  reveal(S.timeline.duration_ms);
   S.ended = true;
   await advance(gen, S.streamEndMs);              // the harness also streams a short silent tail after the call
   if (gen !== S.gen) return;
+  reveal(Infinity);
   S.playing = false;
   stopSources();
   if (S.ctx.state === "running") await S.ctx.suspend();
@@ -176,8 +230,10 @@ async function finish(gen) {
 async function play() {
   if (S.busy || !S.session) return;
   ensureContext();
+  const resumed = S.ctx.resume();                 // first, inside the click: iOS only unlocks audio in a user gesture
   if (S.ended) { await reset(); }
-  await S.ctx.resume();
+  await resumed;
+  if (S.ctx.state !== "running") await S.ctx.resume();
   if (!S.started) { startSources(); S.started = true; }
   S.playing = true;
   updatePlayButton();
@@ -276,7 +332,7 @@ function renderStatus(t) {
     msg = stops ? `Finished: ${stops} STOP decision${stops === 1 ? "" : "s"} from ${modelLabel()}.`
       : `Finished: no STOP from ${modelLabel()}; the agent spoke every utterance to the end.`;
     cls = stops ? "stopped" : "kept";
-  } else if (!S.started) msg = "Ready. Press Play (or Space).";
+  } else if (!S.started) msg = "Ready. Press Play.";
   else if (st.utt && st.muted) {
     cls = "stopped";
     msg = `STOP at ${sec(st.stopAt)} s: agent silenced for the rest of ${st.utt.utt_id}; caller audio continues.`;
@@ -307,7 +363,9 @@ function levelPct(an) {
 
 function frame() {
   const t = Math.min(playhead(), S.timeline ? S.timeline.duration_ms : 0);
-  if (S.playing) updateMute();
+  if (S.playing) { reveal(playhead()); updateMute(); }
+  const key = visibleVerdictKey();
+  if (key !== S.verdictKey) { S.verdictKey = key; renderEvents(); }
   $("clock").textContent = sec(t);
   renderStatus(t);
   if (S.nodes) {
@@ -341,7 +399,9 @@ function logDecision(d) {
   const pill = `<span class="pill ${d.decision === "STOP" ? "STOP" : "other"}">${esc(d.decision)}</span>`;
   const where = d.utt_id ? `during ${esc(d.utt_id)}` : "agent not speaking";
   const extra = d.decision === "TAKE_TURN" ? " · end-of-turn track (separate)" : "";
-  const delay = d.pageDelayMs === null ? "" : ` · shown ${Math.round(d.pageDelayMs)} ms after frame time`;
+  const early = S.lookahead && d.earlyMs !== undefined && !S.ended
+    ? (d.earlyMs >= 0 ? ` · computed ${Math.round(d.earlyMs)} ms ahead` : ` · arrived ${Math.round(-d.earlyMs)} ms late`) : "";
+  const delay = d.pageDelayMs === null || d.pageDelayMs === undefined ? "" : ` · applied ${Math.round(d.pageDelayMs)} ms after frame time${early}`;
   addLog(d.stream_ms, pill, `${where} · frame ${d.frame} · on_frame ${d.on_frame_us} µs${delay}${extra}`, "dec");
 }
 
@@ -361,8 +421,13 @@ function renderTiming() {
     ["Active detector", esc(modelLabel())],
     ["Frames fed", `${Math.round(S.fedMs / 20)} (${sec(S.fedMs)} s of stream)`],
     ["Detector compute", S.meanOnFrameUs === null ? "–" : `${S.meanOnFrameUs} µs mean per 20 ms frame`],
-    ["Page update after decision frame", med === null ? "–" : `median ${Math.round(med)} ms, max ${Math.round(delays[delays.length - 1])} ms (${delays.length})`],
+    ["Decision applied after its frame time", med === null ? "–" : `median ${Math.round(med)} ms, max ${Math.round(delays[delays.length - 1])} ms (${delays.length})`],
   ];
+  if (S.lookahead) {
+    const r = [...S.rtts].sort((a, b) => a - b);
+    rows.push(["Page ↔ hosted server round trip", r.length ? `median ${Math.round(r[Math.floor(r.length / 2)])} ms (this connection)` : "–"]);
+    rows.push(["Detector look-ahead", `up to ${S.lookahead} ms ahead of what you hear`]);
+  }
   $("timing").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
 }
 
@@ -373,8 +438,16 @@ function renderScenarioInfo() {
     `difficulty ${esc(s.difficulty)} · ${esc(s.dialect)} · ${esc(s.acoustic.join(" + "))} · labels: ${esc(gt.label_status)}`;
 }
 
+function visibleVerdictKey() {
+  // Changes whenever another verdict may be shown (playback passed a close time) or the call ended.
+  if (!S.score) return "";
+  const ph = playhead();
+  return `${S.ended}|${S.score.events.map((r) => (r.closed && (S.ended || ph >= r.close_ms) ? 1 : 0)).join("")}`;
+}
+
 function resultCell(ev, r) {
-  if (!r || !r.closed) return `<span class="pending">pending · decided by ${sec(r ? r.close_ms : 0)} s</span>`;
+  // Shown only once playback has passed the point after which no later decision can change it.
+  if (!r || !r.closed || (!S.ended && playhead() < r.close_ms)) return `<span class="pending">pending · decided by ${sec(r ? r.close_ms : 0)} s</span>`;
   const c = r.credit ?? 0;
   const cls = c >= 1 ? "ok" : c > 0 ? "part" : "bad";
   const mark = c >= 1 ? "✓" : c > 0 ? "◐" : "✗";
@@ -394,7 +467,7 @@ function renderEvents() {
   const segs = Object.fromEntries(gt.user_segments.map((s) => [s.seg_id, s]));
   const scored = S.score ? S.score.events : [];
   $("events").innerHTML = gt.events.map((ev, i) => {
-    const words = (ev.segment_ids || []).map((id) => segs[id] && (segs[id].text || `[${segs[id].kind}]`)).filter(Boolean).join(" … ");
+    const words = (ev.segment_ids || []).map((id) => segs[id] && (segs[id].text || `[${segs[id].delivery || segs[id].kind}]`)).filter(Boolean).join(" … ");
     const exp = ev.expected === "EITHER" ? `EITHER<br><small>prefers ${esc(ev.preferred || "-")}</small>` : esc(ev.expected);
     const when = `${sec(ev.onset_ms)}–${sec(ev.offset_ms ?? ev.turn_end_ms ?? ev.onset_ms)} s`;
     const r = scored[i] || { closed: false, close_ms: 0 };
@@ -403,7 +476,7 @@ function renderEvents() {
       `<td><span dir="rtl" lang="ar">${esc(words || "–")}</span><br><small>${when}</small></td>` +
       `<td>${resultCell(ev, r)}</td></tr>`;
   }).join("");
-  const p = S.score && S.score.protected;
+  const p = S.ended && S.score && S.score.protected;
   $("protected").innerHTML = p
     ? `Stops outside labelled events (they lower Restraint): ${p.spurious_stops.length ? p.spurious_stops.map((x) => `${sec(x)} s`).join(", ") : "none"}. ` +
       `<span class="pending">Call restraint credit ${p.credit}.</span>`
@@ -412,6 +485,8 @@ function renderEvents() {
 
 function renderBench() {
   const b = S.config.benchmark;
+  $("bench-panel").hidden = !b;
+  if (!b) return;
   const active = S.models[S.model];
   if (!b.available) { $("bench").innerHTML = `<tr><td colspan="7">No recorded evidence found.</td></tr>`; return; }
   const f = (x, d = 2) => (x === null || x === undefined ? "–" : Number(x).toFixed(d));
@@ -544,6 +619,18 @@ async function init() {
     S.config = await api("/api/config");
   } catch (e) { showError(`Cannot reach the demo server: ${e.message}`); return; }
   for (const m of S.config.models) S.models[m.id] = m;
+  S.lookahead = S.config.lookahead_ms || 0;
+  S.pollMs = S.config.poll_ms || 15;
+  const ds = S.config.dataset || {};
+  if (S.config.mode === "public") {
+    $("mode-chip").textContent = "public demo · original scenarios";
+    $("subtitle").textContent = "Play a call and watch the real detector decide, live. Work in progress by a university team: " +
+      "not the competition submission.";
+    $("dataset-note").hidden = false;
+    $("dataset-note").textContent = `Demo scenarios: ${ds.note || ""} Licence: ${ds.license || "?"}. ` +
+      "The voices are robotic on purpose (open-source eSpeak NG); the detector decisions are real.";
+  }
+  window.addEventListener("pagehide", () => closeSession(S.session));
   const msel = $("model");
   msel.innerHTML = S.config.models.map((m) => `<option value="${esc(m.id)}" ${m.available ? "" : "disabled"}>` +
     `${esc(m.name)} · ${esc(m.revision || "?")}${m.dirty ? " (uncommitted)" : ""}${m.available ? "" : ` (unavailable: ${esc(m.error)})`}</option>`).join("");
@@ -580,6 +667,8 @@ window.sarjDemo = {
     sources: S.sources ? Object.keys(S.sources) : [],
     decisions: S.decisions.map((d) => ({ stream_ms: d.stream_ms, decision: d.decision, utt_id: d.utt_id, pageDelayMs: d.pageDelayMs })),
     events: S.score ? S.score.events : [], protectedResult: S.score ? S.score.protected || null : null,
+    pending: S.pending.length, lookahead: S.lookahead, rtts: S.rtts.slice(-20),
+    shownVerdicts: [...document.querySelectorAll("#events td:last-child")].map((td) => td.textContent),
     status: $("status").textContent,
   }),
 };

@@ -4,21 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SARJ Detector Demo</title>
+<meta name="description" content="Play a call and watch the SARJ interruption detector decide, live.">
+<meta property="og:title" content="SARJ interruption detector: live demo">
+<meta property="og:description" content="Play a call and watch the real detector decide when the agent should stop talking.">
+<meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="top">
   <div>
     <h1>SARJ interruption detector</h1>
-    <p class="sub">Live playback of development calls through the real detector. Work in progress: not the competition submission.</p>
+    <p class="sub" id="subtitle">Live playback of development calls through the real detector. Work in progress: not the competition submission.</p>
   </div>
   <div class="chips">
     <span class="chip" id="model-chip">Model: loading…</span>
-    <span class="chip muted">dev data · localhost only</span>
+    <span class="chip muted" id="mode-chip">dev data · localhost only</span>
   </div>
 </header>
 
 <main>
+  <p class="dataset-note" id="dataset-note" hidden></p>
   <section class="panel controls">
     <label>Scenario
       <select id="scenario"></select>
@@ -76,34 +81,39 @@
     <section class="panel">
       <div class="panel-head"><h2>Ground truth &amp; correctness</h2><span class="tag gt">labels, not given to detector</span></div>
       <div id="scenario-info" class="scen-info"></div>
-      <table class="events">
-        <thead><tr><th>Event</th><th>Expected</th><th>Caller</th><th>Result (official scorer)</th></tr></thead>
-        <tbody id="events"></tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="events">
+          <thead><tr><th>Event</th><th>Expected</th><th>Caller</th><th>Result (official scorer)</th></tr></thead>
+          <tbody id="events"></tbody>
+        </table>
+      </div>
       <div id="protected" class="protected"></div>
       <p class="note">Labels are script-derived and unreviewed. An event's result appears once the stream has passed the point after
         which no later decision can change it.</p>
     </section>
   </div>
 
-  <section class="panel">
+  <section class="panel" id="bench-panel" hidden>
     <div class="panel-head"><h2>Development-set benchmark</h2><span class="tag gt">recorded earlier, not live</span></div>
-    <table class="bench">
-      <thead><tr><th>Version</th><th>Commit</th><th>Core</th><th>Responsiveness R</th><th>Restraint S</th><th>Missed STOPs</th><th>False stops</th></tr></thead>
-      <tbody id="bench"></tbody>
-    </table>
+    <div class="table-wrap">
+      <table class="bench">
+        <thead><tr><th>Version</th><th>Commit</th><th>Core</th><th>Responsiveness R</th><th>Restraint S</th><th>Missed STOPs</th><th>False stops</th></tr></thead>
+        <tbody id="bench"></tbody>
+      </table>
+    </div>
     <p class="note" id="bench-note"></p>
   </section>
 
   <details class="panel how">
     <summary>How decisions reach this page</summary>
     <ol>
-      <li>The page plays the call's two channels from one audio clock and reports its playhead to the local server every ~15 ms.</li>
+      <li>The page plays the call's two channels from one audio clock and regularly reports its playhead to the server that runs the detector.</li>
       <li>For each 20 ms frame the playhead reaches, the server does what the kit's harness and server do: the same control messages
         (<code>scenario_start</code>, <code>agent_utterance_start/end</code>) in the same order, then the 1,280-byte stereo frame,
-        into <code>MySystem.on_frame</code> of the selected version, imported unchanged.</li>
-      <li>Any decision is validated with the kit's protocol check, stamped with its frame time, and sent back; the page then mutes the agent
-        until the end of that utterance. Pause stops the clock and the feed together; Reset and scenario/model changes start a fresh detector.</li>
+        into <code>MySystem.on_frame</code> of the selected version, imported unchanged. On the hosted site the server runs up to 0.8 s
+        ahead of what you hear, so network delay cannot make decisions late; each decision only uses audio up to its own frame.</li>
+      <li>Any decision is validated with the kit's protocol check, stamped with its frame time, and sent back; when playback reaches that
+        frame time the page mutes the agent until the end of that utterance. Pause stops the clock and the feed together; Reset and scenario/model changes start a fresh detector.</li>
       <li>Labels are read only by the official scorer, after the decisions exist. Nothing here is pre-scripted.</li>
     </ol>
   </details>

@@ -117,3 +117,16 @@ td.num, th.num { font-variant-numeric: tabular-nums; }
 .how li { margin-bottom: 4px; }
 .how summary { cursor: pointer; font-weight: 700; }
 code { font-size: 12px; }
+
+.dataset-note { margin: 0 0 14px; padding: 10px 14px; border-radius: 8px; background: var(--either-soft); font-size: 13px; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+[hidden] { display: none !important; }
+@media (max-width: 640px) {
+  h1 { font-size: 19px; }
+  .clock { margin-left: 0; }
+  .buttons { width: 100%; }
+  .buttons button { flex: 1; padding: 12px; }
+  .status { font-size: 16px; }
+  .panel { padding: 12px; }
+  .log td:nth-child(3) { min-width: 180px; }
+}

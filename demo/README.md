@@ -4,6 +4,12 @@ A local web page that plays a development call and shows what the **real detecto
 It is a demonstration aid, not the competition submission, and it changes nothing in the kit, the data or
 `my_system.py`.
 
+**Public site:** the same demo also runs as a public HTTPS site, with 6 original demo calls instead of the
+competition data (which has no public licence). Setup, limits and updates: [DEPLOY.md](DEPLOY.md).
+Public calls worth showing: **NV-P01** (cough: E01b keeps talking, Baseline stops), **BG-P01** (door slam: same
+contrast), **GI-P01** (real interruption: both stop), **BC-P01** and **BG-P02** (backchannel, TV voice: both still
+stop, known limitations).
+
 ## Run it on Windows (PowerShell, from the repository folder)
 
 Uses the existing environment from PROJECT.md (Python 3.12, `requirements-lock.txt`); nothing new to install.
@@ -76,7 +82,8 @@ pause cannot shift it.
 - No seeking (it would require re-feeding the detector from the start); use Reset.
 - Agent-mute reconstruction: silent from STOP to the end of the utterance, or until RESUME, as the scorer assumes.
 - The page reacts within one poll (~15-40 ms) of the frame; your audio device adds its own output delay.
-- Localhost only (`127.0.0.1`), because the dev audio must not be exposed. Do not share the page over a network.
+- Local mode is localhost only (`127.0.0.1`), because the dev audio must not be exposed. The public site
+  (`--public`) serves only `demo/public_data`.
 
 ## Checks
 

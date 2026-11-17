@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "BG-P01",
+  "split": "dev",
+  "category": "BG",
+  "subtype": "background.door",
+  "difficulty": 1,
+  "dialect": "sa-najdi",
+  "elicitation": "scripted",
+  "speakers": [
+    {
+      "speaker_id": "S901",
+      "role": "caller",
+      "source": "synthetic",
+      "gender": "m",
+      "age_band": "25-34",
+      "dialect": "sa-najdi"
+    }
+  ],
+  "agent_voice": "agent-f1",
+  "acoustic": {
+    "conditions": [
+      "household"
+    ],
+    "notes": "procedural noise; voices: eSpeak NG ar+f3 (agent), ar+m3 (caller)"
+  },
+  "audio": {
+    "file": "BG-P01.wav",
+    "sample_rate": 16000,
+    "channels": [
+      "agent",
+      "user"
+    ],
+    "duration_ms": 22717,
+    "sha256": "eb97e5ac570e66f417fbd0740f73560e67315ef13b1bcb1abdc2a29f276943d2"
+  },
+  "context": {
+    "use_case": "service follow-up",
+    "language": "ar"
+  },
+  "agent_utterances": [
+    {
+      "utt_id": "A0",
+      "start_ms": 300,
+      "end_ms": 5279,
+      "text": "مساء الخير، معك نورة من الصيانة. أكلم الأستاذة منى؟",
+      "is_question": true
+    },
+    {
+      "utt_id": "A1",
+      "start_ms": 7699,
+      "end_ms": 21217,
+      "text": "أهلين أستاذة منى. الفني بيزورك يوم الثلاثاء العصر لفحص المكيف، والزيارة مجانية لأن الجهاز تحت الضمان، وبيتصل عليك الفني قبل ما يوصل بنص ساعة.",
+      "is_question": false
+    }
+  ],
+  "user_segments": [
+    {
+      "seg_id": "U0",
+      "speaker_id": "S901",
+      "start_ms": 5729,
+      "end_ms": 7199,
+      "kind": "speech",
+      "text": "إيه نعم، تفضلي."
+    }
+  ],
+  "background_events": [
+    {
+      "kind": "door",
+      "start_ms": 13106,
+      "end_ms": 13706,
+      "level_db": -18
+    },
+    {
+      "kind": "other",
+      "start_ms": 0,
+      "end_ms": 22717,
+      "level_db": -58
+    }
+  ],
+  "events": [
+    {
+      "event_id": "BG-P01.e1",
+      "kind": "interruption",
+      "expected": "KEEP",
+      "onset_ms": 13106,
+      "offset_ms": 13706,
+      "rationale": "A door slam in the caller's room: background sound, not the caller.",
+      "window_end_ms": 14206
+    }
+  ],
+  "provenance": {
+    "script_ref": "demo/public_data/make_public_data.py",
+    "production_mode": "synthetic",
+    "rendered_on": "2026-11-17",
+    "reviewed_by": [
+      "unreviewed"
+    ],
+    "label_status": "script_derived",
+    "notes": "Original demo material (scripts, eSpeak NG voices, procedural noise). Not competition data."
+  }
+}
