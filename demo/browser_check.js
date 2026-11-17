@@ -59,7 +59,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.click("#play");
   const leads = [];
   for (let i = 0; i < 15; i++) { await sleep(150); const x = await snap(); leads.push((x.fedMs - 20) - x.playheadMs); }
-  check("both detectors are fed in step with the audio clock", leads.every((l) => l <= cfg.lookahead_ms + 20 && l > -(80 + 2 * LATENCY)),
+  check("both detectors are fed in step with the audio clock", leads.every((l) => l <= cfg.lookahead_ms + 20 && l > -40),
     `last fed frame minus playhead: ${Math.min(...leads).toFixed(0)} .. ${Math.max(...leads).toFixed(0)} ms`);
   check("agent and caller play from one clock", (await snap()).sources.join() === "agent,caller");
   await page.click("#play");

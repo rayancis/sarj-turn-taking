@@ -249,7 +249,17 @@ async function play() {
   if (S.ended) { await reset(); }
   await resumed;
   if (S.ctx.state !== "running") await S.ctx.resume();
-  if (!S.started) { startSources(); S.started = true; }
+  if (!S.started) {
+    // Over a network, fill the look-ahead buffer once before the audio starts, so the detectors never trail it.
+    if (S.lookahead && fedMs() < S.lookahead) {
+      const gen = S.gen;
+      S.busy = true; $("play").textContent = "Starting…"; $("play").disabled = true;
+      try { await advanceAll(gen, S.lookahead); } catch (e) { showError(`Server error: ${e.message}. Press Reset.`); }
+      finally { S.busy = false; }
+      if (gen !== S.gen) { updatePlayButton(); return; }
+    }
+    startSources(); S.started = true;
+  }
   S.playing = true;
   updatePlayButton();
   feedLoop(S.gen);
