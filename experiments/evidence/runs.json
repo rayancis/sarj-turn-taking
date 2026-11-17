@@ -105,6 +105,124 @@
         "log.jsonl": "9eb4bb086b6a1ff66f3805fa5b31ead634fd0869a142b25545603fd1a5f6063b",
         "report.md": "2172d98bc130c6c3896b5ea4f2db348578136c174e76c6e2ece6d4330d04cadc"
       }
+    },
+    "p3-6b4eece-rt": {
+      "system_commit": "6b4eece",
+      "started_utc": "2026-11-17T04:59:19Z",
+      "ended_utc": "2026-11-17T05:09:13Z",
+      "command": "python my_system.py --port 8771 --quiet",
+      "hello_system_version": "6b4eece",
+      "configuration": "my_system.py defaults (Phase 3 candidate, pilot N1)",
+      "concurrent_load": "none (report being edited; no replay or test running)",
+      "my_system_sha256": "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf",
+      "packages": {
+        "numpy": "2.5.3",
+        "onnxruntime": "1.29.0",
+        "websockets": "17.4"
+      },
+      "model": {
+        "file": "models/silero_vad.onnx",
+        "sha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3"
+      },
+      "harness_version": "0.1.0",
+      "completed": true,
+      "frames_sent": 29651,
+      "max_send_lag_ms": 0.01,
+      "rtt_summary_ms": {
+        "median": 0.88,
+        "max": 1.82,
+        "n": 119
+      },
+      "protocol_errors": 0,
+      "core": 73.41032894095738,
+      "R": 0.9934499999999999,
+      "S": 0.5458333333333333,
+      "misses": 0,
+      "false_stops": 10,
+      "stop_latency_after_evident_ms": {
+        "median": 0.0,
+        "p90": 352.3
+      },
+      "stop_after_caller_onset_ms": [
+        243.0,
+        252.0,
+        302.0,
+        332.0,
+        342.0,
+        342.0,
+        1072.0
+      ],
+      "decision_arrival_after_frame_send_ms": [
+        0.9,
+        3.1
+      ],
+      "decisions": 33,
+      "same_decisions_and_frames_as_offline_replay": true,
+      "files_sha256": {
+        "run.json": "9d87588e751872caea43460681c29808098e441c5e02cd0df34c9094b5f3dba9",
+        "score.json": "1108f977185bd9dddee74541b12a0b844e0af50acda2dbad3289e2767d51949a",
+        "log.jsonl": "768e165af9d6304819f8084c5989848fcf4fac0a75371109908a23ec1d8fa9f8",
+        "report.md": "c8738b4f1f42e234868934d11620da25476036ff308a2168627101204ace4ce3"
+      }
+    },
+    "vadonly-6b4eece-rt": {
+      "system_commit": "6b4eece",
+      "started_utc": "2026-11-17T05:09:17Z",
+      "ended_utc": "2026-11-17T05:19:11Z",
+      "command": "python tools/serve_config.py --set '{\"CALLER_REF\": false, \"EVIDENCE_WINDOW_MS\": 300}' --port 8772 --quiet",
+      "hello_system_version": "6b4eece-dirty (the only uncommitted change at server start was WRITEUP.md section 8; my_system.py sha256 identical to 6b4eece)",
+      "configuration": "Silero speech frames, no caller reference, 300 ms window (pilot B1)",
+      "concurrent_load": "none (report being edited; no replay or test running)",
+      "my_system_sha256": "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf",
+      "packages": {
+        "numpy": "2.5.3",
+        "onnxruntime": "1.29.0",
+        "websockets": "17.4"
+      },
+      "model": {
+        "file": "models/silero_vad.onnx",
+        "sha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3"
+      },
+      "harness_version": "0.1.0",
+      "completed": true,
+      "frames_sent": 29651,
+      "max_send_lag_ms": 0.02,
+      "rtt_summary_ms": {
+        "median": 0.95,
+        "max": 2.82,
+        "n": 119
+      },
+      "protocol_errors": 0,
+      "core": 60.69369439307945,
+      "R": 0.993475,
+      "S": 0.39305555555555555,
+      "misses": 0,
+      "false_stops": 13,
+      "stop_latency_after_evident_ms": {
+        "median": 0.0,
+        "p90": 352.2
+      },
+      "stop_after_caller_onset_ms": [
+        222.0,
+        242.0,
+        252.0,
+        302.0,
+        321.0,
+        332.0,
+        1072.0
+      ],
+      "decision_arrival_after_frame_send_ms": [
+        0.9,
+        2.32
+      ],
+      "decisions": 35,
+      "same_decisions_and_frames_as_offline_replay": true,
+      "files_sha256": {
+        "run.json": "fd8ff0901c188d4cbf0bfa769641f7b6e4b5969b5a2e7e669cb866b7d5bc4d5e",
+        "score.json": "b7c0f43f231caf0ae4fe7ef08b73c719ebe4a83fc1e27563e4810c88b35a2663",
+        "log.jsonl": "006045eabe6e2fc5c0f896f6769eecba0aae35df07314a276000b7096057be36",
+        "report.md": "98b7a0f493698541ca853e130a944c3a29ccb0d469de2008fddfe4db12f81131"
+      }
     }
   }
 }

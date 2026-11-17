@@ -1,0 +1,12 @@
+{
+ "reference": "E01b",
+ "max_experiments": 20,
+ "note": "Comparison rows at HEAD (the simplified detector). The 20-experiment pilot is experiments/phase3/pilot.json, reproducible at commit b27da4c.",
+ "experiments": [
+  {"id": "E01b", "group": "reference", "hypothesis": "E01b, selected through the options of the current file.",
+   "set": {"VAD": null, "CALLER_REF": false, "EVIDENCE_WINDOW_MS": 300}},
+  {"id": "VAD-only", "group": "neural-vad", "hypothesis": "Silero speech frames with E01b's evidence rule and absolute gate (pilot B1): the conservative fallback.",
+   "set": {"CALLER_REF": false, "EVIDENCE_WINDOW_MS": 300}},
+  {"id": "P3", "group": "hybrid", "hypothesis": "The Phase 3 candidate: my_system.py defaults (pilot N1).", "set": {}}
+ ]
+}

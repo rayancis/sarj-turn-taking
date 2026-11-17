@@ -1,0 +1,99 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "NV-H53",
+ "split": "reserve",
+ "category": "NV",
+ "subtype": "nonverbal.echo",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000028"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "speakerphone"
+  ],
+  "snr_db": 38.0,
+  "echo": {
+   "level_db": -18.0,
+   "delay_ms": 240
+  },
+  "noise_source_ids": [
+   "SYN-room-tone"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "NV-H53.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 20788,
+  "sha256": "1c776445b8c1070cb2274c421dd0b97dd30f821c4a694ad3ab455df91e6dcca7"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 3240,
+   "text": "سبعة يسار يمين",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5200,
+   "end_ms": 19290,
+   "text": "سبعة أسفل أربعة السابق اتجاه خيارات تفعيل أعلى خيارات أرسل رقم تفعيل تسجيل ثلاثة",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3590,
+   "end_ms": 4810,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "NV-H53.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [],
+   "onset_ms": 5440,
+   "offset_ms": 18290,
+   "rationale": "Speakerphone: the agent's own voice comes back; nobody new is talking.",
+   "window_end_ms": 18790
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#NV-53",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

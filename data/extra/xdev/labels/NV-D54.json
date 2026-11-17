@@ -1,0 +1,106 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "NV-D54",
+ "split": "dev",
+ "category": "NV",
+ "subtype": "nonverbal.transient",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000024"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "quiet"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone",
+   "ESC50-2-118625-A-30.wav"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "NV-D54.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 15232,
+  "sha256": "43d88cdac9d523bc196ebb557a7f496ce327f01e582b055a3027e8645829fad1"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 2040,
+   "text": "افتح ابدأ أرسل",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 4180,
+   "end_ms": 13730,
+   "text": "التالي واحد يمين أرسل أربعة خمسة ثلاثة تسعة خمسة أسفل خيارات افتح صفر أعلى",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 2390,
+   "end_ms": 3790,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "X1",
+   "speaker_id": "S001",
+   "start_ms": 7900,
+   "end_ms": 8700,
+   "kind": "nonverbal",
+   "delivery": "recorded door_wood_knock"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "NV-D54.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "X1"
+   ],
+   "onset_ms": 7900,
+   "offset_ms": 8700,
+   "rationale": "Recorded door_wood_knock; nothing said.",
+   "window_end_ms": 9200
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#NV-54",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

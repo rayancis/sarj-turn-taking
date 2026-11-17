@@ -1,0 +1,195 @@
+{
+ "reference": "E01b",
+ "max_experiments": 20,
+ "experiments": [
+  {
+   "id": "E01b",
+   "group": "reference",
+   "hypothesis": "E01b as committed (e566234): the reference for every gate.",
+   "set": {}
+  },
+  {
+   "id": "A1",
+   "group": "gain",
+   "parent": "E01b",
+   "hypothesis": "The -42 dBFS gate is a microphone-gain assumption. Removing it (level judged only against the noise floor) makes behaviour identical at any gain; the risk is new stops on quiet sounds in quiet rooms.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  },
+  {
+   "id": "B1",
+   "group": "neural-vad",
+   "parent": "E01b",
+   "hypothesis": "Silero VAD alone as the speech-frame test (same 200 ms in 300 ms rule, same -42 dBFS gate): rejects non-speech (cough, laugh, horn, noise steps) and bridges stop closures, but cannot tell an acknowledgement from an interruption.",
+   "set": {
+    "VAD": "silero",
+    "VAD_MODE": "replace"
+   }
+  },
+  {
+   "id": "B2",
+   "group": "neural-vad",
+   "parent": "E01b",
+   "hypothesis": "TEN VAD alone under the same conditions as B1 (10 ms hops, no extra buffering).",
+   "set": {
+    "VAD": "ten",
+    "VAD_MODE": "replace"
+   }
+  },
+  {
+   "id": "C1",
+   "group": "hybrid",
+   "parent": "E01b",
+   "hypothesis": "E01b acoustic frames with neural confirmation: a STOP also needs 100 ms of Silero speech in the window. Keeps E01b's fast onset and noise-floor logic; the VAD only vetoes non-speech.",
+   "set": {
+    "VAD": "silero",
+    "VAD_MODE": "confirm"
+   }
+  },
+  {
+   "id": "D1",
+   "group": "echo",
+   "parent": "B1",
+   "hypothesis": "The agent channel is a clean reference: caller frames whose level follows the agent's level at a fixed delay are echo, not a caller. Should remove the speakerphone false stops without hiding a caller who talks over the echo.",
+   "set": {
+    "ECHO_GATE": true
+   }
+  },
+  {
+   "id": "D2",
+   "group": "echo",
+   "parent": "E01b",
+   "hypothesis": "The same echo gate on E01b without any neural model (is the echo gate useful on its own?).",
+   "set": {
+    "ECHO_GATE": true
+   }
+  },
+  {
+   "id": "A2",
+   "group": "gain",
+   "parent": "E01b",
+   "hypothesis": "Gain-invariant loudness: compare the evidence with the caller's own earlier speech level instead of an absolute level. Evidence more than 6 dB below it is 'soft' and must last 1000 ms in 1400 ms before a STOP. Acknowledgements are short and soft; a soft but sustained interruption is still caught, later.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "A3",
+   "group": "gain",
+   "parent": "A2",
+   "hypothesis": "With a caller-relative reference in place the absolute -42 dBFS gate should no longer be needed.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  },
+  {
+   "id": "H1",
+   "group": "hybrid",
+   "parent": "B1",
+   "hypothesis": "Silero speech frames + caller-relative loudness (soft tier 6 dB, 1000 ms in 1400 ms): the VAD removes non-speech and far-field sound, the caller reference handles soft acknowledgements. The two address different error classes, so the gains should add.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "H2",
+   "group": "hybrid",
+   "parent": "H1",
+   "hypothesis": "Sound more than 12 dB below the caller's own level is background (TV, another talker, echo) and should never stop the agent, however long it lasts.",
+   "set": {
+    "BACKGROUND_DB": 12.0
+   }
+  },
+  {
+   "id": "H3",
+   "group": "hybrid",
+   "parent": "C1",
+   "hypothesis": "The confirm-mode hybrid (E01b frames + VAD veto) with the caller reference, as an alternative to H1 that keeps the acoustic front end.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "G1",
+   "group": "gain",
+   "parent": "H1",
+   "hypothesis": "At -12 dB microphone gain H1 misses 4 xdev interruptions and one dev interruption: attenuated speech frames fall under the absolute -42 dBFS gate. With a neural VAD deciding what is speech and the caller reference judging loudness, the absolute gate is no longer needed; removing it should make the misses at low gain disappear without new false stops at normal gain.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  },
+  {
+   "id": "W1",
+   "group": "evidence",
+   "parent": "G1",
+   "hypothesis": "A short word with a stop closure (توقف: 120 ms + 140 ms closure + 140 ms) never reaches 200 ms of speech inside 300 ms. A 400 ms window (200 ms = half) catches it. The 2/3 occupancy was there to stop sparse non-speech bursts adding up; the VAD now handles those.",
+   "set": {
+    "EVIDENCE_WINDOW_MS": 400
+   }
+  },
+  {
+   "id": "G2",
+   "group": "gain",
+   "parent": "H1",
+   "hypothesis": "Keep what the -42 dBFS gate does at nominal gain, but make it gain-invariant: once the caller's own level is known, a speech frame must be within 20 dB of it (the absolute gate only applies before the caller has spoken). Scores should then be the same at -12, 0 and +6 dB, and close to H1 at 0 dB.",
+   "set": {
+    "REL_GATE_DB": 20.0
+   }
+  },
+  {
+   "id": "G3",
+   "group": "gain",
+   "parent": "G2",
+   "hypothesis": "On the gain-invariant detector: sound more than 12 dB below the caller's level is background (TV, another talker, echo) and never stops the agent.",
+   "set": {
+    "BACKGROUND_DB": 12.0
+   }
+  },
+  {
+   "id": "W2",
+   "group": "evidence",
+   "parent": "G2",
+   "hypothesis": "400 ms evidence window (as W1) on the gain-invariant detector, for short words with a stop closure.",
+   "set": {
+    "EVIDENCE_WINDOW_MS": 400
+   }
+  },
+  {
+   "id": "G4",
+   "group": "gain",
+   "parent": "W2",
+   "hypothesis": "G2/W2 still miss interruptions at -12 dB because the caller reference is learned only from frames that already passed the absolute gate: with a quiet microphone it never becomes trusted and the absolute gate stays in force. Learning the reference from VAD speech frames before any loudness gate should remove those misses and make -12 / 0 / +6 dB behave alike.",
+   "set": {
+    "REF_UNGATED": true
+   }
+  },
+  {
+   "id": "N1",
+   "group": "gain",
+   "parent": "G4",
+   "hypothesis": "The remaining low-gain miss (dev GI-D03 at -12 dB) is the VAD itself: Silero's output falls when the same audio is 12 dB quieter. Scaling the VAD input so that the caller's own level sits at a nominal -22 dB (gain limited to -12..+24 dB, only once the reference is trusted) should make the VAD see the same signal at any microphone gain.",
+   "set": {
+    "VAD_NORMALIZE_DB": -22.0
+   }
+  },
+  {
+   "id": "S1",
+   "group": "sensitivity",
+   "parent": "G4",
+   "hypothesis": "Sensitivity of the soft-tier boundary: 4 dB instead of 6 dB. Expect more acknowledgements kept and more normal-level interruptions delayed (same-speaker words vary by about +/-5 dB).",
+   "set": {
+    "SOFT_DB": 4.0
+   }
+  },
+  {
+   "id": "S2",
+   "group": "sensitivity",
+   "parent": "G4",
+   "hypothesis": "Sensitivity of the soft-tier boundary: 8 dB instead of 6 dB. Expect fewer acknowledgements kept and no delayed interruptions.",
+   "set": {
+    "SOFT_DB": 8.0
+   }
+  }
+ ]
+}

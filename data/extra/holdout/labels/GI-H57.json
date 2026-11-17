@@ -1,0 +1,113 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "GI-H57",
+ "split": "reserve",
+ "category": "GI",
+ "subtype": "interruption.low_snr",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000026"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "street"
+  ],
+  "snr_db": 5,
+  "noise_source_ids": [
+   "SYN-room-tone",
+   "ESC50-4-166661-A-10.wav"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "GI-H57.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 20055,
+  "sha256": "8794014c98475bae424e715ff011480f6c5dcb2b4033a4a24a53b5d77f98ab87"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 2700,
+   "text": "تسعة سبعة تسجيل",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 4980,
+   "end_ms": 18560,
+   "text": "ثمانية صفر افتح أربعة التالي ستة اثنان اثنان أغلق افتح سبعة ثمانية التالي تسجيل",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3050,
+   "end_ms": 4580,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 8920,
+   "end_ms": 10860,
+   "kind": "speech",
+   "text": "لا لا توقف"
+  }
+ ],
+ "background_events": [
+  {
+   "kind": "other",
+   "start_ms": 0,
+   "end_ms": 20060,
+   "level_db": -5
+  }
+ ],
+ "events": [
+  {
+   "event_id": "GI-H57.e1",
+   "kind": "interruption",
+   "expected": "STOP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 8920,
+   "offset_ms": 10860,
+   "rationale": "Explicit objection / stop word(s) from the caller.",
+   "evident_ms": 9340
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#GI-57",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

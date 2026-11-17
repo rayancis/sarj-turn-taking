@@ -1,0 +1,320 @@
+[
+ {
+  "scenario_id": "GI-H51",
+  "caller": "00000008",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H52",
+  "caller": "00000010",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H53",
+  "caller": "00000012",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": true,
+  "bed": [
+   "engine",
+   12
+  ],
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H54",
+  "caller": "00000014",
+  "agent_speaker": "00000003",
+  "rel_level_db": -6,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H55",
+  "caller": "00000021",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": -12,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H56",
+  "caller": "00000025",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 6,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H57",
+  "caller": "00000026",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": [
+   "rain",
+   5
+  ],
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H58",
+  "caller": "00000028",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": true,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "GI-H59",
+  "caller": "00000008",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": {
+   "level_db": -21.0,
+   "delay_ms": 320
+  },
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "OV-H51",
+  "caller": "00000010",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": true
+ },
+ {
+  "scenario_id": "OV-H52",
+  "caller": "00000012",
+  "agent_speaker": "00000002",
+  "rel_level_db": 3,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H51",
+  "caller": "00000014",
+  "agent_speaker": "00000003",
+  "rel_level_db": -6,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H52",
+  "caller": "00000021",
+  "agent_speaker": "00000002",
+  "rel_level_db": -6,
+  "mic_gain_db": 0,
+  "telephone_band": true,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H53",
+  "caller": "00000025",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H54",
+  "caller": "00000026",
+  "agent_speaker": "00000002",
+  "rel_level_db": -6,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": [
+   "rain",
+   15
+  ],
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H55",
+  "caller": "00000028",
+  "agent_speaker": "00000003",
+  "rel_level_db": -6,
+  "mic_gain_db": -12,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BC-H56",
+  "caller": "00000008",
+  "agent_speaker": "00000002",
+  "rel_level_db": -6,
+  "mic_gain_db": 6,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BG-H51",
+  "caller": "00000010",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BG-H52",
+  "caller": "00000012",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": [
+   "engine",
+   10
+  ],
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BG-H53",
+  "caller": "00000014",
+  "agent_speaker": "00000003",
+  "rel_level_db": -8,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "BG-H54",
+  "caller": "00000021",
+  "agent_speaker": "00000002",
+  "rel_level_db": -6,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "NV-H51",
+  "caller": "00000025",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "NV-H52",
+  "caller": "00000026",
+  "agent_speaker": "00000002",
+  "rel_level_db": -3,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "NV-H53",
+  "caller": "00000028",
+  "agent_speaker": "00000003",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": {
+   "level_db": -18.0,
+   "delay_ms": 240
+  },
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ },
+ {
+  "scenario_id": "NV-H54",
+  "caller": "00000008",
+  "agent_speaker": "00000002",
+  "rel_level_db": 0,
+  "mic_gain_db": 0,
+  "telephone_band": false,
+  "bed": null,
+  "echo": null,
+  "no_prior_caller_speech": false,
+  "starts_with_agent": false
+ }
+]

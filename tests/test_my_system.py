@@ -1,4 +1,8 @@
-"""Behaviour of my_system.py (experiment 1: adaptive noise floor), on synthetic signals only.
+"""Behaviour of my_system.py's acoustic front end in the E01b configuration, on synthetic signals only.
+
+Since Phase 3 the default detector takes its speech frames from a neural VAD, for which a generated harmonic buzz
+is (correctly) not speech. These tests therefore select the acoustic front end explicitly (VAD = None, no caller
+reference, 300 ms window = E01b); tests/test_phase3.py covers the default configuration on real speech.
 
 No dev labels or dev audio are used here: the signals are generated, so the tests describe the intended
 behaviour (steady noise is not speech, a voice onset is) rather than the outcome on particular dev calls.
@@ -10,6 +14,15 @@ import my_system as ms
 
 SR = 16000
 FRAME = 320
+
+
+E01B_OPTIONS = {"VAD": None, "CALLER_REF": False, "EVIDENCE_WINDOW_MS": 300}
+
+
+@pytest.fixture(autouse=True)
+def e01b_configuration(monkeypatch):
+    for name, value in E01B_OPTIONS.items():
+        monkeypatch.setattr(ms, name, value)
 
 
 def db_to_amp(db):

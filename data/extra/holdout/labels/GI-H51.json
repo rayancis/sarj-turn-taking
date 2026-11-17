@@ -1,0 +1,105 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "GI-H51",
+ "split": "reserve",
+ "category": "GI",
+ "subtype": "interruption.multiword",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000008"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "quiet"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "GI-H51.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 18968,
+  "sha256": "d716c1bb4cfbea57a8197e5feb2a0a8a78ad24119777a46ab0bd6da2b8477c70"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 3120,
+   "text": "تسعة تفعيل أربعة",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5100,
+   "end_ms": 17470,
+   "text": "أرسل أربعة اتجاه تسعة تسعة أسفل سبعة السابق اثنان أعلى ثلاثة التالي خيارات تسجيل",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3470,
+   "end_ms": 4710,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 8600,
+   "end_ms": 10280,
+   "kind": "speech",
+   "text": "لا لا توقف"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "GI-H51.e1",
+   "kind": "interruption",
+   "expected": "STOP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 8600,
+   "offset_ms": 10280,
+   "rationale": "Explicit objection / stop word(s) from the caller.",
+   "evident_ms": 9060
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#GI-51",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

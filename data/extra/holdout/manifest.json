@@ -1,0 +1,162 @@
+{
+ "dataset": "sarj-extra-eval",
+ "version": "p3-1",
+ "split": "holdout",
+ "created": "2026-11-17",
+ "label_status": "script_derived",
+ "audio_source": "ASC human keywords (CC BY 4.0) + CC0/CC-BY ESC-50 clips, mixed digitally",
+ "thresholds": {
+  "T_full_ms": 300,
+  "T_dead_ms": 1500,
+  "E_full_ms": 600,
+  "E_dead_ms": 2000,
+  "E_miss_ms": 3000
+ },
+ "speakers": {
+  "agents": [
+   "00000002",
+   "00000003"
+  ],
+  "background": [
+   "00000004",
+   "00000007"
+  ],
+  "callers": [
+   "00000008",
+   "00000010",
+   "00000012",
+   "00000014",
+   "00000021",
+   "00000025",
+   "00000026",
+   "00000028"
+  ]
+ },
+ "scenarios": [
+  {
+   "scenario_id": "GI-H51",
+   "wav_sha256": "d716c1bb4cfbea57a8197e5feb2a0a8a78ad24119777a46ab0bd6da2b8477c70",
+   "label_sha256": "529d72b2178f8114689e33c4037b1653ba8fdf971578c4cbfb6e0240aaaaa689"
+  },
+  {
+   "scenario_id": "GI-H52",
+   "wav_sha256": "8f2e8af81c4b2dd1cb077a9a96c1ef4a14cae56752133f1173ae2c0f73cb28ba",
+   "label_sha256": "5558161a6152e6fe40bb194c703bbcb815e4a791158b9e21f420bad83d4539ba"
+  },
+  {
+   "scenario_id": "GI-H53",
+   "wav_sha256": "be4597f66a6b6e98ed0b4aa183d7144f3a8d04b21129f87e0bf226df206dae2e",
+   "label_sha256": "925207c30ca365c70a5bf22aa75c4969033c8c8192836b7b0a80131e59278218"
+  },
+  {
+   "scenario_id": "GI-H54",
+   "wav_sha256": "8f31409e36d5693b73886666489eb8fdc883a9231de3edc5386a2c54a0af60b2",
+   "label_sha256": "5683a14d673249ea8e10365d2d6fba399c3cb8490dcf0ccebb9d81e249650c5e"
+  },
+  {
+   "scenario_id": "GI-H55",
+   "wav_sha256": "e6d4a036c1149e06a0277c8cf07588ee3320e754c5f8268d746a7431f18ce399",
+   "label_sha256": "9d22c9929c8794b14650e835103dcf1dfbe7ac41a8d5e014be408486532f76fd"
+  },
+  {
+   "scenario_id": "GI-H56",
+   "wav_sha256": "7ed62fd32fd15223f5ba3fb72177a265db43f7a5f6492ffab095a29a19b128c2",
+   "label_sha256": "7f48fef4007f65f76385ec8f26b4a91093d02b82e111f08344fe1880c8009604"
+  },
+  {
+   "scenario_id": "GI-H57",
+   "wav_sha256": "8794014c98475bae424e715ff011480f6c5dcb2b4033a4a24a53b5d77f98ab87",
+   "label_sha256": "debe7e01efa305d2e0f8b418e4ba2fedff4ef17a2c42c27fcdae68237cd90c7c"
+  },
+  {
+   "scenario_id": "GI-H58",
+   "wav_sha256": "2a8614c8d6f6280f8128a3f4a75b46dd36174d7296867c13512b3a219045a864",
+   "label_sha256": "aaf761f28fe5b68401065aee053efcfe13833347fd585da5d50c1b3497e19491"
+  },
+  {
+   "scenario_id": "GI-H59",
+   "wav_sha256": "7351acd5a2ceb1bd769184a6ac7dd26359f175f7eb0f4abff006bc1045dba2a4",
+   "label_sha256": "a51b5daa1f8de7a3af2d84387ce96f59f571b21ca8bdbc3bc5685f0607daf57e"
+  },
+  {
+   "scenario_id": "OV-H51",
+   "wav_sha256": "47c416893f1de03cbb9a19f8cb8823fc49c81c0bf098106d8a7eb0ab57850b4c",
+   "label_sha256": "754b62d722421bd31d6a1da01282405fb313cec57b4961ca07d4b075a9a285e9"
+  },
+  {
+   "scenario_id": "OV-H52",
+   "wav_sha256": "6cf36c1eb02fad022cb07e00cf687e418eedc115c983b4abc01561489afd84e9",
+   "label_sha256": "c9fff9486d8631fb00527690ce0bc31430dee231446047b9cd16056036af30de"
+  },
+  {
+   "scenario_id": "BC-H51",
+   "wav_sha256": "95ca35838606b9a449bef2bc52997034df70276c85fc0545b5af95b27143f502",
+   "label_sha256": "0dc385e31ec116a4c849b66f4a6e447613873d5e920621aca29612c5405afdac"
+  },
+  {
+   "scenario_id": "BC-H52",
+   "wav_sha256": "01e20b8999f3720b73748118b411f0f8dfdb4bf3ec02de39306ab994cec786fc",
+   "label_sha256": "5a7879e6cdf5682555ed7ad2eb583a472c12e5bfbcf44ff05b1087fd238d4272"
+  },
+  {
+   "scenario_id": "BC-H53",
+   "wav_sha256": "daec5ad0006694310d6bc14bedb0afc28d4d81b9a7be320a1d927426555b8086",
+   "label_sha256": "a7d60212ddf569d74d7aa39424f0c66212976c6844e9c7eb7a14ee48c103632e"
+  },
+  {
+   "scenario_id": "BC-H54",
+   "wav_sha256": "7bee07f30f23ed0f69705a5dba2c62c032ac30d1eeb481ddc959357012f7a7a0",
+   "label_sha256": "fae6fe78a24daa1f5cc9c2f5d29b702960fcfad2e287d5c800ee9221c723b1ed"
+  },
+  {
+   "scenario_id": "BC-H55",
+   "wav_sha256": "d0473a3ae402f05f64cf92b9cc06a9f3e51f7255575fca1fee38d146ca3807aa",
+   "label_sha256": "2423b566349a64dd61e316b436266bb8f373bdb7fa53b60fff12d85e78a47e60"
+  },
+  {
+   "scenario_id": "BC-H56",
+   "wav_sha256": "791e484b42b63e7ca674ec9a70d4bbd9e3fc055b28403eeab750ecef429c7f10",
+   "label_sha256": "3e8b3dfeca5849f8fe87368de1ea864e849b2de701e5ecbc0c34f7711f26827d"
+  },
+  {
+   "scenario_id": "BG-H51",
+   "wav_sha256": "9e49cdf972b9eec8aa9e7826b25073fb1798cd41470fae39fad6800612c17fd8",
+   "label_sha256": "49ffc50decfbe5bd2c931d311fa91b2805c24163b42a65deda119e933c9d9441"
+  },
+  {
+   "scenario_id": "BG-H52",
+   "wav_sha256": "baff8d9d248187a4521524eb5a4a484432bfacb643183954105910c8bf7f96a2",
+   "label_sha256": "7d0c29c8a1550d18eaa36f04f7e73b796064df854552512a5ffc77ccd88aab37"
+  },
+  {
+   "scenario_id": "BG-H53",
+   "wav_sha256": "34540df5a0a1229a69dfd9ae2861277ba360b985e47fc9a5c4289149760da5bc",
+   "label_sha256": "1a117f5bd84ed01e7f43fc6818ae6124380ea93b78b535473a5560e562881e4a"
+  },
+  {
+   "scenario_id": "BG-H54",
+   "wav_sha256": "fb3e5539bb0f9a29390423d2e47a831cec0a13279f09e14e331fb5bfed8b0d72",
+   "label_sha256": "94a865fb4051d3202add3d59e0a73a280e10dcdb9de6cdb43eb460bec77f1a7f"
+  },
+  {
+   "scenario_id": "NV-H51",
+   "wav_sha256": "12e1b4354dcd08b78616df372f180fb135c026496ee63c1380783e4e75a819fa",
+   "label_sha256": "e680bab19233d30466c433fe5c610f22331c32488bc55f501d782f8de3aaa0ad"
+  },
+  {
+   "scenario_id": "NV-H52",
+   "wav_sha256": "ae79912be457316f68467787a4716e9fa748870a120aff2fa8841e85d9a574e5",
+   "label_sha256": "07a5d84816f6d81582654e6d93ca6b4791190e139dddf2db2542294d8d5c2900"
+  },
+  {
+   "scenario_id": "NV-H53",
+   "wav_sha256": "1c776445b8c1070cb2274c421dd0b97dd30f821c4a694ad3ab455df91e6dcca7",
+   "label_sha256": "e50ad85b0eceb0e3403e8e44041d16bf3c643a7f8d1ffcceb1894ecd2d16e241"
+  },
+  {
+   "scenario_id": "NV-H54",
+   "wav_sha256": "5f238161cec06c853a2fe904619e3e8d830031d6e55d92ce8e3c1ed1958a494c",
+   "label_sha256": "5a14955677433669ac1496077fc675bdc630b99c9b6bec4835309a76709fa58c"
+  }
+ ]
+}

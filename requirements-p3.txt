@@ -1,0 +1,4 @@
+# Phase 3 candidate: what my_system.py needs beyond requirements.txt.
+onnxruntime>=1.17        # runs models/silero_vad.onnx on CPU (tested: 1.29.0, numpy 2.5.3, Python 3.13.18)
+# Only for rebuilding the extra evaluation audio (tools/build_extra.py), never for the detector:
+scipy>=1.11

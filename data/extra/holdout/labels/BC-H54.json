@@ -1,0 +1,113 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "BC-H54",
+ "split": "reserve",
+ "category": "BC",
+ "subtype": "backchannel.double",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000026"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "street"
+  ],
+  "snr_db": 15,
+  "noise_source_ids": [
+   "SYN-room-tone",
+   "ESC50-4-161127-A-10.wav"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "BC-H54.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 19517,
+  "sha256": "7bee07f30f23ed0f69705a5dba2c62c032ac30d1eeb481ddc959357012f7a7a0"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 2850,
+   "text": "صفر تفعيل خيارات",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5100,
+   "end_ms": 18020,
+   "text": "ابدأ تفعيل ثمانية يمين تسعة واحد السابق صفر تسجيل سبعة السابق التالي افتح صفر",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3200,
+   "end_ms": 4720,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 8230,
+   "end_ms": 9660,
+   "kind": "backchannel",
+   "text": "نعم نعم"
+  }
+ ],
+ "background_events": [
+  {
+   "kind": "other",
+   "start_ms": 0,
+   "end_ms": 19520,
+   "level_db": -15
+  }
+ ],
+ "events": [
+  {
+   "event_id": "BC-H54.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 8230,
+   "offset_ms": 9660,
+   "rationale": "Acknowledgement word(s) only.",
+   "window_end_ms": 10160
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#BC-54",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

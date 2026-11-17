@@ -1,0 +1,105 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "OV-H51",
+ "split": "reserve",
+ "category": "OV",
+ "subtype": "overlap.simultaneous_start",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000010"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "quiet"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "OV-H51.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 21560,
+  "sha256": "47c416893f1de03cbb9a19f8cb8823fc49c81c0bf098106d8a7eb0ab57850b4c"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 3000,
+   "text": "ثمانية ابدأ خيارات",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5100,
+   "end_ms": 20060,
+   "text": "يمين تسجيل تسجيل خمسة تفعيل تسجيل التالي أربعة ثمانية اثنان صفر يسار التالي ثلاثة",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3350,
+   "end_ms": 4700,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 5100,
+   "end_ms": 6280,
+   "kind": "speech",
+   "text": "لا إلغاء"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "OV-H51.e1",
+   "kind": "interruption",
+   "expected": "STOP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 5100,
+   "offset_ms": 6280,
+   "rationale": "Explicit objection / stop word(s) from the caller.",
+   "evident_ms": 5620
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#OV-51",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}
