@@ -154,6 +154,42 @@
    "set": {
     "EVIDENCE_WINDOW_MS": 400
    }
+  },
+  {
+   "id": "G4",
+   "group": "gain",
+   "parent": "W2",
+   "hypothesis": "G2/W2 still miss interruptions at -12 dB because the caller reference is learned only from frames that already passed the absolute gate: with a quiet microphone it never becomes trusted and the absolute gate stays in force. Learning the reference from VAD speech frames before any loudness gate should remove those misses and make -12 / 0 / +6 dB behave alike.",
+   "set": {
+    "REF_UNGATED": true
+   }
+  },
+  {
+   "id": "N1",
+   "group": "gain",
+   "parent": "G4",
+   "hypothesis": "The remaining low-gain miss (dev GI-D03 at -12 dB) is the VAD itself: Silero's output falls when the same audio is 12 dB quieter. Scaling the VAD input so that the caller's own level sits at a nominal -22 dB (gain limited to -12..+24 dB, only once the reference is trusted) should make the VAD see the same signal at any microphone gain.",
+   "set": {
+    "VAD_NORMALIZE_DB": -22.0
+   }
+  },
+  {
+   "id": "S1",
+   "group": "sensitivity",
+   "parent": "G4",
+   "hypothesis": "Sensitivity of the soft-tier boundary: 4 dB instead of 6 dB. Expect more acknowledgements kept and more normal-level interruptions delayed (same-speaker words vary by about +/-5 dB).",
+   "set": {
+    "SOFT_DB": 4.0
+   }
+  },
+  {
+   "id": "S2",
+   "group": "sensitivity",
+   "parent": "G4",
+   "hypothesis": "Sensitivity of the soft-tier boundary: 8 dB instead of 6 dB. Expect fewer acknowledgements kept and no delayed interruptions.",
+   "set": {
+    "SOFT_DB": 8.0
+   }
   }
  ]
 }

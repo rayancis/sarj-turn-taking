@@ -62,6 +62,8 @@ VAD_MODE = "replace"        # "replace": a frame is speech when the VAD says so 
                             # "confirm": E01b speech frames, and a STOP also needs VAD_CONFIRM_MS of VAD speech
 VAD_THRESHOLD = 0.5
 VAD_CONFIRM_MS = 100
+VAD_NORMALIZE_DB = None     # scale the VAD's input so the caller's reference level sits at this band level (None = off)
+VAD_NORMALIZE_RANGE_DB = (-12.0, 24.0)   # limits of that scaling
 ECHO_GATE = False           # ignore caller frames that are explained by the agent's own delayed voice
 ECHO_MAX_LAG_MS = 500       # longest echo delay searched
 ECHO_HISTORY = 50           # agent-active frames kept per lag (1 s)
@@ -77,6 +79,7 @@ SOFT_DB = 6.0               # evidence more than this below the caller's referen
 SOFT_STOP_MS = 1000         # ... soft speech must instead last this long ...
 SOFT_WINDOW_MS = 1400       # ... within this window
 BACKGROUND_DB = None        # evidence more than this below the reference never stops (None = no such tier)
+REF_UNGATED = False         # learn the reference from speech frames before any loudness gate (needed at low gain)
 REL_GATE_DB = None          # once the reference is trusted, a speech frame must be within this many dB of it; this
                             # replaces the absolute gate, so the behaviour no longer depends on microphone gain
 
@@ -222,6 +225,7 @@ class MySystem(System):
         self.echo = EchoTracker() if ECHO_GATE else None
         self.ref = CallerReference()
         self.level = MIN_LEVEL_DB       # current caller frame band level
+        self.candidate = False          # current frame looks like speech before any loudness gate
         self.speech = False             # caller speech-frame state (with hysteresis)
         self.voiced = False             # current caller frame is periodic
         self.prev_caller = np.zeros(FRAME_SAMPLES, dtype=np.int16)   # previous frame, for the 40 ms analysis
@@ -265,16 +269,23 @@ class MySystem(System):
             loud_enough = ABS_GATE_DB is None or loudness_db(caller) > ABS_GATE_DB
         echo = bool(self.echo) and self.echo.explained(band_level_db(agent), level)
         if self.vad:
-            self.vad_speech = self.vad(caller) >= VAD_THRESHOLD
+            x = caller
+            if VAD_NORMALIZE_DB is not None and CALLER_REF and self.ref.ready:     # a quiet line looks nominal to the VAD
+                g = float(np.clip(VAD_NORMALIZE_DB - self.ref.value(), *VAD_NORMALIZE_RANGE_DB))
+                x = np.clip(caller.astype(np.float64) * 10 ** (g / 20), -32768, 32767)
+            self.vad_speech = self.vad(x) >= VAD_THRESHOLD
             if VAD_MODE == "replace":                 # the VAD decides; "voiced" evidence is the VAD itself
-                self.speech = self.voiced = self.vad_speech and loud_enough and not echo
+                self.candidate = self.vad_speech and not echo
+                self.speech = self.voiced = self.candidate and loud_enough
                 return self.speech
         self.voiced = periodicity(np.concatenate([self.prev_caller, caller])) >= VOICING_THRESHOLD
         self.prev_caller = caller
         if self.floor.ready:
             threshold = SPEECH_OFF_DB if self.speech else SPEECH_ON_DB
+            self.candidate = self.voiced and level - self.floor.value() >= SPEECH_ON_DB and not echo
             self.speech = loud_enough and level - self.floor.value() >= threshold
         else:                           # no trusted noise estimate yet: baseline rule, periodic frames only
+            self.candidate = False
             self.speech = loud_enough and self.voiced
         if not self.voiced:
             self.floor.add(level)
@@ -317,7 +328,7 @@ class MySystem(System):
                 self.stopped = True
                 return "STOP"
             return None
-        if CALLER_REF and speech and self.voiced:
+        if CALLER_REF and (self.candidate if REF_UNGATED else speech and self.voiced):
             self.ref.add(self.level)                # the caller's own turn: remember how loud they speak
 
         # End-of-turn track: the kit baseline, unchanged (fixed loudness and a fixed stretch of quiet).
