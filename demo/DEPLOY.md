@@ -61,7 +61,7 @@ Every push to `feat/demo-ui` redeploys automatically (Render: Auto-Deploy on com
   `experiments/evidence/runs.json`. The tests check the pin against that run.
 - **Scenario audio**: `python tools/build_extra.py` then `python tools/build_extra.py --verify`; a changed WAV is
   refused publicly until its new SHA-256 is reviewed and added to `demo/collections.json`.
-- **Roll back**: Render dashboard > the service > Events > Rollback, or push the tag:
+- **Roll back**: Render dashboard > the service > Events > Rollback, or push the rollback branch:
   `git push origin demo-rollback/e91e36e-before-p3:feat/demo-ui --force-with-lease` (ask the repository owner first).
 
 ## First-time setup (done)
