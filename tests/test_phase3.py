@@ -169,7 +169,7 @@ def test_the_e01b_options_reproduce_the_committed_e01b_run(monkeypatch):
     sys.path.insert(0, str(ROOT / "tools"))
     import replay
     from ttbench.dataset import lay_out_stream, load_split
-    for name, value in {"VAD": None, "CALLER_REF": False, "EVIDENCE_WINDOW_MS": 300}.items():
+    for name, value in {"VAD": None, "AEC": False, "CALLER_REF": False, "EVIDENCE_WINDOW_MS": 300}.items():
         monkeypatch.setattr(ms, name, value)
     log, meta = replay.replay(ms.MySystem, lay_out_stream(load_split(DEV)))
     mine = [(int(l["stream_ms"]) // 20, l["msg"]["decision"]) for l in log

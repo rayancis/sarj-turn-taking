@@ -16,7 +16,7 @@ SR = 16000
 FRAME = 320
 
 
-E01B_OPTIONS = {"VAD": None, "CALLER_REF": False, "EVIDENCE_WINDOW_MS": 300}
+E01B_OPTIONS = {"VAD": None, "AEC": False, "CALLER_REF": False, "EVIDENCE_WINDOW_MS": 300}
 
 
 @pytest.fixture(autouse=True)

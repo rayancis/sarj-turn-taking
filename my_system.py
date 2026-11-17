@@ -27,7 +27,10 @@ STOP rule, per 20 ms caller frame (only audio already received is used; no label
              about a second later.
      Until the reference is trusted only the fast rule applies (with the absolute gate). One STOP per agent
      utterance. No RESUME.
-State: the reference and the VAD's recurrent state are cleared at each scenario_start; the evidence window and the
+Echo (AEC = True): before step 1 the agent's own voice is subtracted from the caller channel by an adaptive echo
+  canceller driven by the agent channel (echo_canceller.py). The STOP rule then sees the caller minus the echo.
+  The end-of-turn path still reads the raw caller channel.
+State: the reference, the echo canceller and the VAD's recurrent state are cleared at each scenario_start; the evidence window and the
 stop flag at each agent_utterance_start.
 
 VAD = None gives E01b's acoustic front end (noise floor + periodicity) under the same evidence rules; with
@@ -57,6 +60,7 @@ VAD_THRESHOLD = 0.5         # speech probability at or above this = speech frame
 VAD_NORMALIZE_DB = -22.0    # the VAD's input is scaled so the caller's reference sits at this band level; None = off
 VAD_NORMALIZE_RANGE_DB = (-12.0, 24.0)   # limits of that scaling
 
+AEC = True                  # subtract the agent's own echo from the caller channel first (echo_canceller.py)
 CALLER_REF = True           # judge loudness against the caller's own earlier speech (gain-invariant)
 REF_WINDOW_MS = 15000       # caller-turn speech frames remembered for the reference
 REF_MIN_FRAMES = 10         # ... needed before the reference is trusted
@@ -169,6 +173,10 @@ class MySystem(System):
         if VAD:
             import neural_vad
             self.vad = neural_vad.load(VAD)     # the model file is read once per process (see __main__)
+        self.aec = None
+        if AEC:
+            import echo_canceller
+            self.aec = echo_canceller.EchoCanceller()
         self.floor = NoiseFloor()               # acoustic front end only
         self.ref = CallerReference()
         self.level = MIN_LEVEL_DB       # band level of the current caller frame
@@ -191,6 +199,8 @@ class MySystem(System):
         self.ref.reset()
         if self.vad:
             self.vad.reset()
+        if self.aec:
+            self.aec.reset()
         self.candidate = self.speech = self.voiced = False
         self.prev_caller = np.zeros(FRAME_SAMPLES, dtype=np.int16)
         self.agent_talking, self.stopped = False, False
@@ -257,7 +267,8 @@ class MySystem(System):
 
     # --- every 20 ms: decide ---------------------------------------------------------------------------
     def on_frame(self, agent, caller):
-        speech = self.is_speech(caller)
+        heard = self.aec.process(agent, caller) if self.aec else caller   # caller minus the agent's echo
+        speech = self.is_speech(heard)
 
         if self.agent_talking:
             self.evidence.append((speech, speech and self.voiced, self.level))

@@ -2,3 +2,4 @@
 onnxruntime>=1.17        # runs models/silero_vad.onnx on CPU (tested: 1.29.0, numpy 2.5.3, Python 3.13.18)
 # Only for rebuilding the extra evaluation audio (tools/build_extra.py), never for the detector:
 scipy>=1.11
+livekit==1.3.0           # E02 echo handling: WebRTC AEC3 (echo_canceller.py); Apache-2.0, WebRTC BSD-3-Clause, local CPU only
