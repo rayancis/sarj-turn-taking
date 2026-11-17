@@ -2,7 +2,7 @@
 
 Live site: **https://sarj-turn-taking.onrender.com** (Render, free web service, Docker). It deploys branch
 `feat/demo-ui` of the private repository; visitors reach only the HTTP routes below. Rollback point for the
-previous site (E01b + 6 synthetic scenarios): tag `demo-v1-e01b` (commit `e91e36e`).
+previous site (E01b + 6 synthetic scenarios): branch `demo-rollback/e91e36e-before-p3` (commit `e91e36e`).
 
 ## What visitors get
 
@@ -62,7 +62,7 @@ Every push to `feat/demo-ui` redeploys automatically (Render: Auto-Deploy on com
 - **Scenario audio**: `python tools/build_extra.py` then `python tools/build_extra.py --verify`; a changed WAV is
   refused publicly until its new SHA-256 is reviewed and added to `demo/collections.json`.
 - **Roll back**: Render dashboard > the service > Events > Rollback, or push the tag:
-  `git push origin demo-v1-e01b:feat/demo-ui --force-with-lease` (ask the repository owner first).
+  `git push origin demo-rollback/e91e36e-before-p3:feat/demo-ui --force-with-lease` (ask the repository owner first).
 
 ## First-time setup (done)
 
