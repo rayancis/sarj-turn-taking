@@ -1,0 +1,106 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "NV-H51",
+ "split": "reserve",
+ "category": "NV",
+ "subtype": "nonverbal.cough",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000025"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "quiet"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone",
+   "ESC50-4-171396-A-24.wav"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "NV-H51.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 20301,
+  "sha256": "12e1b4354dcd08b78616df372f180fb135c026496ee63c1380783e4e75a819fa"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 3130,
+   "text": "ثلاثة اثنان تفعيل",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5340,
+   "end_ms": 18800,
+   "text": "صفر خمسة افتح ثلاثة تسجيل سبعة سبعة ستة خيارات ثلاثة أغلق تسجيل واحد تسعة",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3480,
+   "end_ms": 4960,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "X1",
+   "speaker_id": "S001",
+   "start_ms": 9070,
+   "end_ms": 11570,
+   "kind": "nonverbal",
+   "delivery": "recorded coughing"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "NV-H51.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "X1"
+   ],
+   "onset_ms": 9070,
+   "offset_ms": 11570,
+   "rationale": "Recorded coughing; nothing said.",
+   "window_end_ms": 12070
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#NV-51",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

@@ -1,0 +1,145 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "BC-H52",
+ "split": "reserve",
+ "category": "BC",
+ "subtype": "backchannel.repeated",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000021"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "phone-nb"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "BC-H52.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 18983,
+  "sha256": "01e20b8999f3720b73748118b411f0f8dfdb4bf3ec02de39306ab994cec786fc"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 2220,
+   "text": "خمسة سبعة تسعة",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 4440,
+   "end_ms": 17480,
+   "text": "ثمانية رقم واحد أربعة ثلاثة خمسة اثنان يسار ستة ستة أعلى تسجيل تفعيل رقم",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 2570,
+   "end_ms": 4040,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 8030,
+   "end_ms": 8470,
+   "kind": "backchannel",
+   "text": "نعم"
+  },
+  {
+   "seg_id": "U2",
+   "speaker_id": "S001",
+   "start_ms": 10630,
+   "end_ms": 11370,
+   "kind": "backchannel",
+   "text": "موافق"
+  },
+  {
+   "seg_id": "U3",
+   "speaker_id": "S001",
+   "start_ms": 13230,
+   "end_ms": 13730,
+   "kind": "backchannel",
+   "text": "نعم"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "BC-H52.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 8030,
+   "offset_ms": 8470,
+   "rationale": "Acknowledgement word(s) only.",
+   "window_end_ms": 8970
+  },
+  {
+   "event_id": "BC-H52.e2",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "U2"
+   ],
+   "onset_ms": 10630,
+   "offset_ms": 11370,
+   "rationale": "Acknowledgement word(s) only.",
+   "window_end_ms": 11870
+  },
+  {
+   "event_id": "BC-H52.e3",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "U3"
+   ],
+   "onset_ms": 13230,
+   "offset_ms": 13730,
+   "rationale": "Acknowledgement word(s) only.",
+   "window_end_ms": 14230
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#BC-52",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "schema_version": "1.0",
+ "scenario_id": "BC-D51",
+ "split": "dev",
+ "category": "BC",
+ "subtype": "backchannel.single_soft",
+ "difficulty": 2,
+ "dialect": "msa",
+ "elicitation": "scripted",
+ "speakers": [
+  {
+   "speaker_id": "S001",
+   "role": "caller",
+   "source": "human",
+   "gender": "m",
+   "age_band": "25-34",
+   "dialect": "msa",
+   "consent_id": "ASC-CC-BY-4.0-00000027"
+  }
+ ],
+ "agent_voice": "agent-m1",
+ "acoustic": {
+  "conditions": [
+   "quiet"
+  ],
+  "snr_db": 38.0,
+  "noise_source_ids": [
+   "SYN-room-tone"
+  ],
+  "notes": "ASC human keyword recordings (gender/age not published; placeholders) mixed digitally"
+ },
+ "audio": {
+  "file": "BC-D51.wav",
+  "sample_rate": 16000,
+  "channels": [
+   "agent",
+   "user"
+  ],
+  "duration_ms": 20520,
+  "sha256": "5e921044de4585ba5f356690e7681ee3e27afa55e97f058805aab3f5521c6485"
+ },
+ "context": {
+  "use_case": "extra evaluation",
+  "language": "ar"
+ },
+ "agent_utterances": [
+  {
+   "utt_id": "A0",
+   "start_ms": 300,
+   "end_ms": 2860,
+   "text": "يسار سبعة خيارات",
+   "is_question": true
+  },
+  {
+   "utt_id": "A1",
+   "start_ms": 5120,
+   "end_ms": 19020,
+   "text": "يمين تفعيل واحد افتح يسار اثنان أرسل اتجاه السابق يمين ابدأ يسار أغلق تسعة",
+   "is_question": false
+  }
+ ],
+ "user_segments": [
+  {
+   "seg_id": "U0",
+   "speaker_id": "S001",
+   "start_ms": 3210,
+   "end_ms": 4730,
+   "kind": "speech",
+   "text": "نعم، موافق."
+  },
+  {
+   "seg_id": "U1",
+   "speaker_id": "S001",
+   "start_ms": 8590,
+   "end_ms": 9170,
+   "kind": "backchannel",
+   "text": "نعم"
+  }
+ ],
+ "background_events": [],
+ "events": [
+  {
+   "event_id": "BC-D51.e1",
+   "kind": "interruption",
+   "expected": "KEEP",
+   "segment_ids": [
+    "U1"
+   ],
+   "onset_ms": 8590,
+   "offset_ms": 9170,
+   "rationale": "Acknowledgement word(s) only.",
+   "window_end_ms": 9670
+  }
+ ],
+ "provenance": {
+  "script_ref": "tools/build_extra.py#BC-51",
+  "production_mode": "human_keywords_mixed",
+  "rendered_on": "2026-11-17",
+  "reviewed_by": [
+   "unreviewed"
+  ],
+  "label_status": "script_derived",
+  "notes": "Built from ASC (CC BY 4.0) keyword recordings and CC0/CC-BY ESC-50 clips. Labels derived from the script and exact placement, NOT validated by native listeners."
+ }
+}
