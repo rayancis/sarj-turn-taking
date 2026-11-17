@@ -1,0 +1,87 @@
+{
+ "reference": "E01b",
+ "max_experiments": 20,
+ "experiments": [
+  {
+   "id": "E01b",
+   "group": "reference",
+   "hypothesis": "E01b as committed (e566234): the reference for every gate.",
+   "set": {}
+  },
+  {
+   "id": "A1",
+   "group": "gain",
+   "parent": "E01b",
+   "hypothesis": "The -42 dBFS gate is a microphone-gain assumption. Removing it (level judged only against the noise floor) makes behaviour identical at any gain; the risk is new stops on quiet sounds in quiet rooms.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  },
+  {
+   "id": "B1",
+   "group": "neural-vad",
+   "parent": "E01b",
+   "hypothesis": "Silero VAD alone as the speech-frame test (same 200 ms in 300 ms rule, same -42 dBFS gate): rejects non-speech (cough, laugh, horn, noise steps) and bridges stop closures, but cannot tell an acknowledgement from an interruption.",
+   "set": {
+    "VAD": "silero",
+    "VAD_MODE": "replace"
+   }
+  },
+  {
+   "id": "B2",
+   "group": "neural-vad",
+   "parent": "E01b",
+   "hypothesis": "TEN VAD alone under the same conditions as B1 (10 ms hops, no extra buffering).",
+   "set": {
+    "VAD": "ten",
+    "VAD_MODE": "replace"
+   }
+  },
+  {
+   "id": "C1",
+   "group": "hybrid",
+   "parent": "E01b",
+   "hypothesis": "E01b acoustic frames with neural confirmation: a STOP also needs 100 ms of Silero speech in the window. Keeps E01b's fast onset and noise-floor logic; the VAD only vetoes non-speech.",
+   "set": {
+    "VAD": "silero",
+    "VAD_MODE": "confirm"
+   }
+  },
+  {
+   "id": "D1",
+   "group": "echo",
+   "parent": "B1",
+   "hypothesis": "The agent channel is a clean reference: caller frames whose level follows the agent's level at a fixed delay are echo, not a caller. Should remove the speakerphone false stops without hiding a caller who talks over the echo.",
+   "set": {
+    "ECHO_GATE": true
+   }
+  },
+  {
+   "id": "D2",
+   "group": "echo",
+   "parent": "E01b",
+   "hypothesis": "The same echo gate on E01b without any neural model (is the echo gate useful on its own?).",
+   "set": {
+    "ECHO_GATE": true
+   }
+  },
+  {
+   "id": "A2",
+   "group": "gain",
+   "parent": "E01b",
+   "hypothesis": "Gain-invariant loudness: compare the evidence with the caller's own earlier speech level instead of an absolute level. Evidence more than 6 dB below it is 'soft' and must last 1000 ms in 1400 ms before a STOP. Acknowledgements are short and soft; a soft but sustained interruption is still caught, later.",
+   "set": {
+    "CALLER_REF": true
+   }
+  },
+  {
+   "id": "A3",
+   "group": "gain",
+   "parent": "A2",
+   "hypothesis": "With a caller-relative reference in place the absolute -42 dBFS gate should no longer be needed.",
+   "set": {
+    "ABS_GATE_DB": null
+   }
+  }
+ ]
+}
