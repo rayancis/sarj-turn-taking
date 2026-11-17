@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import random
+import subprocess
 import sys
 import threading
 import urllib.error
@@ -90,17 +91,33 @@ def dev_app():
     return demo.DemoApp(DEV, demo.DEFAULT_MODELS)
 
 
-def test_default_models_load_from_the_repository(dev_app):
-    cur = dev_app.models["current"]
-    assert cur.available, cur.error
-    assert cur.sha256 == demo.hashlib.sha256((KIT / "my_system.py").read_bytes()).hexdigest()
-    base = dev_app.models["baseline"]
-    if not base.available:
-        pytest.skip(f"git history not available: {base.error}")
-    # the exact file of the recorded baseline run (experiments/evidence/runs.json)
-    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))
-    assert base.sha256 == runs["runs"]["baseline-bd2a3f0-rt"]["my_system_sha256"]
-    assert base.revision == "bd2a3f0" and base.name == "Baseline"
+def test_exactly_two_pinned_detectors(dev_app):
+    """Baseline and P3 only, each the exact file of its recorded run (experiments/evidence/runs.json)."""
+    assert list(dev_app.models) == ["p3", "baseline"]
+    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
+    p3, base = dev_app.models["p3"], dev_app.models["baseline"]
+    assert p3.available and base.available, (p3.error, base.error)
+    assert p3.sha256 == runs["p3-6b4eece-rt"]["my_system_sha256"] == demo.P3_SHA256
+    assert base.sha256 == runs["baseline-bd2a3f0-rt"]["my_system_sha256"] == demo.BASELINE_SHA256
+    assert (p3.name, p3.revision, base.name, base.revision) == ("P3 Hybrid", "b32cfc2", "Baseline", "bd2a3f0")
+    assert p3.new_system().vad is not None                   # P3 really runs the neural VAD ...
+    assert not hasattr(base.new_system(), "vad")             # ... and Baseline is the plain loudness rule
+
+
+def test_p3_files_are_the_audited_phase3_files():
+    for path in ("my_system.py", "neural_vad.py", "models/silero_vad.onnx", "models/SILERO_VAD_LICENSE"):
+        try:
+            original = subprocess.run(["git", "show", f"b32cfc2:{path}"], cwd=KIT, capture_output=True, timeout=20)
+        except OSError:
+            pytest.skip("git not available")
+        if original.returncode != 0:
+            pytest.skip("commit b32cfc2 not available")
+        assert (KIT / path).read_bytes() == original.stdout, path
+
+
+def test_a_label_cannot_run_other_code(tmp_path):
+    wrong = demo.Model("p3", {**demo.DEFAULT_MODELS["p3"], "source": "file:demo/models/baseline_bd2a3f0.py"})
+    assert not wrong.available and "not the pinned" in wrong.error
 
 
 @pytest.mark.parametrize("model_id", list(demo.DEFAULT_MODELS))
@@ -113,7 +130,7 @@ def test_demo_decisions_equal_offline_replay_on_every_dev_call(dev_app, model_id
     rng = random.Random(7)
     for sid, scen in dev_app.data.scenarios.items():
         sess = demo.DetectorSession(model, scen)
-        scorer = demo.Scorer(scen.label, dev_app.data.thresholds)
+        scorer = demo.Scorer(scen.label, dev_app.data.thresholds(sid))
         shown: dict[str, dict] = {}
 
         def remember():
@@ -130,7 +147,7 @@ def test_demo_decisions_equal_offline_replay_on_every_dev_call(dev_app, model_id
             assert {k: early[k] for k in ("outcome", "credit")} == {k: final[eid][k] for k in ("outcome", "credit")}, eid
 
 
-@pytest.mark.parametrize("model_id,run", [("current", "e01b-e566234-rt"), ("baseline", "baseline-bd2a3f0-rt")])
+@pytest.mark.parametrize("model_id,run", [("p3", "p3-6b4eece-rt"), ("baseline", "baseline-bd2a3f0-rt")])
 def test_demo_matches_the_recorded_realtime_runs(dev_app, model_id, run):
     """Per call, the demo gives the decisions the official real-time harness recorded for that commit in one full
     session (arrival time = frame time + processing/network delay, so 0-20 ms later)."""
@@ -155,28 +172,39 @@ def test_demo_matches_the_recorded_realtime_runs(dev_app, model_id, run):
 
 
 def test_api_real_stop_and_real_keep(dev_app):
-    """Through HTTP: GI-D01 gets a real STOP inside the interruption; NV-D01 (a cough) gets no STOP and is kept."""
+    """Through HTTP: GI-D01 gets a real P3 STOP inside the interruption; NV-D01 (a cough): P3 keeps talking while
+    the Baseline stops (its recorded false stop)."""
     with serving(dev_app) as base:
-        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "current"})
+        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "p3"})
         r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
         stops = [d for d in r["decisions"] if d["decision"] == "STOP"]
         assert r["done"] and len(stops) == 1 and stops[0]["utt_id"] is not None
         ev = r["score"]["events"][0]
-        assert ev["closed"] and ev["outcome"] == "yield" and ev["credit"] == 1.0
+        assert ev["closed"] and ev["outcome"] == "yield" and ev["credit"] > 0
 
-        s = post(base, "/api/session", {"scenario": "NV-D01", "model": "current"})
-        r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
-        assert [d for d in r["decisions"] if d["decision"] == "STOP"] == []
-        assert r["score"]["events"][0]["outcome"] == "kept"
+        for model, outcome in (("p3", "kept"), ("baseline", "false_stop")):
+            s = post(base, "/api/session", {"scenario": "NV-D01", "model": model})
+            r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
+            assert r["score"]["events"][0]["outcome"] == outcome, model
 
 
 def test_config_reports_recorded_benchmarks_not_live_scores(dev_app):
+    """Exactly the two recorded dev-set rows, equal to experiments/evidence/runs.json; no other version anywhere."""
     cfg = dev_app.config()
     assert len(cfg["scenarios"]) == 24
-    rows = {r["commit"]: r for r in cfg["benchmark"]["rows"]}
+    rows = {r["model"]: r for r in cfg["benchmark"]["rows"]}
+    assert set(rows) == {"baseline", "p3"}
     runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
-    assert rows["e566234"]["core"] == runs["e01b-e566234-rt"]["core"]
-    assert rows["bd2a3f0"]["core"] == runs["baseline-bd2a3f0-rt"]["core"]
+    for model, run in (("baseline", "baseline-bd2a3f0-rt"), ("p3", "p3-6b4eece-rt")):
+        r = runs[run]
+        assert rows[model]["core"] == round(r["core"], 2) and rows[model]["R"] == round(r["R"], 3)
+        assert rows[model]["S"] == round(r["S"], 3)
+        assert (rows[model]["false_stops"], rows[model]["misses"]) == (r["false_stops"], r["misses"])
+    assert (rows["baseline"]["core"], rows["p3"]["core"]) == (41.04, 73.41)
+    page = json.dumps(cfg) + "".join((KIT / "demo" / "static" / f).read_text(encoding="utf-8")
+                                     for f in ("index.html", "app.js"))
+    for gone in ("E01b", "e566234", "E01 ", "8f08311", "82.0"):
+        assert gone not in page, gone
 
 
 def test_timeline_keeps_ground_truth_apart_from_protocol_input(dev_app):

@@ -1,0 +1,112 @@
+{
+  "about": "Which scenario collections the demo may serve, and on what terms. The public site (server.py --public) serves only collections marked public here, and only WAV files whose SHA-256 is listed under public_wav_sha256.",
+  "reviewed": "2026-11-17",
+  "collections": [
+    {
+      "key": "dev",
+      "dir": "data/dev",
+      "public": false,
+      "title": "Competition development set",
+      "kind": "Original kit recordings (AI-generated Gemini TTS voices, procedural noise)",
+      "description": "The 24 development calls supplied with the SARJ starter kit.",
+      "rights": "Supplied to participants; the kit grants no public redistribution licence. The owner's approval covers the private repository and local team use only. Never served by the public site."
+    },
+    {
+      "key": "xdev",
+      "dir": "data/extra/xdev",
+      "public": true,
+      "title": "Phase 3 constructed scenarios: xdev",
+      "kind": "Additional constructed evaluation scenarios",
+      "description": "25 scenarios assembled from recordings of real people reading isolated Arabic keywords and from licensed non-speech sound clips, mixed digitally (not spontaneous conversations). Used while developing Phase 3.",
+      "rights": "ASC voice clips CC BY 4.0; ESC-50 sound clips individually CC0 or CC BY (Freesound), cross-checked against the ESC-50 LICENSE file; generated room tone, echo and filters. Redistributable with attribution."
+    },
+    {
+      "key": "holdout",
+      "dir": "data/extra/holdout",
+      "public": true,
+      "title": "Phase 3 constructed scenarios: holdout",
+      "kind": "Additional constructed evaluation scenarios",
+      "description": "25 scenarios built the same way with different speakers and sound clips, kept frozen during Phase 3 and scored once. Shown here for listening only; never used to tune the detector.",
+      "rights": "Same sources and licences as xdev (different speakers and clips)."
+    }
+  ],
+  "attribution": [
+    {
+      "work": "Arabic Speech Commands Dataset",
+      "by": "Abdulkader Ghandoura, Farouk Hjabo, Oumayma Al Dakkak",
+      "cite": "Building and Benchmarking an Arabic Speech Commands Dataset for Small-Footprint Keyword Spotting, Engineering Applications of Artificial Intelligence, 2021",
+      "url": "https://github.com/abdulkaderghandoura/arabic-speech-commands-dataset",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "changes": "One-second keyword clips trimmed, level-scaled, concatenated, filtered and mixed with other sounds."
+    },
+    {
+      "work": "ESC-50: Dataset for Environmental Sound Classification",
+      "by": "Karol J. Piczak (ACM Multimedia 2015)",
+      "url": "https://github.com/karolpiczak/ESC-50",
+      "license": "Only clips whose own Freesound licence is CC0 or CC BY are used (per clip, below). The compilation as a whole is CC BY-NC 3.0; this demo is non-commercial.",
+      "license_url": "https://creativecommons.org/licenses/by-nc/3.0/",
+      "changes": "Clips cut, level-scaled, filtered and mixed into the caller channel."
+    },
+    {
+      "work": "Silero VAD v6 (model used by the P3 detector)",
+      "by": "Silero Team",
+      "url": "https://github.com/snakers4/silero-vad",
+      "license": "MIT",
+      "license_url": "https://opensource.org/licenses/MIT",
+      "changes": "None (ONNX file used as published)."
+    }
+  ],
+  "public_wav_sha256": {
+    "GI-D51": "74c7a6d035c8dae6fb2d11f0e191853ba84966c8ddd0dcd3b9dcddd308369b55",
+    "GI-D52": "d85c4718eab34bafc88d347c53fba59087aaa78f64eb610c35b0f20f672dcfa2",
+    "GI-D53": "5fd79218a7861f26e669b326a093640030e08f26bdf31f50e7b2c0a471dc643f",
+    "GI-D54": "5d94687b96ccbfce7cb61da383fa518811d75b1fbdadf03947f3cb2e4a8ee13d",
+    "GI-D55": "95e5cf09ff2e9c63a438811dcaa9ad864cb1968cdde456e4a3c6bb7cec8c6f57",
+    "GI-D56": "7fa009614cbdbafa2c6a94498812d8553d073849d79ef950418995d3874e401e",
+    "GI-D57": "ef0778813706c65b9d058ebeb5148ac8acb05e2957a2e3fe94028522c66cde75",
+    "GI-D58": "d70c233843047bbe6ef4d134a6589a482bd886cb64893e907b706a5062576edc",
+    "GI-D59": "a7256360953b117f15af7162d0ac2c0d7b3d53f552002b0b9a6647fa7043e62f",
+    "OV-D51": "625ce39b65462a4134977b8185cd358b535e85ff17639043ad48b129597dcf88",
+    "OV-D52": "7573fc825dc8f52b151a7a6de4c417a06fa688a03fda8f8539f824984aa589d0",
+    "BC-D51": "5e921044de4585ba5f356690e7681ee3e27afa55e97f058805aab3f5521c6485",
+    "BC-D52": "cd1ebde742292e4f6d0b1b5927dc0e7e11dfbfa809ce30daaa7e437ad953bf4e",
+    "BC-D53": "591fdba937043ad33f0e47459e692248db30c7d10b37ff33c5dc88c8b56220ff",
+    "BC-D54": "89d5f338f36ffd1b6ee6f18942fc7c614166788c1c3a83ea2346eb1c0175b87c",
+    "BC-D55": "cce86d4fab0c02bfbe734dd2d07aa17d534bc0c033e36de68551df9cd4e9edee",
+    "BC-D56": "f9243f5b10cc8b57e6982a5676c09bb5be311abb1060044476602a7afd31512b",
+    "BG-D51": "399259359963e034b9503563e92e43e307e88dbe67d9685ee9c30c7595ce8098",
+    "BG-D52": "32cb4bbd2e899c33d12df955a81c5461ee4c4997d850179251dfd2217883fe5d",
+    "BG-D53": "69296fa866b800fabe59fe0ff582965c277df9af9572d7bc72f32b6ba601b7e9",
+    "BG-D54": "21fe938af4d0e39456c4c3135007c54c1a837123ebf0ce3614f8eb343585f7d3",
+    "NV-D51": "d253fa1b8306c6c5473d45818eaf9fc0f77c24b3d7f4671c082e1e1d5cba5922",
+    "NV-D52": "3fe9b00bfeea43ef5f02098fa8775e2ae2123567a227a7b903f6850b3a90a7d4",
+    "NV-D53": "792a6cb100c6308ef82b3cc15156eaacd938b12b96939e3b7e3374e0dfc55ba2",
+    "NV-D54": "43d88cdac9d523bc196ebb557a7f496ce327f01e582b055a3027e8645829fad1",
+    "GI-H51": "d716c1bb4cfbea57a8197e5feb2a0a8a78ad24119777a46ab0bd6da2b8477c70",
+    "GI-H52": "8f2e8af81c4b2dd1cb077a9a96c1ef4a14cae56752133f1173ae2c0f73cb28ba",
+    "GI-H53": "be4597f66a6b6e98ed0b4aa183d7144f3a8d04b21129f87e0bf226df206dae2e",
+    "GI-H54": "8f31409e36d5693b73886666489eb8fdc883a9231de3edc5386a2c54a0af60b2",
+    "GI-H55": "e6d4a036c1149e06a0277c8cf07588ee3320e754c5f8268d746a7431f18ce399",
+    "GI-H56": "7ed62fd32fd15223f5ba3fb72177a265db43f7a5f6492ffab095a29a19b128c2",
+    "GI-H57": "8794014c98475bae424e715ff011480f6c5dcb2b4033a4a24a53b5d77f98ab87",
+    "GI-H58": "2a8614c8d6f6280f8128a3f4a75b46dd36174d7296867c13512b3a219045a864",
+    "GI-H59": "7351acd5a2ceb1bd769184a6ac7dd26359f175f7eb0f4abff006bc1045dba2a4",
+    "OV-H51": "47c416893f1de03cbb9a19f8cb8823fc49c81c0bf098106d8a7eb0ab57850b4c",
+    "OV-H52": "6cf36c1eb02fad022cb07e00cf687e418eedc115c983b4abc01561489afd84e9",
+    "BC-H51": "95ca35838606b9a449bef2bc52997034df70276c85fc0545b5af95b27143f502",
+    "BC-H52": "01e20b8999f3720b73748118b411f0f8dfdb4bf3ec02de39306ab994cec786fc",
+    "BC-H53": "daec5ad0006694310d6bc14bedb0afc28d4d81b9a7be320a1d927426555b8086",
+    "BC-H54": "7bee07f30f23ed0f69705a5dba2c62c032ac30d1eeb481ddc959357012f7a7a0",
+    "BC-H55": "d0473a3ae402f05f64cf92b9cc06a9f3e51f7255575fca1fee38d146ca3807aa",
+    "BC-H56": "791e484b42b63e7ca674ec9a70d4bbd9e3fc055b28403eeab750ecef429c7f10",
+    "BG-H51": "9e49cdf972b9eec8aa9e7826b25073fb1798cd41470fae39fad6800612c17fd8",
+    "BG-H52": "baff8d9d248187a4521524eb5a4a484432bfacb643183954105910c8bf7f96a2",
+    "BG-H53": "34540df5a0a1229a69dfd9ae2861277ba360b985e47fc9a5c4289149760da5bc",
+    "BG-H54": "fb3e5539bb0f9a29390423d2e47a831cec0a13279f09e14e331fb5bfed8b0d72",
+    "NV-H51": "12e1b4354dcd08b78616df372f180fb135c026496ee63c1380783e4e75a819fa",
+    "NV-H52": "ae79912be457316f68467787a4716e9fa748870a120aff2fa8841e85d9a574e5",
+    "NV-H53": "1c776445b8c1070cb2274c421dd0b97dd30f821c4a694ad3ab455df91e6dcca7",
+    "NV-H54": "5f238161cec06c853a2fe904619e3e8d830031d6e55d92ce8e3c1ed1958a494c"
+  }
+}

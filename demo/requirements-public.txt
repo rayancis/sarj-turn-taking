@@ -1,3 +1,8 @@
-# Runtime of the hosted demo only (same pinned versions as requirements-lock.txt).
+# Runtime of the hosted demo only, fully pinned (numpy/websockets as requirements-lock.txt; onnxruntime as tested
+# for P3 in experiments/P3-phase3-report.md). onnxruntime runs models/silero_vad.onnx for the P3 detector.
 numpy==2.5.5
 websockets==17.4
+onnxruntime==1.29.0
+flatbuffers==25.12.19
+packaging==26.3
+protobuf==7.36.2

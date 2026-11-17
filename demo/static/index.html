@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SARJ Detector Demo</title>
-<meta name="description" content="Play a call and watch the SARJ interruption detector decide, live.">
-<meta property="og:title" content="SARJ interruption detector: live demo">
-<meta property="og:description" content="Play a call and watch the real detector decide when the agent should stop talking.">
+<meta name="description" content="Play a call and compare two interruption detectors, Baseline and P3, on the same audio.">
+<meta property="og:title" content="SARJ interruption detector: Baseline vs P3">
+<meta property="og:description" content="Play a call and watch two real detectors decide when the agent should stop talking.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -14,11 +14,12 @@
 <header class="top">
   <div>
     <h1>SARJ interruption detector</h1>
-    <p class="sub" id="subtitle">Live playback of development calls through the real detector. Work in progress: not the competition submission.</p>
+    <p class="sub" id="subtitle">Play a call and compare two real detectors, Baseline and P3, on the same audio. Work in progress by a
+      university team: not the competition submission.</p>
   </div>
   <div class="chips">
-    <span class="chip" id="model-chip">Model: loading…</span>
-    <span class="chip muted" id="mode-chip">dev data · localhost only</span>
+    <span class="chip" id="model-chip">Hearing: loading…</span>
+    <span class="chip muted" id="mode-chip">local · team use</span>
   </div>
 </header>
 
@@ -28,7 +29,7 @@
     <label>Scenario
       <select id="scenario"></select>
     </label>
-    <label>Detector
+    <label>Hear the agent as controlled by
       <select id="model"></select>
     </label>
     <div class="buttons">
@@ -38,11 +39,24 @@
     <div class="clock"><span id="clock">0.00</span> / <span id="duration">0.00</span> s</div>
   </section>
 
+  <section class="panel scen-card" id="scen-card">
+    <div class="scen-head">
+      <h2 id="scen-title">Loading…</h2>
+      <span class="tag gt" id="scen-collection"></span>
+    </div>
+    <p id="scen-explanation" class="scen-expl"></p>
+    <p id="scen-credits" class="note"></p>
+  </section>
+
   <section class="panel status-panel">
-    <div id="status" class="status idle">Loading…</div>
+    <div class="duel">
+      <div class="det-card" id="card-baseline"><div class="det-name">Baseline</div><div class="det-status" id="st-baseline">–</div></div>
+      <div class="det-card" id="card-p3"><div class="det-name">P3 Hybrid</div><div class="det-status" id="st-p3">–</div></div>
+    </div>
+    <div id="headline" class="headline" hidden></div>
     <div class="utt" id="utt-text" dir="rtl" lang="ar"></div>
     <div class="meters">
-      <div class="meter"><span>Agent output (what the caller hears)</span><div class="bar"><i id="m-agent"></i></div></div>
+      <div class="meter"><span id="m-agent-label">Agent output (what the caller hears)</span><div class="bar"><i id="m-agent"></i></div></div>
       <div class="meter"><span>Caller microphone</span><div class="bar"><i id="m-caller"></i></div></div>
     </div>
     <div id="error" class="error" hidden></div>
@@ -52,19 +66,33 @@
     <div class="panel-head">
       <h2>Timeline</h2>
       <div class="legend">
-        <span><i class="sw stop"></i>STOP (detector)</span>
-        <span><i class="sw muted-sw"></i>agent muted after STOP</span>
+        <span><i class="sw stop"></i>STOP decision</span>
+        <span><i class="sw muted-sw"></i>agent silent after STOP</span>
         <span><i class="sw gt-stop"></i>label: STOP</span>
         <span><i class="sw gt-keep"></i>label: KEEP</span>
         <span><i class="sw gt-either"></i>label: EITHER</span>
       </div>
     </div>
-    <canvas id="timeline" height="250"></canvas>
-    <p class="note">Waveforms show the original recording. The detector always receives this original audio (open loop, as in the
+    <canvas id="timeline" height="290"></canvas>
+    <p class="note">Waveforms show the original recording. Both detectors always receive this original audio (open loop, as in the
       official harness); muting the agent after a STOP changes only what you hear.</p>
   </section>
 
   <div class="grid">
+    <section class="panel">
+      <div class="panel-head"><h2>Ground truth &amp; correctness</h2><span class="tag gt">labels, not given to detectors</span></div>
+      <div id="scenario-info" class="scen-info"></div>
+      <div class="table-wrap">
+        <table class="events">
+          <thead><tr><th>Event</th><th>Expected</th><th>Caller</th><th>Baseline</th><th>P3</th></tr></thead>
+          <tbody id="events"></tbody>
+        </table>
+      </div>
+      <div id="protected" class="protected"></div>
+      <p class="note">Labels are script-derived and not validated by listeners. Results come from the official scorer and appear once
+        playback has passed the point after which no later decision can change them.</p>
+    </section>
+
     <section class="panel">
       <div class="panel-head"><h2>Detector decisions</h2><span class="tag live">real output, live</span></div>
       <div class="log-wrap" id="log-wrap">
@@ -74,30 +102,16 @@
         </table>
       </div>
       <dl class="timing" id="timing"></dl>
-      <p class="note">Timing is measured in this local replay (detector compute time and page update delay). It is not network
-        latency and not an official latency score.</p>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head"><h2>Ground truth &amp; correctness</h2><span class="tag gt">labels, not given to detector</span></div>
-      <div id="scenario-info" class="scen-info"></div>
-      <div class="table-wrap">
-        <table class="events">
-          <thead><tr><th>Event</th><th>Expected</th><th>Caller</th><th>Result (official scorer)</th></tr></thead>
-          <tbody id="events"></tbody>
-        </table>
-      </div>
-      <div id="protected" class="protected"></div>
-      <p class="note">Labels are script-derived and unreviewed. An event's result appears once the stream has passed the point after
-        which no later decision can change it.</p>
+      <p class="note" id="timing-note">This page may run the detectors ahead of what you hear (look-ahead) and applies each decision at the
+        frame time where the detector made it. These timings are <b>not</b> a real-time network latency benchmark.</p>
     </section>
   </div>
 
   <section class="panel" id="bench-panel" hidden>
-    <div class="panel-head"><h2>Development-set benchmark</h2><span class="tag gt">recorded earlier, not live</span></div>
+    <div class="panel-head"><h2>Official dev-set results</h2><span class="tag gt">recorded earlier, not live</span></div>
     <div class="table-wrap">
       <table class="bench">
-        <thead><tr><th>Version</th><th>Commit</th><th>Core</th><th>Responsiveness R</th><th>Restraint S</th><th>Missed STOPs</th><th>False stops</th></tr></thead>
+        <thead><tr><th>Metric</th><th class="num">Baseline</th><th class="num">P3</th></tr></thead>
         <tbody id="bench"></tbody>
       </table>
     </div>
@@ -107,15 +121,21 @@
   <details class="panel how">
     <summary>How decisions reach this page</summary>
     <ol>
-      <li>The page plays the call's two channels from one audio clock and regularly reports its playhead to the server that runs the detector.</li>
-      <li>For each 20 ms frame the playhead reaches, the server does what the kit's harness and server do: the same control messages
-        (<code>scenario_start</code>, <code>agent_utterance_start/end</code>) in the same order, then the 1,280-byte stereo frame,
-        into <code>MySystem.on_frame</code> of the selected version, imported unchanged. On the hosted site the server runs up to 0.8 s
-        ahead of what you hear, so network delay cannot make decisions late; each decision only uses audio up to its own frame.</li>
-      <li>Any decision is validated with the kit's protocol check, stamped with its frame time, and sent back; when playback reaches that
-        frame time the page mutes the agent until the end of that utterance. Pause stops the clock and the feed together; Reset and scenario/model changes start a fresh detector.</li>
+      <li>The page plays the call's two channels (agent and caller) from one audio clock and regularly reports its playhead to the server.</li>
+      <li>The server runs both detectors, each in its own session, on the same frames. For each 20 ms frame it does what the kit's
+        harness and server do: the same control messages (<code>scenario_start</code>, <code>agent_utterance_start/end</code>) in the
+        same order, then the 1,280-byte stereo frame, into <code>MySystem.on_frame</code> of that detector, imported unchanged and
+        checked against its file hash. On the hosted site the server may run up to 0.8 s ahead of what you hear, so network delay
+        cannot make decisions late; each decision only uses audio up to its own frame.</li>
+      <li>Each decision is validated with the kit's protocol check, stamped with its frame time, and sent back; when playback reaches
+        that time the page marks it, and the selected detector's STOP silences the agent until the end of that utterance.</li>
       <li>Labels are read only by the official scorer, after the decisions exist. Nothing here is pre-scripted.</li>
     </ol>
+  </details>
+
+  <details class="panel how" id="credits-panel">
+    <summary>Audio credits and licences</summary>
+    <div id="credits"></div>
   </details>
 </main>
 <script src="app.js"></script>

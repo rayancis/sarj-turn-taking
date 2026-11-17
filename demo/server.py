@@ -5,16 +5,22 @@ Local (presenter laptop, competition dev calls, 127.0.0.1 only):
     python demo/server.py --port 8771 --no-browser
     python demo/server.py --model e01=git:8f08311:my_system.py     # add another detector version
 
-Public (hosted site, original demo scenarios only, see demo/DEPLOY.md):
-    python demo/server.py --public             # 0.0.0.0:$PORT, demo/public_data, limits on, no evaluation artifacts
+Public (hosted site, see demo/DEPLOY.md):
+    python demo/server.py --public             # 0.0.0.0:$PORT, publicly licensed collections only, limits on
+
+Two detectors, pinned by file hash so a label can never run other code: Baseline (the kit's starter detector,
+bd2a3f0) and P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2). Scenario collections and
+their redistribution rights are listed in demo/collections.json: the 24 competition dev calls are local-only; the 50
+Phase 3 constructed scenarios (real human keyword recordings + licensed sounds) are public, with attribution.
 
 How a decision reaches the page (nothing is pre-scripted):
-  1. The browser plays the call's two channels from one AudioContext and regularly posts its playhead.
+  1. The browser plays the call's two channels from one AudioContext and regularly posts its playhead (for both
+     detectors: each has its own session, fed the same frames).
   2. For each 20 ms frame up to the playhead (+ a small look-ahead in public mode, to absorb network delay),
      DetectorSession does what the kit's server does with the harness's messages: control messages first
      (scenario_start, agent_utterance_start/end, built by the kit's own ttbench.harness.build_stream), then the
      1,280-byte frame, parsed back with np.frombuffer, into MySystem.on_frame(agent, caller). It is the class from
-     my_system.py (or a pinned, hash-checked copy of an earlier version), imported unchanged.
+     my_system.py (P3) or the pinned baseline file, imported unchanged and checked against its SHA-256.
   3. Whatever on_frame returns goes through the kit's _as_messages and validate_client_message, is stamped with the
      frame's stream time (20 * n ms, as tools/replay.py does), and is returned. The page applies each decision when
      playback reaches that stream time (mutes the agent on STOP).
@@ -56,7 +62,9 @@ from ttbench.server import _as_messages  # noqa: E402
 HOST = "127.0.0.1"
 DEFAULT_PORT = 8770
 STATIC = HERE / "static"
-PUBLIC_DATA = HERE / "public_data"
+REGISTER = HERE / "collections.json"        # scenario collections and their redistribution rights
+BENCHMARK = HERE / "benchmark.json"         # recorded dev-set results of the two detectors (from runs.json)
+SOURCES = KIT / "data" / "extra" / "sources.json"   # per-clip licence and attribution of the Phase 3 scenarios
 # Fixed types: on Windows, mimetypes reads the registry, which can map .js to text/plain (Chrome would then refuse it).
 STATIC_TYPES = {"html": "text/html; charset=utf-8", "js": "text/javascript; charset=utf-8", "css": "text/css; charset=utf-8"}
 SECURITY_HEADERS = {
@@ -69,33 +77,62 @@ SECURITY_HEADERS = {
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 }
 
-# Detector versions offered by default. "file:my_system.py" follows the working tree, so the demo shows every later
-# algorithm change without edits here. The baseline is a byte-identical copy of `git show bd2a3f0:my_system.py`
-# (hash checked in tests), because a hosted copy of the demo has no git history.
+# The two detectors of the demo, each pinned to the SHA-256 of its exact file (as recorded in
+# experiments/evidence/runs.json). If a file does not match its pin the detector is disabled, so the label "P3" can
+# only ever run the audited P3 code, and "Baseline" only the original starter detector.
+P3_SHA256 = "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf"        # b32cfc2 (= 6b4eece)
+BASELINE_SHA256 = "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830"  # bd2a3f0 (= kit 0915ace)
 DEFAULT_MODELS = {
-    "current": "file:my_system.py",
-    "baseline": "file:demo/models/baseline_bd2a3f0.py",
+    "p3": {"source": "file:my_system.py", "sha256": P3_SHA256, "name": "P3 Hybrid", "revision": "b32cfc2",
+           "about": "Phase 3: Silero VAD speech frames + caller-relative loudness (experimental)"},
+    "baseline": {"source": "file:demo/models/baseline_bd2a3f0.py", "sha256": BASELINE_SHA256, "name": "Baseline",
+                 "revision": "bd2a3f0", "about": "The kit's starter detector: any caller sound for 200 ms stops the agent"},
 }
-# Display names, keyed by the SHA-256 of the exact file (as recorded in experiments/evidence/runs.json). Names never
-# influence a decision; an unknown file is shown by its git revision or hash.
-KNOWN_SOURCES = {
-    "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830": ("Baseline", "bd2a3f0"),
-    "0958413417fdc335974578ee3b42c02556c6ee7ae77cc26fcf6a19bb354a39c9": ("E01", "8f08311"),
-    "455122a19d6ec8d3923f8a11e9d749ef9feb65ada8d95213d3958acd4a43e3a4": ("E01b", "e566234"),
+KNOWN_SOURCES = {v["sha256"]: (v["name"], v["revision"]) for v in DEFAULT_MODELS.values()}
+CATEGORY_NAMES = {"GI": "Genuine interruptions", "OV": "Overlap: talking at the same time",
+                  "BC": "Acknowledgements (backchannels)", "NV": "Non-speech sounds: cough, laugh, knock, echo",
+                  "BG": "Background speech and noise", "HT": "Hesitation", "AM": "Ambiguous words",
+                  "DV": "Dialect variation"}
+CATEGORY_ORDER = ["GI", "OV", "BC", "NV", "BG", "HT", "AM", "DV"]
+SUBTYPE_TEXT = {      # Phase 3 templates (tools/build_extra.py): short name, what happens
+    "interruption.multiword": ("Multi-word interruption", "The caller cuts in with several stop words."),
+    "interruption.single_word": ("Single-word interruption", "The caller says one stop word."),
+    "interruption.backchannel_opener": ("Yes, then no", "The caller starts like an acknowledgement, then objects."),
+    "interruption.soft": ("Soft interruption", "The caller objects quietly."),
+    "interruption.low_gain": ("Interruption, quiet microphone", "The whole caller line is 12 dB quieter."),
+    "interruption.high_gain": ("Interruption, loud microphone", "The whole caller line is 6 dB louder."),
+    "interruption.low_snr": ("Interruption in heavy rain", "The caller objects over loud rain."),
+    "interruption.no_prior_caller_speech": ("Interruption before the caller has spoken",
+                                            "The caller's first words are the interruption: no earlier speech to compare with."),
+    "interruption.over_echo": ("Interruption over the agent's echo", "The agent's own voice leaks back into the caller line."),
+    "overlap.simultaneous_start": ("Both start at once", "The caller starts objecting at the same moment the agent starts."),
+    "overlap.talk_over": ("Caller talks over the agent", "A long, loud objection over the agent."),
+    "backchannel.single_soft": ("Soft «نعم»", "One quiet acknowledgement while the agent talks."),
+    "backchannel.repeated": ("Repeated «نعم»", "Three quiet acknowledgements on a telephone line."),
+    "backchannel.normal_level": ("«نعم» at normal loudness", "One acknowledgement, as loud as the caller's greeting."),
+    "backchannel.double": ("«نعم نعم» in the rain", "A double acknowledgement over rain."),
+    "backchannel.low_gain": ("«موافق», quiet microphone", "An acknowledgement on a line 12 dB quieter."),
+    "backchannel.high_gain": ("«نعم», loud microphone", "An acknowledgement on a line 6 dB louder."),
+    "background.tv": ("Television in the background", "Broadcast-like speech in the room; the caller says nothing."),
+    "background.horn": ("Car horn in traffic", "A horn over engine noise; the caller says nothing."),
+    "background.side_speech": ("Someone else talking", "Another person speaks in the room, away from the phone."),
+    "background.abrupt_noise": ("Sudden noise", "A loud noise starts suddenly; the caller says nothing."),
+    "nonverbal.cough": ("Cough", "The caller coughs; nothing is said."),
+    "nonverbal.laugh": ("Laugh", "The caller laughs; nothing is said."),
+    "nonverbal.echo": ("Agent's own echo", "The agent's voice leaks back into the caller line; the caller is silent."),
+    "nonverbal.transient": ("Knock on a door", "A knock near the caller; nothing is said."),
 }
-REVISION_NAMES = {rev: name for name, rev in KNOWN_SOURCES.values()}
-CATEGORY_NAMES = {"GI": "Genuine interruption", "BC": "Backchannel", "HT": "Hesitation", "BG": "Background",
-                  "NV": "Coughs, laughs, echo", "AM": "Ambiguous words", "OV": "Overlap", "DV": "Dialect variation"}
 
 
 @dataclass
 class Settings:
-    """Local defaults: one presenter on localhost. public() tightens everything for an open URL."""
+    """Local defaults: one presenter on localhost. for_public() tightens everything for an open URL."""
     public: bool = False
     host: str = HOST
     port: int = DEFAULT_PORT
-    data_dir: Path = KIT / "data" / "dev"
-    max_sessions: int = 8               # detector sessions held in memory
+    collections: tuple = ("dev", "xdev", "holdout")   # keys in demo/collections.json (missing audio is skipped locally)
+    data_dir: Path | None = None        # instead of collections: one folder (tests, ad-hoc local use)
+    max_sessions: int = 16              # detector sessions held in memory (each playback runs two: Baseline and P3)
     evict_idle_s: float = 0.0           # at capacity, an older session may be dropped once idle this long
     session_idle_s: float = 3600.0      # sessions idle longer than this are dropped
     lookahead_ms: int = 0               # feed the detector this far ahead of playback (hides network delay)
@@ -105,15 +142,15 @@ class Settings:
     pace: float = 0.0                   # max stream ms fed per wall-clock ms since the session began (0 = unlimited)
     max_body: int = 65536
     max_connections: int = 64
-    show_benchmark: bool = True         # recorded dev-set scores (evaluation artifacts: never in public mode)
 
     @classmethod
     def for_public(cls, port: int | None = None, max_sessions: int | None = None) -> "Settings":
         env = os.environ
-        return cls(public=True, host="0.0.0.0", port=port or int(env.get("PORT", "10000")), data_dir=PUBLIC_DATA,
-                   max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "12")), evict_idle_s=60.0,
-                   session_idle_s=600.0, lookahead_ms=800, poll_ms=100, sessions_per_min=40.0, advance_per_s=20.0,
-                   pace=1.5, max_body=2048, max_connections=48, show_benchmark=False)
+        return cls(public=True, host="0.0.0.0", port=port or int(env.get("PORT", "10000")),
+                   collections=("xdev", "holdout"),
+                   max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "16")), evict_idle_s=60.0,
+                   session_idle_s=600.0, lookahead_ms=800, poll_ms=100, sessions_per_min=80.0, advance_per_s=20.0,
+                   pace=1.5, max_body=2048, max_connections=64)
 
 
 class Refused(Exception):
@@ -152,38 +189,49 @@ def _git(*args: str, raw: bool = False) -> str | bytes | None:
 
 
 class Model:
-    """One detector version: the unmodified source of a system file, imported as its own module."""
+    """One detector version: the unmodified source of a system file, imported as its own module.
 
-    def __init__(self, model_id: str, source: str):
-        self.id, self.source = model_id, source
+    With a pinned sha256 the file must match it exactly, or the detector is unavailable: a label can never run
+    different code than it names."""
+
+    def __init__(self, model_id: str, source: str | dict, sha256: str | None = None, name: str | None = None):
+        if isinstance(source, dict):
+            spec = source
+            source, sha256 = spec["source"], spec.get("sha256", sha256)
+            name, self.about, pinned_rev = spec.get("name", name), spec.get("about", ""), spec.get("revision")
+        else:
+            self.about, pinned_rev = "", None
+        self.id, self.source, self.pinned = model_id, source, sha256
         self.available, self.error = False, None
-        self.revision, self.dirty, self.name, self.sha256 = None, False, model_id, None
+        self.revision, self.dirty, self.name, self.sha256 = None, False, name or model_id, None
         self._cls = None
         try:
             raw, origin = self._read(source)
             self.sha256 = hashlib.sha256(raw).hexdigest()       # of the exact file bytes, as in runs.json
+            if sha256 and self.sha256 != sha256:
+                raise RuntimeError(f"{source} is not the pinned {self.name} file (sha256 {self.sha256[:12]}…, "
+                                   f"expected {sha256[:12]}…)")
             code = raw.decode("utf-8")
             module = types.ModuleType(f"sarj_demo_model_{re.sub(r'[^0-9A-Za-z_]', '_', model_id)}")
             module.__file__ = origin
             exec(compile(code, origin, "exec"), module.__dict__)  # noqa: S102 - our own repository's system file
             self._cls = module.MySystem
-            self._cls()                                            # fail at start-up, not mid-demo
+            self._cls()                     # load any model (P3: the Silero ONNX session) now, not mid-demo
             self.available = True
         except Exception as e:  # noqa: BLE001 - shown in the page instead of crashing the demo
             self.error = f"{type(e).__name__}: {e}"
         known = KNOWN_SOURCES.get(self.sha256 or "")
         if known:
             self.name, self.revision = known
+        elif pinned_rev:
+            self.revision = pinned_rev
         elif source.startswith("file:"):
-            self.name = "Current my_system.py" if source.endswith("my_system.py") else model_id
             self.revision = self.revision or (self.sha256 or "")[:7] or None
 
     def _read(self, source: str) -> tuple[bytes, str]:
         kind, _, rest = source.partition(":")
         if kind == "file":
             path = (KIT / rest).resolve()
-            log = _git("log", "-1", "--format=%h", "--", rest)
-            self.revision = (log or "").strip() or None
             self.dirty = bool(_git("status", "--porcelain", "--", rest) or "")
             return path.read_bytes(), str(path)
         if kind == "git":
@@ -200,39 +248,83 @@ class Model:
         return self._cls()
 
     def describe(self, public: bool = False) -> dict:
-        d = {"id": self.id, "name": self.name, "revision": self.revision, "dirty": self.dirty,
-             "available": self.available}
+        d = {"id": self.id, "name": self.name, "revision": self.revision, "about": self.about,
+             "dirty": self.dirty, "available": self.available}
         if not public:                   # file paths, hashes and errors stay off the public site
             d.update(source=self.source, sha256=self.sha256, error=self.error)
         return d
 
 
 # ------------------------------------------------------------------------------------------------ data
+def _clip_credits() -> dict:
+    try:
+        return json.loads(SOURCES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def describe_scenario(label: dict, design: dict | None) -> tuple[str, str]:
+    """A short name and a one-paragraph explanation, from the scenario's own label and design record."""
+    sub = label.get("subtype", "")
+    title, text = SUBTYPE_TEXT.get(sub, (sub.split(".")[-1].replace("_", " ").capitalize() or label["scenario_id"], ""))
+    segs = {s["seg_id"]: s for s in label.get("user_segments", [])}
+    parts = [text] if text else []
+    for ev in label["events"]:
+        words = [segs[i].get("text") for i in ev.get("segment_ids", []) if segs.get(i, {}).get("text")]
+        if words:
+            parts.append(f"Caller: «{' … '.join(words)}».")
+            break
+    if design:
+        if design.get("rel_level_db"):
+            r = design["rel_level_db"]
+            parts.append(f"Spoken {abs(r)} dB {'quieter' if r < 0 else 'louder'} than the caller's own greeting.")
+        if design.get("mic_gain_db") and "gain" not in sub:
+            parts.append(f"Caller microphone {design['mic_gain_db']:+d} dB.")
+        if design.get("telephone_band"):
+            parts.append("Telephone band (300–3400 Hz).")
+        if design.get("bed"):
+            parts.append(f"{design['bed'][0].capitalize()} noise underneath (SNR {design['bed'][1]} dB).")
+        if design.get("echo"):
+            e = design["echo"]
+            parts.append(f"Agent echo at {e['level_db']:.0f} dB, {e['delay_ms']} ms delay.")
+    elif not text:
+        parts += [ev.get("rationale", "") for ev in label["events"][:1]]
+    expected = sorted({ev["expected"] for ev in label["events"]})
+    meaning = {"STOP": "STOP (a genuine interruption: the agent should yield)",
+               "KEEP": "KEEP (the agent should keep talking)", "EITHER": "EITHER (ambiguous: both acceptable)",
+               "TAKE_TURN": "TAKE_TURN (end-of-turn track)"}
+    parts.append("Expected: " + "; ".join(meaning.get(x, x) for x in expected) + ".")
+    return title, " ".join(p for p in parts if p)
+
+
 class DevData:
-    """A scenario split (manifest + labels + stereo WAVs), read once. Labels stay server-side except through
+    """One scenario collection (manifest + labels + stereo WAVs), read once. Labels stay server-side except through
     timeline(), which keeps ground truth apart from what the detector is told."""
 
-    def __init__(self, data_dir: Path):
+    def __init__(self, data_dir: Path, meta: dict | None = None):
         self.dir = Path(data_dir)
+        self.meta = meta or {"key": self.dir.name, "title": self.dir.name, "public": False}
+        self.key = self.meta["key"]
         self.manifest = json.loads((self.dir / "manifest.json").read_text(encoding="utf-8"))
         self.thresholds = {**DEFAULT_THRESHOLDS, **self.manifest.get("thresholds", {})}
         self.scenarios = {s.scenario_id: s for s in load_split(self.dir)}
+        design = self.dir / "design.json"
+        self.design = ({d["scenario_id"]: d for d in json.loads(design.read_text(encoding="utf-8"))}
+                       if design.is_file() else {})
 
-    @property
-    def is_public(self) -> bool:
-        return self.manifest.get("distribution") == "public" and bool(self.manifest.get("license"))
-
-    def info(self) -> dict:
-        m = self.manifest
-        return {"name": m.get("dataset"), "version": m.get("version"), "public": self.is_public,
-                "license": m.get("license"), "note": m.get("license_note"),
-                "label_status": m.get("label_status", "script_derived")}
+    def info(self, public: bool = False) -> dict:
+        m = self.meta
+        return {"key": self.key, "title": m.get("title"), "kind": m.get("kind", ""), "description": m.get("description", ""),
+                "rights": m.get("rights", ""), "public": bool(m.get("public")), "count": len(self.scenarios),
+                "label_status": self.manifest.get("label_status", "script_derived")}
 
     def summary(self) -> list[dict]:
         out = []
         for sid, s in self.scenarios.items():
             lab = s.label
-            out.append({"id": sid, "category": lab["category"], "category_name": CATEGORY_NAMES.get(lab["category"], ""),
+            title, explanation = describe_scenario(lab, self.design.get(sid))
+            out.append({"id": sid, "collection": self.key, "title": title, "explanation": explanation,
+                        "category": lab["category"], "category_name": CATEGORY_NAMES.get(lab["category"], ""),
                         "subtype": lab.get("subtype", ""), "difficulty": lab.get("difficulty"),
                         "dialect": lab.get("dialect", ""), "acoustic": lab.get("acoustic", {}).get("conditions", []),
                         "use_case": lab["context"]["use_case"], "duration_ms": s.duration_ms,
@@ -242,12 +334,26 @@ class DevData:
     def audio_path(self, sid: str) -> Path:
         return self.dir / "audio" / self.scenarios[sid].label["audio"]["file"]
 
+    def credits(self, sid: str) -> list[dict]:
+        """Per-clip attribution of the sounds mixed into this scenario (Phase 3 collections)."""
+        lab = self.scenarios[sid].label
+        if not self.design:
+            return []
+        clips, out = _clip_credits(), []
+        for src in lab.get("acoustic", {}).get("noise_source_ids", []):
+            if src.startswith("ESC50-"):
+                c = clips.get("esc:" + src[len("ESC50-"):], {})
+                out.append({"what": "sound clip", "attribution": c.get("attribution", src), "license": c.get("licence", "?")})
+        out.append({"what": "voices", "attribution": "Arabic Speech Commands Dataset (Ghandoura, Hjabo, Al Dakkak, 2021): "
+                    "real speakers reading isolated keywords; trimmed, concatenated and mixed", "license": "CC BY 4.0"})
+        return out
+
     def timeline(self, sid: str) -> dict:
         """Protocol inputs (what the detector is told) kept apart from ground truth (what it is never told)."""
         s = self.scenarios[sid]
         lab = s.label
         return {
-            "id": sid, "duration_ms": s.duration_ms,
+            "id": sid, "duration_ms": s.duration_ms, "collection": self.key, "credits": self.credits(sid),
             "protocol": {"context": {"use_case": lab["context"]["use_case"], "language": "ar"},
                          "agent_utterances": [{"utt_id": u["utt_id"], "start_ms": u["start_ms"],
                                                "end_ms": u["end_ms"], "text": u["text"]}
@@ -259,16 +365,76 @@ class DevData:
         }
 
 
-def check_public_data(data_dir: Path) -> None:
-    """Public mode serves a dataset only if it declares itself publicly licensed and is not the kit's data."""
-    d = Path(data_dir).resolve()
-    kit_data = (KIT / "data").resolve()
-    if d == kit_data or kit_data in d.parents:
-        raise SystemExit(f"refusing to serve {d} publicly: competition data under data/ has no public licence")
-    manifest = json.loads((d / "manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("distribution") != "public" or not manifest.get("license"):
-        raise SystemExit(f"refusing to serve {d} publicly: its manifest.json does not declare "
-                         '"distribution": "public" and a "license"')
+def load_register() -> dict:
+    return json.loads(REGISTER.read_text(encoding="utf-8"))
+
+
+def check_public_collection(col: DevData, register: dict) -> None:
+    """The public site serves a collection only if the register marks it public, it is not the kit's competition
+    data, and every WAV in it is byte-identical to a reviewed file (SHA-256 listed in the register)."""
+    if not col.meta.get("public"):
+        raise SystemExit(f"refusing to serve {col.dir} publicly: not marked public in demo/collections.json")
+    if (KIT / "data" / "dev").resolve() in (col.dir.resolve(), *col.dir.resolve().parents) \
+            or col.manifest.get("dataset") == "sarj-turn-taking-ar":
+        raise SystemExit(f"refusing to serve {col.dir} publicly: competition recordings have no public licence")
+    allowed = register.get("public_wav_sha256", {})
+    for sid in col.scenarios:
+        digest = hashlib.sha256(col.audio_path(sid).read_bytes()).hexdigest()
+        if allowed.get(sid) != digest:
+            raise SystemExit(f"refusing to serve {sid} publicly: its audio is not a reviewed file")
+
+
+class Catalog:
+    """All collections the server offers, with scenario ids unique across them."""
+
+    def __init__(self, settings: Settings):
+        self.collections: list[DevData] = []
+        if settings.data_dir is not None:
+            if settings.public:
+                raise SystemExit("public mode serves only the collections in demo/collections.json")
+            self.collections.append(DevData(settings.data_dir))
+        else:
+            register = load_register()
+            metas = {c["key"]: c for c in register["collections"]}
+            for key in settings.collections:
+                meta = metas[key]
+                folder = KIT / meta["dir"]
+                if not settings.public and not (folder / "audio").is_dir():
+                    continue                    # e.g. Phase 3 audio not built on this machine
+                col = DevData(folder, meta)
+                if settings.public:
+                    check_public_collection(col, register)
+                self.collections.append(col)
+        self.by_id: dict[str, DevData] = {}
+        for col in self.collections:
+            for sid in col.scenarios:
+                if sid in self.by_id:
+                    raise SystemExit(f"scenario id {sid} appears in two collections")
+                self.by_id[sid] = col
+        self.scenarios = {sid: col.scenarios[sid] for sid, col in self.by_id.items()}
+
+    def thresholds(self, sid: str) -> dict:
+        return self.by_id[sid].thresholds
+
+    def audio_path(self, sid: str) -> Path:
+        return self.by_id[sid].audio_path(sid)
+
+    def timeline(self, sid: str) -> dict:
+        return self.by_id[sid].timeline(sid)
+
+    def summary(self) -> list[dict]:
+        rows = [r for col in self.collections for r in col.summary()]
+        order = {c.key: i for i, c in enumerate(self.collections)}
+        cat = {c: i for i, c in enumerate(CATEGORY_ORDER)}
+        return sorted(rows, key=lambda r: (order[r["collection"]], cat.get(r["category"], 99), r["id"]))
+
+
+def benchmark() -> dict | None:
+    """Recorded dev-set results of the two detectors (demo/benchmark.json, copied from runs.json; tested)."""
+    try:
+        return json.loads(BENCHMARK.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 # ------------------------------------------------------------------------------------------------ one playback
@@ -392,24 +558,6 @@ class Scorer:
         return out
 
 
-# ------------------------------------------------------------------------------------------------ benchmark evidence
-def benchmark_results() -> dict:
-    """Previously measured dev-set results, read from the committed evidence index (never computed here)."""
-    path = KIT / "experiments" / "evidence" / "runs.json"
-    try:
-        idx = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {"available": False, "rows": []}
-    rows = []
-    for run_id, r in idx.get("runs", {}).items():
-        commit = r.get("system_commit")
-        rows.append({"run": run_id, "commit": commit, "name": REVISION_NAMES.get(commit, commit),
-                     "core": r.get("core"), "R": r.get("R"), "S": r.get("S"), "misses": r.get("misses"),
-                     "false_stops": r.get("false_stops"), "protocol_errors": r.get("protocol_errors")})
-    return {"available": True, "source": "experiments/evidence/runs.json", "scope": idx.get("scope"),
-            "speed": idx.get("speed"), "calls": idx.get("calls"), "data": idx.get("data"), "rows": rows}
-
-
 # ------------------------------------------------------------------------------------------------ application
 @dataclass
 class Entry:
@@ -421,13 +569,11 @@ class Entry:
 
 
 class DemoApp:
-    def __init__(self, data_dir: Path | None, model_specs: dict[str, str], settings: Settings | None = None):
+    def __init__(self, data_dir: Path | None, model_specs: dict, settings: Settings | None = None):
         self.settings = settings or Settings()
         if data_dir is not None:
             self.settings.data_dir = Path(data_dir)
-        if self.settings.public:
-            check_public_data(self.settings.data_dir)
-        self.data = DevData(self.settings.data_dir)
+        self.data = Catalog(self.settings)
         self.models = {mid: Model(mid, src) for mid, src in model_specs.items()}   # loaded before serving
         self.sessions: dict[str, Entry] = {}
         self.lock = threading.Lock()
@@ -437,11 +583,20 @@ class DemoApp:
 
     def config(self) -> dict:
         s = self.settings
+        register = load_register() if REGISTER.is_file() else {}
         return {"mode": "public" if s.public else "local", "frame_ms": FRAME_MS,
-                "lookahead_ms": s.lookahead_ms, "poll_ms": s.poll_ms, "dataset": self.data.info(),
+                "lookahead_ms": s.lookahead_ms, "poll_ms": s.poll_ms,
+                "collections": [c.info(public=s.public) for c in self.data.collections],
+                "attribution": register.get("attribution", []),
                 "models": [m.describe(public=s.public) for m in self.models.values()],
-                "scenarios": self.data.summary(),
-                "benchmark": benchmark_results() if s.show_benchmark else None}
+                "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark()}
+
+    @staticmethod
+    def public_benchmark() -> dict | None:
+        b = benchmark()
+        if b:
+            b["rows"] = [{k: v for k, v in r.items() if k != "my_system_sha256"} for r in b["rows"]]
+        return b
 
     def new_session(self, scenario_id: str, model_id: str) -> dict:
         s = self.settings
@@ -466,7 +621,7 @@ class DemoApp:
             sess = DetectorSession(model, scen)
             sid = uuid.uuid4().hex
             bucket = TokenBucket(s.advance_per_s, 2 * s.advance_per_s) if s.advance_per_s else None
-            self.sessions[sid] = Entry(sess, Scorer(scen.label, self.data.thresholds), now, now, bucket)
+            self.sessions[sid] = Entry(sess, Scorer(scen.label, self.data.thresholds(scenario_id)), now, now, bucket)
         return {"session_id": sid, "model": model.describe(public=s.public), "scenario_id": scenario_id,
                 "stream_end_ms": sess.n_frames * FRAME_MS}
 
@@ -647,17 +802,22 @@ def main(argv: list[str] | None = None) -> int:
     a = p.parse_args(argv)
 
     settings = Settings.for_public(a.port) if a.public else Settings(port=a.port or DEFAULT_PORT)
+    if a.public and a.data is not None:
+        raise SystemExit("--data is local-only; the public site serves the collections in demo/collections.json")
     app = DemoApp(a.data, parse_models(a.model), settings)
     for m in app.models.values():
         d = m.describe()
         state = f"{d['name']} @ {d['revision']}{' (uncommitted changes)' if d['dirty'] else ''}" if m.available \
             else f"UNAVAILABLE: {m.error}"
         print(f"  model {m.id:<10} {m.source:<40} {state}")
+    if not all(m.available for m in app.models.values()) and settings.public:
+        raise SystemExit("a pinned detector failed to load; refusing to serve a misleading selector")
     srv = make_server(app)
     shown = HOST if settings.host == "0.0.0.0" else settings.host
     url = f"http://{shown}:{srv.server_address[1]}/"
-    print(f"SARJ demo ({'PUBLIC' if settings.public else 'local'}): {len(app.data.scenarios)} calls from "
-          f"{app.data.dir}. Listening on {settings.host}:{srv.server_address[1]}. Ctrl+C to stop.", flush=True)
+    cols = ", ".join(f"{c.key} ({len(c.scenarios)})" for c in app.data.collections)
+    print(f"SARJ demo ({'PUBLIC' if settings.public else 'local'}): {len(app.data.scenarios)} calls: {cols}. "
+          f"Listening on {settings.host}:{srv.server_address[1]}. Ctrl+C to stop.", flush=True)
     if not a.no_browser and not settings.public:
         threading.Timer(0.5, lambda: webbrowser.open(url)).start()
     try:

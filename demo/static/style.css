@@ -130,3 +130,32 @@ code { font-size: 12px; }
   .panel { padding: 12px; }
   .log td:nth-child(3) { min-width: 180px; }
 }
+
+/* --- Baseline vs P3 --- */
+.scen-card { padding-bottom: 10px; }
+.scen-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.scen-head h2 { font-size: 17px; }
+.scen-expl { margin: 8px 0 0; font-size: 14px; }
+.tag.private { background: var(--stop-soft); color: var(--stop); border: 1px solid var(--stop); }
+.duel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.det-card { border: 1px solid var(--line); border-left: 5px solid var(--muted); border-radius: 8px; padding: 10px 14px; background: var(--bg); }
+.det-card.speaking { border-left-color: var(--agent); }
+.det-card.stopped { border-left-color: var(--stop); background: var(--stop-soft); }
+.det-card.kept { border-left-color: var(--keep); background: var(--keep-soft); }
+.det-card.listening { box-shadow: 0 0 0 2px var(--accent); }
+.det-card.listening .det-name::after { content: " · you hear this one"; font-weight: 400; color: var(--muted); font-size: 12px; }
+.det-name { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.det-status { font-size: 16px; font-weight: 600; margin-top: 4px; }
+.headline { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 15px; background: var(--bg); }
+.headline .good { color: var(--keep); }
+.headline .bad { color: var(--stop); }
+.headline.good { border-left: 5px solid var(--keep); }
+.headline.bad { border-left: 5px solid var(--stop); }
+.who { font-size: 11px; font-weight: 700; color: var(--muted); }
+.who.p3 { color: var(--accent); }
+#credits p { font-size: 13px; margin: 8px 0; }
+#credits a, .scen-card a { color: var(--accent); word-break: break-all; }
+@media (max-width: 640px) {
+  .duel { grid-template-columns: 1fr; }
+  .det-status { font-size: 15px; }
+}
