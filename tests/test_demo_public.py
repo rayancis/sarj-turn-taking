@@ -1,9 +1,9 @@
 """Public-mode guarantees of the hosted demo (demo/server.py --public, demo/Dockerfile).
 
-What must hold before the site is exposed: only the publicly licensed Phase 3 collections are served, each WAV
-byte-identical to a reviewed file; the competition recordings and labels, evaluation artifacts and source files are
-unreachable over HTTP and absent from the image; only Baseline and P3 are offered, each running its pinned code;
-limits hold; and both detectors behave exactly as in the kit's replay and as recorded in Phase 3.
+The demo shows only the 24 competition recordings. Public mode serves them only once the organisers' permission for
+public web hosting is recorded (it is not, so public mode refuses to start), and it never starts with no playable
+scenario. Only Baseline and P3 are offered, each running its pinned code. The 50 Phase 3 research scenarios stay
+preserved in the repository; the public-mode machinery (rights checks, exposure, limits) is tested on them.
 """
 from __future__ import annotations
 
@@ -45,21 +45,39 @@ def public_app(**overrides) -> demo.DemoApp:
 
 @pytest.fixture(scope="module")
 def app():
-    return public_app()
+    """A running public server for exposure tests: the machinery on the 50 research scenarios (not deployed)."""
+    return public_app(collections=("xdev", "holdout"))
+
+
+@pytest.fixture(scope="module")
+def research():
+    """Public-mode machinery on the 50 Phase 3 research scenarios (not deployed; tests the checks and limits)."""
+    return public_app(collections=("xdev", "holdout"))
 
 
 # ------------------------------------------------------------------------------------------------ data rights
-def test_competition_recordings_are_never_public(tmp_path):
-    settings = demo.Settings.for_public(port=1)
-    settings.collections = ("dev",)
-    with pytest.raises(SystemExit, match="not marked public"):
-        demo.DemoApp(None, demo.DEFAULT_MODELS, settings)
+def test_public_mode_refuses_the_competition_recordings_until_authorised():
+    assert demo.Settings.for_public(port=1).collections == ("dev",)
+    with pytest.raises(SystemExit, match="not authorised"):
+        public_app()                                              # the deployable configuration, as of today
     with pytest.raises(SystemExit, match="only the collections"):
         demo.DemoApp(KIT / "data" / "dev", demo.DEFAULT_MODELS, demo.Settings.for_public(port=1))
-    # even if someone marked the kit data public, it is refused
-    meta = {**next(c for c in REGISTER["collections"] if c["key"] == "dev"), "public": True}
-    with pytest.raises(SystemExit, match="no public licence"):
-        demo.check_public_collection(demo.DevData(KIT / "data" / "dev", meta), REGISTER)
+    dev = next(c for c in REGISTER["collections"] if c["key"] == "dev")
+    assert dev["public"] is False and not dev["authorization"] and dev["authorization_needed"]
+    # marking it public without recording the permission is not enough
+    with pytest.raises(SystemExit, match="not authorised"):
+        demo.check_public_collection(demo.DevData(KIT / "data" / "dev", {**dev, "public": True}), REGISTER)
+
+
+def test_once_authorised_exactly_the_kits_own_files_would_be_served():
+    dev = next(c for c in REGISTER["collections"] if c["key"] == "dev")
+    meta = {**dev, "public": True, "authorization": "test only"}
+    demo.check_public_collection(demo.DevData(KIT / "data" / "dev", meta), REGISTER)   # passes: original files
+
+
+def test_public_mode_never_starts_empty():
+    with pytest.raises(SystemExit, match="no playable scenario"):
+        public_app(collections=())
 
 
 def test_an_unreviewed_or_changed_file_is_refused(tmp_path):
@@ -70,7 +88,7 @@ def test_an_unreviewed_or_changed_file_is_refused(tmp_path):
 
 
 @needs_audio
-def test_register_covers_exactly_the_50_reviewed_files():
+def test_the_50_research_scenarios_are_preserved_intact():
     listed = REGISTER["public_wav_sha256"]
     assert len(listed) == 50
     for split, folder in SPLITS.items():
@@ -104,7 +122,8 @@ def test_every_audio_component_has_a_redistributable_licence():
 # ------------------------------------------------------------------------------------------------ real behaviour
 @needs_audio
 @pytest.mark.parametrize("model_id", list(demo.DEFAULT_MODELS))
-def test_public_scenarios_decisions_equal_offline_replay(app, model_id):
+def test_research_scenarios_decisions_equal_offline_replay(research, model_id):
+    app = research
     model = app.models[model_id]
     assert model.available, model.error
     rng = random.Random(11)
@@ -143,15 +162,14 @@ def test_pinned_baseline_is_the_recorded_baseline_file():
 
 # ------------------------------------------------------------------------------------------------ exposure
 @needs_audio
+@needs_audio
 def test_public_config_offers_two_detectors_and_hides_internals(app):
     cfg = app.config()
     assert cfg["mode"] == "public"
     assert [m["id"] for m in cfg["models"]] == ["p3", "baseline"]
     for m in cfg["models"]:
         assert set(m) == {"id", "name", "revision", "about", "dirty", "available"} and m["available"]
-    assert [c["key"] for c in cfg["collections"]] == ["xdev", "holdout"]
-    assert len(cfg["scenarios"]) == 50 and all(s["title"] and s["explanation"] for s in cfg["scenarios"])
-    assert {s["category"] for s in cfg["scenarios"]} == {"GI", "OV", "BC", "NV", "BG"}
+    assert {r["model"] for r in cfg["benchmark"]["rows"]} == {"baseline", "p3"}
     text = json.dumps(cfg, ensure_ascii=False)
     for secret in (str(KIT), "data/dev", "sha256", "GI-D01", "E01b", "e566234", "runs.json\": {"):
         assert secret not in text, secret
@@ -171,7 +189,7 @@ def test_no_repository_file_is_reachable(app):
             continue
         name = f.split("/")[-1]
         probes += [f"/{f}", f"/{name}", f"/static/{name}", f"/..%2F{f}", f"/%2e%2e/{f}"]
-        if not (f.startswith("data/extra/") and f.endswith(".wav")):
+        if not (f.startswith("data/extra/") and f.endswith(".wav")):     # served in this research configuration
             probes += [f"/api/audio/{name}", f"/api/scenario/{name}"]
     probes += ["/.git/config", "/.git/HEAD", "/demo/server.py", "/server.py", "/.env", "/models/silero_vad.onnx",
                "/api/audio/GI-D01.wav", "/api/scenario/GI-D01", "/api/audio/GI-P01.wav",
@@ -179,8 +197,7 @@ def test_no_repository_file_is_reachable(app):
     with serving(app) as base:
         reachable = [p for p in probes if status(base + p) != 404]
         assert reachable == []
-        for ok in ("/", "/app.js", "/style.css", "/healthz", "/robots.txt", "/api/config", "/api/audio/GI-D51.wav",
-                   "/api/scenario/GI-H54", "/api/audio/OV-H52.wav"):
+        for ok in ("/", "/app.js", "/style.css", "/healthz", "/robots.txt", "/api/config"):
             assert status(base + ok) == 200, ok
         r = urllib.request.urlopen(base + "/")
         assert r.headers["X-Robots-Tag"] == "noindex, nofollow"
@@ -189,26 +206,22 @@ def test_no_repository_file_is_reachable(app):
 
 
 @needs_audio
-def test_every_public_audio_file_is_served_and_playable(app):
-    import wave
-    import io
+def test_unauthorised_competition_recordings_are_unreachable(app):
+    """Without the recorded permission no public server ever loads the 24 competition recordings."""
+    ids = [e["scenario_id"] for e in json.loads((KIT / "data" / "dev" / "manifest.json").read_text())["scenarios"]]
+    assert len(ids) == 24
     with serving(app) as base:
-        for sid, scen in app.data.scenarios.items():
-            body = urllib.request.urlopen(f"{base}/api/audio/{sid}.wav").read()
-            assert hashlib.sha256(body).hexdigest() == REGISTER["public_wav_sha256"][sid]
-            with wave.open(io.BytesIO(body)) as w:
-                assert (w.getnchannels(), w.getsampwidth(), w.getframerate()) == (2, 2, 16000)
-                assert w.getnframes() * 1000 // 16000 >= scen.label["audio"]["duration_ms"] - 1
-            tl = json.loads(urllib.request.urlopen(f"{base}/api/scenario/{sid}").read())
-            assert tl["ground_truth"]["events"] == scen.label["events"] and tl["credits"]
+        for sid in ids:
+            assert status(f"{base}/api/audio/{sid}.wav") == 404, sid
+            assert status(f"{base}/api/scenario/{sid}") == 404, sid
+        assert status(base + "/api/session", {"scenario": "GI-D01", "model": "p3"}) == 404
 
 
 def test_image_contains_only_whitelisted_paths():
     copies = [line.split()[1:-1] for line in (KIT / "demo" / "Dockerfile").read_text(encoding="utf-8").splitlines()
               if line.startswith("COPY ")]
     flat = [p for c in copies for p in c]
-    assert not any(p.startswith(("data/dev", "experiments", "baseline", "tests", ".git", "demo/public_data")) for p in flat)
-    assert "data/extra/xdev/audio/" in flat and "data/extra/holdout/audio/" in flat
+    assert not any(p.startswith(("data", "experiments", "baseline", "tests", ".git", "demo/public_data")) for p in flat)
     assert "models/silero_vad.onnx" in flat and "models/SILERO_VAD_LICENSE" in flat and "neural_vad.py" in flat
     req = (KIT / "demo" / "requirements-public.txt").read_text(encoding="utf-8")
     assert "onnxruntime==1.29.0" in req and "numpy==2.5.5" in req
@@ -219,7 +232,7 @@ def test_image_contains_only_whitelisted_paths():
 # ------------------------------------------------------------------------------------------------ limits
 @needs_audio
 def test_capacity_eviction_and_rate_limits():
-    app = public_app(max_sessions=2, evict_idle_s=60.0, sessions_per_min=600.0)
+    app = public_app(max_sessions=2, evict_idle_s=60.0, sessions_per_min=600.0, collections=("xdev", "holdout"))
     a = app.new_session("GI-D51", "p3")["session_id"]
     app.new_session("GI-D51", "baseline")
     with pytest.raises(demo.Refused) as e:                       # both active: the next visitor is told to wait
@@ -229,7 +242,7 @@ def test_capacity_eviction_and_rate_limits():
     app.new_session("GI-D51", "p3")
     assert a not in app.sessions
 
-    app = public_app(sessions_per_min=60.0)
+    app = public_app(sessions_per_min=60.0, collections=("xdev", "holdout"))
     statuses = []
     for _ in range(40):
         try:
@@ -242,7 +255,7 @@ def test_capacity_eviction_and_rate_limits():
 
 @needs_audio
 def test_advance_is_paced_and_rate_limited():
-    app = public_app(advance_per_s=5.0)
+    app = public_app(advance_per_s=5.0, collections=("xdev", "holdout"))
     sid = app.new_session("GI-D51", "p3")["session_id"]
     r = app.advance(sid, 1e9)                                   # cannot run the whole call at once
     assert not r["done"] and r["fed_ms"] <= app.settings.lookahead_ms + 1000 + 200
@@ -253,7 +266,8 @@ def test_advance_is_paced_and_rate_limited():
 
 
 @needs_audio
-def test_reset_and_repeated_playback_give_identical_results(app):
+def test_reset_and_repeated_playback_give_identical_results(research):
+    app = research
     """Each playback is a fresh detector (P3's VAD state included): replaying a call gives the same decisions."""
     runs = []
     for _ in range(3):
@@ -265,8 +279,8 @@ def test_reset_and_repeated_playback_give_identical_results(app):
 
 
 @needs_audio
-def test_http_limits(app):
-    with serving(app) as base:
+def test_http_limits(research):
+    with serving(research) as base:
         big = {"to_ms": 1, "pad": "x" * 5000}
         assert status(base + "/api/session", big) == 413
         s = post(base, "/api/session", {"scenario": "GI-D51", "model": "p3"})
@@ -280,5 +294,5 @@ def test_http_limits(app):
 def test_public_server_listens_on_all_interfaces_only_in_public_mode():
     assert demo.Settings().host == "127.0.0.1"
     assert demo.Settings.for_public(port=1).host == "0.0.0.0"
-    assert demo.Settings.for_public(port=1).collections == ("xdev", "holdout")
+    assert demo.Settings().collections == ("dev",)
     shutil.which("git")                                         # (keeps the import used on systems without git)

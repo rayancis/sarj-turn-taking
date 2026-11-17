@@ -713,14 +713,13 @@ async function init() {
   }
   msel.value = S.listen;
   const pub = S.config.mode === "public";
-  $("mode-chip").textContent = pub ? "public demo · constructed scenarios" : "local · team use (includes private data)";
+  const dev = collection("dev");
+  $("mode-chip").textContent = pub ? "public demo" : "local · team use (private recordings)";
   const note = $("dataset-note");
   note.hidden = false;
-  note.textContent = (pub ? "" : "Local mode: the 24 competition recordings below are private (no public licence) and are never served by the public site. ") +
-    "The 50 additional scenarios are constructed evaluation scenarios from Phase 3: recordings of real people reading isolated Arabic " +
-    "keywords (Arabic Speech Commands Dataset, CC BY 4.0) mixed with licensed sound clips (ESC-50, CC0 / CC BY). They are not " +
-    "spontaneous conversations; the agent's voice is also read keywords. " +
-    (pub ? "The original 24 competition recordings are not published here: their licence does not allow public redistribution." : "");
+  note.textContent = "The 24 original SARJ competition development recordings, as supplied with the kit (separate agent and " +
+    "caller channels; AI-generated voices, script-derived labels). " +
+    (pub ? (dev.rights || "") : "Private: team use only; the public site does not serve them until hosting is authorised.");
   const groups = new Map();
   for (const s of S.config.scenarios) {
     const col = collection(s.collection);
@@ -741,7 +740,7 @@ async function init() {
     if (e.code === "Space" && !["SELECT", "BUTTON"].includes(document.activeElement.tagName)) { e.preventDefault(); $("play").click(); }
   });
   window.addEventListener("resize", () => buildStaticLayer());
-  const first = S.config.scenarios.find((s) => s.id === "NV-D51") || S.config.scenarios.find((s) => s.collection !== "dev") || S.config.scenarios[0];
+  const first = S.config.scenarios.find((s) => s.id === "NV-D01") || S.config.scenarios[0];
   $("scenario").value = first.id;
   await loadScenario(first.id);
   requestAnimationFrame(frame);

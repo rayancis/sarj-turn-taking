@@ -9,9 +9,10 @@ Public (hosted site, see demo/DEPLOY.md):
     python demo/server.py --public             # 0.0.0.0:$PORT, publicly licensed collections only, limits on
 
 Two detectors, pinned by file hash so a label can never run other code: Baseline (the kit's starter detector,
-bd2a3f0) and P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2). Scenario collections and
-their redistribution rights are listed in demo/collections.json: the 24 competition dev calls are local-only; the 50
-Phase 3 constructed scenarios (real human keyword recordings + licensed sounds) are public, with attribution.
+bd2a3f0) and P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2). The demo shows the 24 original
+competition recordings (data/dev). Public mode serves them only once the organisers' permission for public web
+hosting is recorded in demo/collections.json, and never starts with no playable scenario (demo/DEPLOY.md). The 50
+Phase 3 research scenarios stay in the repository and are not part of the demo.
 
 How a decision reaches the page (nothing is pre-scripted):
   1. The browser plays the call's two channels from one AudioContext and regularly posts its playhead (for both
@@ -130,7 +131,7 @@ class Settings:
     public: bool = False
     host: str = HOST
     port: int = DEFAULT_PORT
-    collections: tuple = ("dev", "xdev", "holdout")   # keys in demo/collections.json (missing audio is skipped locally)
+    collections: tuple = ("dev",)       # keys in demo/collections.json: the demo shows the 24 competition recordings only
     data_dir: Path | None = None        # instead of collections: one folder (tests, ad-hoc local use)
     max_sessions: int = 16              # detector sessions held in memory (each playback runs two: Baseline and P3)
     evict_idle_s: float = 0.0           # at capacity, an older session may be dropped once idle this long
@@ -147,7 +148,7 @@ class Settings:
     def for_public(cls, port: int | None = None, max_sessions: int | None = None) -> "Settings":
         env = os.environ
         return cls(public=True, host="0.0.0.0", port=port or int(env.get("PORT", "10000")),
-                   collections=("xdev", "holdout"),
+                   collections=("dev",),   # served only once public hosting is authorised (demo/collections.json)
                    max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "16")), evict_idle_s=60.0,
                    session_idle_s=600.0, lookahead_ms=800, poll_ms=100, sessions_per_min=80.0, advance_per_s=20.0,
                    pace=1.5, max_body=2048, max_connections=64)
@@ -372,12 +373,17 @@ def load_register() -> dict:
 def check_public_collection(col: DevData, register: dict) -> None:
     """The public site serves a collection only if the register marks it public, it is not the kit's competition
     data, and every WAV in it is byte-identical to a reviewed file (SHA-256 listed in the register)."""
+    kit = (KIT / "data" / "dev").resolve() in (col.dir.resolve(), *col.dir.resolve().parents) \
+        or col.manifest.get("dataset") == "sarj-turn-taking-ar"
+    if kit and not (col.meta.get("public") and col.meta.get("authorization")):
+        raise SystemExit("refusing to serve the competition recordings publicly: public web hosting is not authorised. "
+                         "Record the organisers' written permission in demo/collections.json (dev: public, authorization); "
+                         "see demo/DEPLOY.md")
     if not col.meta.get("public"):
         raise SystemExit(f"refusing to serve {col.dir} publicly: not marked public in demo/collections.json")
-    if (KIT / "data" / "dev").resolve() in (col.dir.resolve(), *col.dir.resolve().parents) \
-            or col.manifest.get("dataset") == "sarj-turn-taking-ar":
-        raise SystemExit(f"refusing to serve {col.dir} publicly: competition recordings have no public licence")
-    allowed = register.get("public_wav_sha256", {})
+    allowed = dict(register.get("public_wav_sha256", {}))
+    if kit:                             # authorised: exactly the kit's own files, as listed in its manifest
+        allowed.update({e["scenario_id"]: e["wav_sha256"] for e in col.manifest["scenarios"]})
     for sid in col.scenarios:
         digest = hashlib.sha256(col.audio_path(sid).read_bytes()).hexdigest()
         if allowed.get(sid) != digest:
@@ -412,6 +418,8 @@ class Catalog:
                     raise SystemExit(f"scenario id {sid} appears in two collections")
                 self.by_id[sid] = col
         self.scenarios = {sid: col.scenarios[sid] for sid, col in self.by_id.items()}
+        if settings.public and not self.scenarios:
+            raise SystemExit("refusing to start a public demo with no playable scenario")
 
     def thresholds(self, sid: str) -> dict:
         return self.by_id[sid].thresholds
@@ -584,10 +592,12 @@ class DemoApp:
     def config(self) -> dict:
         s = self.settings
         register = load_register() if REGISTER.is_file() else {}
+        shown = {c.key for c in self.data.collections}
+        credits = [a for a in register.get("attribution", []) if not a.get("applies_to") or set(a["applies_to"]) & shown]
         return {"mode": "public" if s.public else "local", "frame_ms": FRAME_MS,
                 "lookahead_ms": s.lookahead_ms, "poll_ms": s.poll_ms,
                 "collections": [c.info(public=s.public) for c in self.data.collections],
-                "attribution": register.get("attribution", []),
+                "attribution": credits,
                 "models": [m.describe(public=s.public) for m in self.models.values()],
                 "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark()}
 

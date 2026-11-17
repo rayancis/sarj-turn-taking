@@ -1,5 +1,5 @@
 {
-  "about": "Which scenario collections the demo may serve, and on what terms. The public site (server.py --public) serves only collections marked public here, and only WAV files whose SHA-256 is listed under public_wav_sha256.",
+  "about": "Scenario collections and their redistribution rights. The demo shows the 24 competition recordings (dev). Public mode serves a collection only if it is marked public here; the competition recordings additionally need a recorded authorization. Phase 3 research collections are kept for reference and are not part of the demo.",
   "reviewed": "2026-11-17",
   "collections": [
     {
@@ -9,7 +9,10 @@
       "title": "Competition development set",
       "kind": "Original kit recordings (AI-generated Gemini TTS voices, procedural noise)",
       "description": "The 24 development calls supplied with the SARJ starter kit.",
-      "rights": "Supplied to participants; the kit grants no public redistribution licence. The owner's approval covers the private repository and local team use only. Never served by the public site."
+      "rights": "Supplied to challenge participants with the kit; no licence for redistribution is included. The owner approved storing them in this private repository and team use; the kit expects them in the teams' own presentations. Public web hosting is not authorised yet.",
+      "in_demo": true,
+      "authorization": null,
+      "authorization_needed": "Written permission from Sarj AI (the challenge organisers, owners of the development set) for the team to host the 24 development recordings, their labels and transcripts on a public, non-commercial website for its project presentation, with any required attribution and duration. When received: set public: true, put who/when/scope/reference in authorization, add data/dev to demo/Dockerfile, run the tests."
     },
     {
       "key": "xdev",
@@ -18,7 +21,9 @@
       "title": "Phase 3 constructed scenarios: xdev",
       "kind": "Additional constructed evaluation scenarios",
       "description": "25 scenarios assembled from recordings of real people reading isolated Arabic keywords and from licensed non-speech sound clips, mixed digitally (not spontaneous conversations). Used while developing Phase 3.",
-      "rights": "ASC voice clips CC BY 4.0; ESC-50 sound clips individually CC0 or CC BY (Freesound), cross-checked against the ESC-50 LICENSE file; generated room tone, echo and filters. Redistributable with attribution."
+      "rights": "ASC voice clips CC BY 4.0; ESC-50 sound clips individually CC0 or CC BY (Freesound), cross-checked against the ESC-50 LICENSE file; generated room tone, echo and filters. Redistributable with attribution.",
+      "in_demo": false,
+      "note": "Research scenarios (Phase 3). Kept in the repository; not shown in the demo (decision 2026-11-17)."
     },
     {
       "key": "holdout",
@@ -27,7 +32,9 @@
       "title": "Phase 3 constructed scenarios: holdout",
       "kind": "Additional constructed evaluation scenarios",
       "description": "25 scenarios built the same way with different speakers and sound clips, kept frozen during Phase 3 and scored once. Shown here for listening only; never used to tune the detector.",
-      "rights": "Same sources and licences as xdev (different speakers and clips)."
+      "rights": "Same sources and licences as xdev (different speakers and clips).",
+      "in_demo": false,
+      "note": "Research scenarios (Phase 3). Kept in the repository; not shown in the demo (decision 2026-11-17)."
     }
   ],
   "attribution": [
@@ -38,7 +45,11 @@
       "url": "https://github.com/abdulkaderghandoura/arabic-speech-commands-dataset",
       "license": "CC BY 4.0",
       "license_url": "https://creativecommons.org/licenses/by/4.0/",
-      "changes": "One-second keyword clips trimmed, level-scaled, concatenated, filtered and mixed with other sounds."
+      "changes": "One-second keyword clips trimmed, level-scaled, concatenated, filtered and mixed with other sounds.",
+      "applies_to": [
+        "xdev",
+        "holdout"
+      ]
     },
     {
       "work": "ESC-50: Dataset for Environmental Sound Classification",
@@ -46,7 +57,11 @@
       "url": "https://github.com/karolpiczak/ESC-50",
       "license": "Only clips whose own Freesound licence is CC0 or CC BY are used (per clip, below). The compilation as a whole is CC BY-NC 3.0; this demo is non-commercial.",
       "license_url": "https://creativecommons.org/licenses/by-nc/3.0/",
-      "changes": "Clips cut, level-scaled, filtered and mixed into the caller channel."
+      "changes": "Clips cut, level-scaled, filtered and mixed into the caller channel.",
+      "applies_to": [
+        "xdev",
+        "holdout"
+      ]
     },
     {
       "work": "Silero VAD v6 (model used by the P3 detector)",

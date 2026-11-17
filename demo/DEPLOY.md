@@ -4,6 +4,34 @@ Live site: **https://sarj-turn-taking.onrender.com** (Render, free web service, 
 `feat/demo-ui` of the private repository; visitors reach only the HTTP routes below. Rollback point for the
 previous site (E01b + 6 synthetic scenarios): branch `demo-rollback/e91e36e-before-p3` (commit `e91e36e`).
 
+## Status (2026-11-17): the 24 originals are prepared, not yet public
+
+The demo now shows only the 24 original competition recordings (`data/dev`), with Baseline and P3. This version is on
+branch `feat/demo-p3-integration` and runs locally (`python demo/server.py`). The live site keeps the previous
+version (50 Phase 3 scenarios, branch `feat/demo-ui`) until public hosting of the 24 is authorised: public mode
+refuses to start without that permission, and never starts with no playable scenario, so deploying early cannot
+expose the recordings or blank the site (Render keeps the running version when a new one fails to start).
+
+**What the kit allows.** Three different things:
+
+| Question | Answer from the kit |
+|---|---|
+| Are the voices AI-generated? | Yes: Gemini TTS voices, procedural noise (DATA.md). That does not make them free to republish: the scripts, labels, mix and dataset belong to the organisers, and the kit grants no licence. |
+| Internal team use? | Yes. Supplied to participants; the owner approved storing them in this private repository (PROJECT.md); the judging rubric expects "a clear demo … with Arabic examples" in the teams' presentations (CHALLENGE.md). |
+| Public web hosting? | **Not granted.** No clause in CHALLENGE.md, DATA.md, README.md or SUBMISSION.md licenses redistribution. "Public development set" means shared with all participants. §10.8 licenses *our* work to Sarj, not their data to us. |
+
+**Authorization needed.** Written permission (email is enough) from Sarj AI, the challenge organisers, stating that
+the team may host the 24 development recordings, with their labels and transcripts, on a public, non-commercial
+website for its project presentation; with any attribution wording, time limit or conditions (e.g. no indexing).
+
+**Switch-over, once permission is received** (on `feat/demo-p3-integration`):
+1. `demo/collections.json`, collection `dev`: set `"public": true`; put who granted it, the date, the scope and a
+   reference (e.g. the email subject) in `"authorization"`; update `"rights"` (it is shown on the public page).
+2. `demo/Dockerfile`: add `COPY data/dev/manifest.json data/dev/` and `COPY data/dev/labels/ data/dev/labels/` and
+   `COPY data/dev/audio/ data/dev/audio/`; adjust `test_image_contains_only_whitelisted_paths` accordingly.
+3. `python -m pytest -q`, then `python demo/server.py --public` and `node demo/browser_check.js http://127.0.0.1:10000/`.
+4. Fast-forward `feat/demo-ui` to the integration branch and push; Render redeploys in about a minute.
+
 ## What visitors get
 
 A normal HTTPS link that opens in Chrome or Safari, on desktop or phone, with no install, account or sign-in.

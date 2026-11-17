@@ -115,6 +115,31 @@ def test_p3_files_are_the_audited_phase3_files():
         assert (KIT / path).read_bytes() == original.stdout, path
 
 
+def test_demo_shows_exactly_the_24_original_recordings():
+    """The demo (default settings) lists the 24 kit dev calls and nothing else; each plays the original file, byte for
+    byte as in the kit's own manifest, with its original labels and timing."""
+    import hashlib
+    app = demo.DemoApp(None, demo.DEFAULT_MODELS)
+    manifest = json.loads((DEV / "manifest.json").read_text(encoding="utf-8"))
+    want = {e["scenario_id"]: e["wav_sha256"] for e in manifest["scenarios"]}
+    cfg = app.config()
+    assert [c["key"] for c in cfg["collections"]] == ["dev"]
+    assert len(cfg["scenarios"]) == 24 and {x["id"] for x in cfg["scenarios"]} == set(want)
+    assert not any("-D5" in x["id"] or "-H5" in x["id"] for x in cfg["scenarios"])
+    with serving(app) as base:
+        for sid, digest in want.items():
+            body = urllib.request.urlopen(f"{base}/api/audio/{sid}.wav").read()
+            assert hashlib.sha256(body).hexdigest() == digest, sid
+            label = json.loads((DEV / "labels" / f"{sid}.json").read_text(encoding="utf-8"))
+            assert body == (DEV / "audio" / label["audio"]["file"]).read_bytes()
+            tl = json.loads(urllib.request.urlopen(f"{base}/api/scenario/{sid}").read())
+            assert tl["ground_truth"]["events"] == label["events"]
+            assert [(u["utt_id"], u["start_ms"], u["end_ms"]) for u in tl["protocol"]["agent_utterances"]] == \
+                [(u["utt_id"], u["start_ms"], u["end_ms"]) for u in label["agent_utterances"]]
+        for research in ("GI-D51", "NV-H51"):
+            assert status(f"{base}/api/audio/{research}.wav") == 404
+
+
 def test_a_label_cannot_run_other_code(tmp_path):
     wrong = demo.Model("p3", {**demo.DEFAULT_MODELS["p3"], "source": "file:demo/models/baseline_bd2a3f0.py"})
     assert not wrong.available and "not the pinned" in wrong.error

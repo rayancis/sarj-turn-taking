@@ -5,10 +5,11 @@ same audio. Public site: https://sarj-turn-taking.onrender.com (setup, rights, l
 It is a demonstration aid, not the competition submission, and it changes no detector, kit or evaluation file.
 
 - **Detectors:** Baseline (kit starter, `bd2a3f0`) and P3 Hybrid (Phase 3, `b32cfc2`), each pinned by file hash.
-- **Scenarios:** locally, the 24 competition dev calls (private, never public) plus the 50 Phase 3 constructed
-  scenarios; the public site serves only the 50 (real human keyword recordings + licensed sounds, with credits).
-- Good ones to show: **NV-D51** (cough: Baseline stops, P3 keeps talking), **GI-D51** (genuine interruption: P3
-  stops), **BC-D53** (acknowledgement), **GI-H54** (a soft interruption P3 is known to handle late or miss).
+- **Scenarios:** exactly the 24 original competition recordings (`data/dev`, both channels, original labels). Local
+  only until the organisers authorise public hosting (see DEPLOY.md). The 50 Phase 3 research scenarios stay in
+  the repository (`data/extra`) and are not part of the demo.
+- Good ones to show: **NV-D01** (cough: Baseline stops at 11.62 s, P3 keeps talking), **GI-D01** (genuine
+  interruption: both stop), **GI-D02** and **GI-D03** (noisy line), **BG-D01** (TV voice).
 
 ## Run it on Windows (PowerShell, from the repository folder)
 
@@ -21,8 +22,7 @@ $env:PYTHONUTF8 = '1'
 ```
 
 Then open **http://127.0.0.1:8770** in Chrome (the browser opens automatically; `--no-browser` turns that off).
-Stop with Ctrl+C. If port 8770 is busy: `demo\server.py --port 8771`. Local mode lists the 24 competition calls
-(private) and the 50 Phase 3 scenarios (their WAVs are committed; `python tools\build_extra.py --verify` checks them).
+Stop with Ctrl+C. If port 8770 is busy: `demo\server.py --port 8771`. The selector lists the 24 competition calls.
 
 ## Using it
 
@@ -59,8 +59,8 @@ the official evaluation). Pause stops the clock and the feed together.
 - One call per session (the official run streams all 24 calls in one session; both detectors reset per call).
 - No seeking; use Reset. Agent silence is reconstructed as the scorer does: from STOP to the end of the utterance.
 - P3 is experimental: occasional delayed responses and missed quiet interruptions on the additional data.
-- Local mode is localhost only (`127.0.0.1`), because the competition audio must not be exposed. The public site
-  (`--public`) serves only the collections marked public in `demo/collections.json`.
+- Local mode is localhost only (`127.0.0.1`), because the competition audio must not be exposed. Public mode
+  (`--public`) refuses to start until hosting is authorised in `demo/collections.json`.
 
 ## Checks
 

@@ -22,8 +22,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: LATENCY, downloadThroughput: -1, uploadThroughput: -1 });
   }
   const consoleErrors = [];
-  page.on("console", (m) => {                       // (the deliberate 404 probe for GI-D01 below is not an error)
-    if (m.type() === "error" && !(m.location().url || "").includes("GI-D01")) consoleErrors.push(m.text());
+  page.on("console", (m) => {                       // (the deliberate 404 probe for GI-D51 below is not an error)
+    if (m.type() === "error" && !(m.location().url || "").includes("GI-D51")) consoleErrors.push(m.text());
   });
   page.on("pageerror", (e) => consoleErrors.push(String(e)));
   const snap = () => page.evaluate(() => window.sarjDemo.snapshot());
@@ -51,11 +51,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const body = await page.content();
   check("no E01b anywhere on the page", !/E01b|e566234/.test(body + JSON.stringify(cfg)));
   console.log(`mode ${cfg.mode}, look-ahead ${cfg.lookahead_ms} ms, ${cfg.scenarios.length} scenarios in ${cfg.collections.map((c) => c.key).join(", ")}`);
-  if (cfg.mode === "public") check("public site: no competition recordings", cfg.scenarios.every((x) => x.collection !== "dev") &&
-    (await page.evaluate(() => fetch("/api/audio/GI-D01.wav").then((r) => r.status))) === 404);
+  const entries = await page.$$eval("#scenario option", (os) => os.map((o) => o.value));
+  check("selector lists exactly the 24 original competition recordings", entries.length === 24 &&
+    entries.every((id) => /^[A-Z]{2}-D0[1-3]$/.test(id)) && cfg.scenarios.every((x) => x.collection === "dev"),
+    `${entries.length} entries: ${entries.slice(0, 4).join(", ")} …`);
+  const research = await page.evaluate(() => fetch("/api/audio/GI-D51.wav").then((r) => r.status));
+  check("Phase 3 research scenarios are not served", research === 404);
 
   // 1. A cough (KEEP): Baseline stops falsely, P3 keeps talking. Pause/resume on the way.
-  await select("NV-D51");
+  await select("NV-D01");
   await page.click("#play");
   const leads = [];
   for (let i = 0; i < 15; i++) { await sleep(150); const x = await snap(); leads.push((x.fedMs - 20) - x.playheadMs); }
@@ -104,10 +108,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.click("#play");
   await sleep(800);
   const before = await snap();
-  await select("GI-D51");
+  await select("GI-D01");
   const after = await snap();
   check("switching scenario stops playback and starts fresh detectors", !after.playing && after.decisions.p3.length === 0 &&
-    after.fedMs === 0 && after.session !== before.session && after.scenario === "GI-D51");
+    after.fedMs === 0 && after.session !== before.session && after.scenario === "GI-D01");
   await page.click("#play");
   const gstop = await waitFor((x) => x.decisions.p3.some((d) => d.decision === "STOP"), 30000);
   const gd = gstop && gstop.decisions.p3.find((d) => d.decision === "STOP");
