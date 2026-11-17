@@ -1,18 +1,25 @@
 {
-  "about": "Scenario collections and their redistribution rights. The demo shows the 24 competition recordings (dev). Public mode serves a collection only if it is marked public here; the competition recordings additionally need a recorded authorization. Phase 3 research collections are kept for reference and are not part of the demo.",
+  "about": "Scenario collections and their redistribution rights. The demo shows the 24 competition recordings (dev), publicly since the supervisor's permission of 2026-11-17 (authorization below). Public mode serves a collection only if it is marked public here; the competition recordings also need the recorded authorization, and only their original files (SHA-256 in data/dev/manifest.json) are served. Phase 3 research collections are kept for reference and are not part of the demo.",
   "reviewed": "2026-11-17",
   "collections": [
     {
       "key": "dev",
       "dir": "data/dev",
-      "public": false,
+      "public": true,
       "title": "Competition development set",
       "kind": "Original kit recordings (AI-generated Gemini TTS voices, procedural noise)",
       "description": "The 24 development calls supplied with the SARJ starter kit.",
-      "rights": "Supplied to challenge participants with the kit; no licence for redistribution is included. The owner approved storing them in this private repository and team use; the kit expects them in the teams' own presentations. Public web hosting is not authorised yet.",
+      "rights": "Published here with written permission from the SARJ competition supervisor (2026-11-17): public display allowed because the recordings are synthetic and for testing only. Not for other reuse.",
       "in_demo": true,
-      "authorization": null,
-      "authorization_needed": "Written permission from Sarj AI (the challenge organisers, owners of the development set) for the team to host the 24 development recordings, their labels and transcripts on a public, non-commercial website for its project presentation, with any required attribution and duration. When received: set public: true, put who/when/scope/reference in authorization, add data/dev to demo/Dockerfile, run the tests."
+      "authorization": {
+        "granted_by": "SARJ competition supervisor (name and contact details withheld)",
+        "date": "2026-11-17",
+        "channel": "written message (WhatsApp); screenshot kept by the repository owner, provided to the developer on 2026-11-17",
+        "text_ar": "نعم، مسموح نشر او عرض التسجيلات على رابط عام لانه غير حقيقية ولغرض الاختبار فقط",
+        "text_en": "Yes, publishing or displaying the recordings on a public link is permitted, because they are not real and are for testing only.",
+        "scope": "The 24 development recordings, with their labels, on the team's public, non-commercial demo link, for testing and presentation.",
+        "evidence_note": "The screenshot shows the message text and time only (no sender name, date or the question it answers); its bubble style is that of a sent message. The repository owner confirmed it is the supervisor's reply."
+      }
     },
     {
       "key": "xdev",

@@ -1,6 +1,6 @@
 # Image for the PUBLIC demo site (see demo/DEPLOY.md). Build context: the repository root.
-# Only the files the demo needs are copied, one by one. Never in the image: the competition recordings and labels
-# (data/), evaluation evidence (experiments/, baseline/), tests, documents and .git, so no route can serve them.
+# Only the files the demo needs are copied, one by one. Never in the image: the Phase 3 research data
+# (data/extra), evaluation evidence (experiments/, baseline/), tests, documents and .git, so no route can serve them.
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUTF8=1 SARJ_DEMO_PUBLIC=1 OMP_NUM_THREADS=1
@@ -17,8 +17,11 @@ COPY demo/models/ demo/models/
 # The demo itself.
 COPY demo/server.py demo/collections.json demo/benchmark.json demo/
 COPY demo/static/ demo/static/
-# No scenario audio: the 24 competition recordings have no public licence (demo/DEPLOY.md), and the 50 Phase 3
-# research scenarios are not part of the demo. data/ is not copied at all.
+# The 24 original competition recordings, published with the supervisor's permission (demo/collections.json).
+# Only the manifest, labels and audio; the 50 Phase 3 research scenarios (data/extra) are not part of the demo.
+COPY data/dev/manifest.json data/dev/
+COPY data/dev/labels/ data/dev/labels/
+COPY data/dev/audio/ data/dev/audio/
 
 RUN useradd --create-home --uid 10001 demo
 USER demo

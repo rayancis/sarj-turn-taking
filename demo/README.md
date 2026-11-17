@@ -5,9 +5,9 @@ same audio. Public site: https://sarj-turn-taking.onrender.com (setup, rights, l
 It is a demonstration aid, not the competition submission, and it changes no detector, kit or evaluation file.
 
 - **Detectors:** Baseline (kit starter, `bd2a3f0`) and P3 Hybrid (Phase 3, `b32cfc2`), each pinned by file hash.
-- **Scenarios:** exactly the 24 original competition recordings (`data/dev`, both channels, original labels). Local
-  only until the organisers authorise public hosting (see DEPLOY.md). The 50 Phase 3 research scenarios stay in
-  the repository (`data/extra`) and are not part of the demo.
+- **Scenarios:** exactly the 24 original competition recordings (`data/dev`, both channels, original labels), also
+  on the public site with the competition supervisor's written permission (see DEPLOY.md). The 50 Phase 3 research
+  scenarios stay in the repository (`data/extra`) and are not part of the demo.
 - Good ones to show: **NV-D01** (cough: Baseline stops at 11.62 s, P3 keeps talking), **GI-D01** (genuine
   interruption: both stop), **GI-D02** and **GI-D03** (noisy line), **BG-D01** (TV voice).
 
@@ -59,8 +59,8 @@ the official evaluation). Pause stops the clock and the feed together.
 - One call per session (the official run streams all 24 calls in one session; both detectors reset per call).
 - No seeking; use Reset. Agent silence is reconstructed as the scorer does: from STOP to the end of the utterance.
 - P3 is experimental: occasional delayed responses and missed quiet interruptions on the additional data.
-- Local mode is localhost only (`127.0.0.1`), because the competition audio must not be exposed. Public mode
-  (`--public`) refuses to start until hosting is authorised in `demo/collections.json`.
+- Local mode listens on `127.0.0.1` only. Public mode (`--public`) serves the 24 only while the permission is
+  recorded in `demo/collections.json`, and only their original files.
 
 ## Checks
 

@@ -10,9 +10,9 @@ Public (hosted site, see demo/DEPLOY.md):
 
 Two detectors, pinned by file hash so a label can never run other code: Baseline (the kit's starter detector,
 bd2a3f0) and P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2). The demo shows the 24 original
-competition recordings (data/dev). Public mode serves them only once the organisers' permission for public web
-hosting is recorded in demo/collections.json, and never starts with no playable scenario (demo/DEPLOY.md). The 50
-Phase 3 research scenarios stay in the repository and are not part of the demo.
+competition recordings (data/dev), publicly since the competition supervisor's written permission (2026-11-17,
+recorded in demo/collections.json); public mode serves a collection only with such a record and never starts with
+no playable scenario (demo/DEPLOY.md). The 50 Phase 3 research scenarios stay in the repository, not in the demo.
 
 How a decision reaches the page (nothing is pre-scripted):
   1. The browser plays the call's two channels from one AudioContext and regularly posts its playhead (for both

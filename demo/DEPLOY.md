@@ -4,38 +4,26 @@ Live site: **https://sarj-turn-taking.onrender.com** (Render, free web service, 
 `feat/demo-ui` of the private repository; visitors reach only the HTTP routes below. Rollback point for the
 previous site (E01b + 6 synthetic scenarios): branch `demo-rollback/e91e36e-before-p3` (commit `e91e36e`).
 
-## Status (2026-11-17): the 24 originals are prepared, not yet public
+## The 24 original recordings: public with the supervisor's permission
 
-The demo now shows only the 24 original competition recordings (`data/dev`), with Baseline and P3. This version is on
-branch `feat/demo-p3-integration` and runs locally (`python demo/server.py`). The live site keeps the previous
-version (50 Phase 3 scenarios, branch `feat/demo-ui`) until public hosting of the 24 is authorised: public mode
-refuses to start without that permission, and never starts with no playable scenario, so deploying early cannot
-expose the recordings or blank the site (Render keeps the running version when a new one fails to start).
+The demo shows exactly the 24 original competition recordings (`data/dev`, the kit's own files, unchanged), with
+Baseline and P3. The 50 Phase 3 research scenarios stay in the repository (`data/extra`) and are not in the demo
+or the image.
 
-**What the kit allows.** Three different things:
-
-| Question | Answer from the kit |
+| Question | Answer |
 |---|---|
-| Are the voices AI-generated? | Yes: Gemini TTS voices, procedural noise (DATA.md). That does not make them free to republish: the scripts, labels, mix and dataset belong to the organisers, and the kit grants no licence. |
-| Internal team use? | Yes. Supplied to participants; the owner approved storing them in this private repository (PROJECT.md); the judging rubric expects "a clear demo … with Arabic examples" in the teams' presentations (CHALLENGE.md). |
-| Public web hosting? | **Not granted.** No clause in CHALLENGE.md, DATA.md, README.md or SUBMISSION.md licenses redistribution. "Public development set" means shared with all participants. §10.8 licenses *our* work to Sarj, not their data to us. |
+| Are the voices AI-generated? | Yes: Gemini TTS voices and procedural noise (DATA.md). That alone does not license republication; the kit itself grants none. |
+| Internal team use? | Yes: supplied to participants; stored in this private repository with the owner's approval (PROJECT.md). |
+| Public web hosting? | **Permitted since 2026-11-17** by written message from the SARJ competition supervisor: «نعم، مسموح نشر او عرض التسجيلات على رابط عام لانه غير حقيقية ولغرض الاختبار فقط» ("Yes, publishing or displaying the recordings on a public link is permitted, because they are not real and are for testing only"). Recorded in `demo/collections.json` (`dev.authorization`), without names or contact details; the screenshot is kept by the repository owner. Scope: this non-commercial test/presentation demo, not other reuse. |
 
-**Authorization needed.** Written permission (email is enough) from Sarj AI, the challenge organisers, stating that
-the team may host the 24 development recordings, with their labels and transcripts, on a public, non-commercial
-website for its project presentation; with any attribution wording, time limit or conditions (e.g. no indexing).
-
-**Switch-over, once permission is received** (on `feat/demo-p3-integration`):
-1. `demo/collections.json`, collection `dev`: set `"public": true`; put who granted it, the date, the scope and a
-   reference (e.g. the email subject) in `"authorization"`; update `"rights"` (it is shown on the public page).
-2. `demo/Dockerfile`: add `COPY data/dev/manifest.json data/dev/` and `COPY data/dev/labels/ data/dev/labels/` and
-   `COPY data/dev/audio/ data/dev/audio/`; adjust `test_image_contains_only_whitelisted_paths` accordingly.
-3. `python -m pytest -q`, then `python demo/server.py --public` and `node demo/browser_check.js http://127.0.0.1:10000/`.
-4. Fast-forward `feat/demo-ui` to the integration branch and push; Render redeploys in about a minute.
+Public mode serves the competition recordings only while that record exists, serves only the kit's original files
+(SHA-256 as in `data/dev/manifest.json`; a changed file stops the server), and never starts with no playable scenario.
+Previous live version (50 Phase 3 scenarios): branch `demo-rollback/4fe3f8c-phase3-scenarios`.
 
 ## What visitors get
 
 A normal HTTPS link that opens in Chrome or Safari, on desktop or phone, with no install, account or sign-in.
-They pick one of 50 scenarios, press Play, and both detectors run on the same audio, side by side:
+They pick one of the 24 original competition scenarios, press Play, and both detectors run on the same audio, side by side:
 
 | Detector | Code | Pinned SHA-256 of the file |
 |---|---|---|
@@ -48,24 +36,19 @@ detectors always run.
 
 ## Scenario collections and rights (`demo/collections.json`)
 
-| Collection | Count | Public? | Why |
+| Collection | Count | In the demo? | Rights |
 |---|---|---|---|
-| Competition dev set (`data/dev`) | 24 | **no**, local mode only | The kit grants no public redistribution licence; the owner's approval covers the private repository and team use. |
-| Phase 3 xdev (`data/extra/xdev`) | 25 | yes, with attribution | ASC voice clips CC BY 4.0; ESC-50 sound clips individually CC0 or CC BY (cross-checked against the ESC-50 LICENSE file); generated room tone/echo/filters. |
-| Phase 3 holdout (`data/extra/holdout`) | 25 | yes, with attribution | Same sources and licences. Listening only: never used to tune the detector. |
+| Competition dev set (`data/dev`) | 24 | **yes**, locally and on the public site | Public display permitted by the competition supervisor (2026-11-17), recorded above. |
+| Phase 3 xdev (`data/extra/xdev`) | 25 | no (research only) | ASC voice clips CC BY 4.0; ESC-50 clips individually CC0 / CC BY. Kept with their rights review. |
+| Phase 3 holdout (`data/extra/holdout`) | 25 | no (research only) | Same sources and licences. Frozen; never used to tune the detector. |
 
-The Phase 3 scenarios are constructed: recordings of real people reading isolated Arabic keywords, mixed with
-licensed sounds. They are not spontaneous conversations. Their WAVs were rebuilt with `tools/build_extra.py` and are
-bit-identical to the Phase 3 manifests (`--verify`); they are committed so the site can serve them.
-
-Public mode serves a collection only if `collections.json` marks it public, it is not the kit data, and every WAV's
-SHA-256 is in the register's `public_wav_sha256` list. Credits are shown on the page (each scenario lists its clips).
-ESC-50 as a compilation is CC BY-NC: **keep the site non-commercial** (no ads, no paid access).
+The Phase 3 files (WAVs rebuilt bit-exactly by `tools/build_extra.py`, manifests, labels, design, sources and
+results) stay in the repository unchanged; they are simply not part of the demo or its image.
 
 ## Public routes (everything else is 404)
 
 `/`, `/app.js`, `/style.css`; `/api/config` (scenarios, the two detectors, recorded dev-set numbers; no file paths
-or hashes); `/api/scenario/<id>`, `/api/audio/<id>.wav` (the 50 public scenarios only); `POST /api/session`,
+or hashes); `/api/scenario/<id>`, `/api/audio/<id>.wav` (the 24 original scenarios only); `POST /api/session`,
 `/api/session/<id>/advance`, `/close`; `/healthz`, `/robots.txt` (no indexing).
 
 ## Limits (public mode)
