@@ -26,7 +26,9 @@ function wavFile(samples, rate, channels) {
   return Buffer.concat([h, data]);
 }
 async function testAudio() {
-  const buf = Buffer.from(await (await fetch(new globalThis.URL("api/audio/GI-D01.wav", URL))).arrayBuffer());
+  const local = path.join(__dirname, "..", "data", "dev", "audio", "GI-D01.wav");   // the same original file
+  const buf = fs.existsSync(local) ? fs.readFileSync(local)
+    : Buffer.from(await (await fetch(new globalThis.URL("api/audio/GI-D01.wav", URL))).arrayBuffer());
   let o = 12, dataAt = -1, size = 0;
   while (o + 8 <= buf.length) { const id = buf.toString("ascii", o, o + 4), n = buf.readUInt32LE(o + 4); if (id === "data") { dataAt = o + 8; size = n; break; } o += 8 + n + (n & 1); }
   const caller = [];
