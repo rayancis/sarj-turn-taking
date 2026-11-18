@@ -2,10 +2,10 @@
 
 Regression for the BG-D02 cold-start false STOP: the noise floor started at -90 dB and may
 only rise 3 dB/s, so steady street noise read as strong speech for many seconds. The fix
-starts the floor at the first caller frame. These tests check the failure mode with
-synthetic audio, that real interruptions are still detected, and on the dev calls that no
-real interruption the old start detected is lost (acoustics only; the words layer needs
-real time and is measured by the official run).
+seeds the floor from the line when the agent starts before the caller's level is known.
+These tests check the failure mode with synthetic audio, that real interruptions are still
+detected, and on the dev calls that warm (benchmark) decisions are unchanged (acoustics
+only; the words layer needs real time and is measured by the official run).
 """
 import sys
 from pathlib import Path
@@ -67,7 +67,7 @@ def test_steady_street_noise_does_not_stop_a_cold_detector():
 
 def test_the_legacy_floor_reproduces_the_false_stop():
     # guards the test itself: with the original -90 dB start the same audio stops the agent
-    assert run(street(6), noise_init_first_frame=False)
+    assert run(street(6), cold_start_noise_seed=False)
 
 
 def test_real_interruption_in_noise_still_stops_a_cold_detector():
@@ -78,8 +78,21 @@ def test_real_interruption_in_noise_still_stops_a_cold_detector():
     assert stops and 2000 <= stops[0] <= 3000
 
 
+def test_caller_already_talking_when_the_agent_starts_still_stops():
+    """Seeding on a speech frame must not deafen the detector (E01b finding 1: voice from the first frame).
+
+    Words of 0.7 s with 0.2 s pauses: the first pause sets the floor, then the usual evidence is
+    needed. Known cost: the stop comes ~0.7 s later than with the -90 dB floor, which reached
+    0.7 s only by treating any sound, street noise included, as speech. A voice with no pause
+    at all cannot be told from steady noise by level alone and is not asserted here."""
+    v = voice(5)
+    caller = street(5) + v * ((np.arange(len(v)) / SR % 0.9) < 0.7)
+    stops = run(caller)
+    assert stops and stops[0] <= 1600
+
+
 def test_floor_recovers_when_the_call_opens_with_loud_speech():
-    """Starting at the first frame must not deafen the detector if that frame is speech."""
+    """Seeding high must not deafen the detector if the first frame is speech."""
     caller = street(5)
     caller[:int(0.4 * SR)] += voice(0.4, db=-8)
     caller[3 * SR:5 * SR] += voice(2)
@@ -87,16 +100,25 @@ def test_floor_recovers_when_the_call_opens_with_loud_speech():
     assert stops and 3000 <= stops[0] <= 4000
 
 
-def test_floor_is_reset_for_every_call():
+def test_seed_only_when_the_caller_level_is_unknown():
+    d = Decider(Config())
+    d.agent_start("x", 1000)
+    assert d.fe.seed_noise                      # cold: nothing heard without the agent
+    d = Decider(Config())
+    d.caller_ref_db = -30.0
+    d.agent_start("x", 1000)
+    assert not d.fe.seed_noise                  # warm: the tuned floor is left alone
+    d = Decider(Config(cold_start_noise_seed=False))
+    d.agent_start("x", 1000)
+    assert not d.fe.seed_noise
+
+
+def test_a_new_call_starts_unseeded():
     from tt.frontend import Frontend
     fe = Frontend(Config())
-    loud, quiet = i16(street(0.2, db=-20)), i16(street(0.2, db=-50))
-    z = np.zeros(N, dtype=np.int16)
-    fe.process(z, loud[:N])
-    high = fe.noise.sum()
-    fe.reset_call()
-    fe.process(z, quiet[:N])
-    assert fe.noise.sum() < high / 100
+    fe.seed_noise = True
+    fe.process(np.zeros(N, dtype=np.int16), i16(street(0.02, db=-20)))
+    assert not fe.seed_noise
 
 
 needs_dev = pytest.mark.skipif(not (ROOT / "data/dev/audio/BG-D02.wav").exists(), reason="dev audio missing")
@@ -106,7 +128,7 @@ needs_dev = pytest.mark.skipif(not (ROOT / "data/dev/audio/BG-D02.wav").exists()
 def test_dev_calls_cold_and_warm_keep_every_real_interruption():
     import v3_cold_start as cs
     new = cs.run(Config())
-    old = cs.run(Config(noise_init_first_frame=False))
+    old = cs.run(Config(cold_start_noise_seed=False))
     # BG-D02 (street noise, nothing said) no longer stops when the detector starts cold
     assert new["BG-D02"]["cold"]["stops"] == []
     def total(rows, mode, key):
@@ -115,9 +137,7 @@ def test_dev_calls_cold_and_warm_keep_every_real_interruption():
         # real interruptions: no fewer timely stops and no more misses in total
         assert total(new, mode, "hit") >= total(old, mode, "hit"), mode
         assert total(new, mode, "missed") <= total(old, mode, "missed"), mode
-    # every call whose interruption the old start caught warm is still caught warm
+    # calls heard before the agent speaks (the benchmark) keep exactly the tuned decisions
     for sid in new:
-        if any(k == "hit" for _, k in old[sid]["warm"]["stops"]):
-            assert any(k == "hit" for _, k in new[sid]["warm"]["stops"]), sid
-    assert total(new, "warm", "false") <= total(old, "warm", "false")
+        assert new[sid]["warm"] == old[sid]["warm"], sid
     assert total(new, "cold", "false") < total(old, "cold", "false")

@@ -154,6 +154,10 @@ class Decider:
             self.plan = AgentPlan()
         self.utt_seq += 1
         self._reset_utt()
+        if self.cfg.cold_start_noise_seed and self.caller_ref_db is None:
+            # nothing heard without the agent yet: the noise floor is still at its
+            # -90 dB start and would take line noise for caller speech
+            self.fe.seed_noise = True
 
     def agent_end(self, *args, **kwargs):
         self.agent_on = False

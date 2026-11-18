@@ -19,11 +19,13 @@ class Config:
 
     # ---- noise floor (frontend) ----
     noise_rise_db_per_s: float = 3.0
-    # Start the floor at the first caller frame of a call instead of -90 dB. The floor
-    # falls fast and rises 3 dB/s, so from -90 dB it needed >10 s to reach street or
-    # car noise, and a detector that had not heard the caller yet took that noise
-    # for speech (cold-start false STOP). False keeps the original behaviour.
-    noise_init_first_frame: bool = True
+    # Cold start (the agent starts before the detector has heard the line or the
+    # caller, e.g. a Gemini Live greeting): seed the floor from that frame instead
+    # of -90 dB. The floor may only rise 3 dB/s, so from -90 dB street noise read
+    # as strong speech for >10 s (BG-D02 cold: false STOP after 1.1 s). Calls that
+    # are heard before the agent speaks are unaffected. False = original behaviour.
+    cold_start_noise_seed: bool = True
+    cold_seed_acquire_ms: float = 1000.0  # after a seed, the floor drops straight to the quietest frame for this long
 
     # ---- frame-level speech evidence ----
     snr_on_db: float = 9.0               # excess-over-noise needed for a speech frame
