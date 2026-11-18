@@ -42,6 +42,9 @@ LIVE_URL = ("wss://generativelanguage.googleapis.com/ws/"
             "google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent")
 MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}"
 PREFERRED_MODELS = ("gemini-3.8-live", "gemini-3.1-flash-live-preview")   # official docs, 2026-11
+# Feature flag (env LIVE_MODE): "off" = no live sessions; "hidden" = works, but the page shows the section only with
+# ?live=1 (a controlled test); "on" = shown to every visitor. Without GEMINI_API_KEY it is always unavailable.
+LIVE_DEFAULT_MODE = "hidden"
 FRAME_BYTES = FRAME_SAMPLES * 2 * 2
 OUT_RATE = 24000                    # Gemini Live output: 16-bit PCM, 24 kHz, mono
 LOUD_DB = -42.0                     # the kit's loudness rule (also P3's end-of-turn rule)
@@ -76,6 +79,7 @@ class LiveSettings:
     per_hour: int = 30
     per_day: int = 100
     verify_model: bool = True
+    mode: str = LIVE_DEFAULT_MODE
 
     @classmethod
     def from_env(cls) -> "LiveSettings":
@@ -85,7 +89,8 @@ class LiveSettings:
                    voice=e.get("GEMINI_LIVE_VOICE") or None,
                    max_concurrent=int(e.get("LIVE_MAX_CONCURRENT", "2")), max_seconds=int(e.get("LIVE_MAX_SECONDS", "180")),
                    per_hour=int(e.get("LIVE_PER_HOUR", "30")), per_day=int(e.get("LIVE_PER_DAY", "100")),
-                   verify_model=url == LIVE_URL)
+                   verify_model=url == LIVE_URL,
+                   mode=(e.get("LIVE_MODE") or LIVE_DEFAULT_MODE).strip().lower())
 
 
 class LiveGate:
@@ -102,15 +107,22 @@ class LiveGate:
         self.model: str | None = s.model
         self.model_checked = 0.0
         self.model_error: str | None = None
+        self.checks: list = []
+        self.last_check = 0.0
 
     def status(self) -> dict:
         now = time.time()
+        if self.s.mode == "off":
+            return {"enabled": False, "visible": False, "reason": "The live agent is switched off on this server."}
         if not self.s.api_key:
-            return {"enabled": False, "reason": "The live agent is not configured on this server (no Gemini API key)."}
+            return {"enabled": False, "visible": False,
+                    "reason": "The live agent is not configured on this server (no Gemini API key)."}
+        visible = self.s.mode == "on"
         if now < self.cooldown_until:
-            return {"enabled": False, "reason": self.cooldown_reason}
-        return {"enabled": True, "model": self.model or PREFERRED_MODELS[0], "max_seconds": self.s.max_seconds,
-                "max_concurrent": self.s.max_concurrent, "busy": self.active >= self.s.max_concurrent}
+            return {"enabled": False, "visible": visible, "reason": self.cooldown_reason}
+        return {"enabled": True, "visible": visible, "model": self.model or PREFERRED_MODELS[0],
+                "max_seconds": self.s.max_seconds, "max_concurrent": self.s.max_concurrent,
+                "busy": self.active >= self.s.max_concurrent}
 
     def acquire(self) -> None:
         now = time.time()
@@ -139,11 +151,20 @@ class LiveGate:
             self.cooldown_reason = "The Gemini free-tier quota is exhausted for now. The live agent is paused for 15 minutes."
             self.model_error = detail
 
-    def resolve_model(self) -> str:
+    def check(self) -> dict:
+        """Model availability as the API reports it now (no key or secret in the result)."""
+        self.checks = []
+        try:
+            model = self.resolve_model(force=True)
+            return {"ok": True, "model": model, "tried": self.checks}
+        except LiveRefused as e:
+            return {"ok": False, "error": str(e), "tried": self.checks}
+
+    def resolve_model(self, force: bool = False) -> str:
         """The configured model, or the first of PREFERRED_MODELS that the API reports as supporting the Live API
         (checked against the models endpoint, cached for an hour)."""
         with self.lock:
-            if self.model and (not self.s.verify_model or time.time() - self.model_checked < 3600):
+            if not force and self.model and (not self.s.verify_model or time.time() - self.model_checked < 3600):
                 return self.model
         candidates = [self.s.model] if self.s.model else list(PREFERRED_MODELS)
         if not self.s.verify_model:
@@ -154,12 +175,16 @@ class LiveGate:
             try:
                 with urllib.request.urlopen(req, timeout=10) as r:
                     info = json.loads(r.read())
-                if "bidiGenerateContent" in info.get("supportedGenerationMethods", ["bidiGenerateContent"]):
+                methods = info.get("supportedGenerationMethods", [])
+                self.checks.append({"model": m, "status": 200, "live": "bidiGenerateContent" in methods,
+                                    "display_name": info.get("displayName")})
+                if "bidiGenerateContent" in methods or not methods:
                     with self.lock:
                         self.model, self.model_checked = m, time.time()
                     return m
                 last = f"{m}: no Live API support"
             except urllib.error.HTTPError as e:
+                self.checks.append({"model": m, "status": e.code})
                 last = f"{m}: HTTP {e.code}"
                 if e.code in (401, 403):
                     raise LiveRefused("The Gemini API key was rejected. Check GEMINI_API_KEY on the server.")
@@ -167,7 +192,8 @@ class LiveGate:
                     self.quota_exhausted(last)
                     raise LiveRefused(self.cooldown_reason)
             except (urllib.error.URLError, TimeoutError, OSError) as e:
-                last = f"{m}: {e}"
+                self.checks.append({"model": m, "error": type(e).__name__})
+                last = f"{m}: {type(e).__name__}"
         raise LiveRefused(f"No Gemini Live model is available ({last}).")
 
 

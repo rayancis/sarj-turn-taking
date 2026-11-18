@@ -17,7 +17,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-  await page.goto(URL);
+  await page.goto(URL + (URL.includes("?") ? "&" : "?") + "live=1");   // the section is hidden unless LIVE_MODE=on
   await page.waitForFunction(() => window.SARJ_CONFIG, null, { timeout: 30000 });
   const cfg = await page.evaluate(() => window.SARJ_CONFIG.live);
   check("live agent available", !!cfg.enabled, cfg.enabled ? `model ${cfg.model}` : cfg.reason);

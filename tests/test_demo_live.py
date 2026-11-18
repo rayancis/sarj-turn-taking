@@ -302,3 +302,28 @@ def test_an_unrequested_interruption_would_be_reported(models):
     s._send_activity("activityStart", "barge_in")
     s.on_gemini({"serverContent": {"interrupted": True}})                 # this one SARJ asked for
     assert s.summary()["gemini_interrupted_unrequested"] == 1 and s.summary()["gemini_interrupted"] == 2
+
+
+def test_feature_flag_and_model_check(monkeypatch):
+    """LIVE_MODE: off = unavailable; hidden = works but not shown by default; on = shown. The model check never
+    reveals the key and is rate-limited."""
+    for mode, enabled, visible in (("off", False, False), ("hidden", True, False), ("on", True, True)):
+        monkeypatch.setenv("LIVE_MODE", mode)
+        monkeypatch.setenv("GEMINI_API_KEY", "secret-key-xyz")
+        st = live.LiveGate(live.LiveSettings.from_env()).status()
+        assert (st["enabled"], st["visible"]) == (enabled, visible), mode
+    monkeypatch.delenv("LIVE_MODE")
+    assert live.LiveSettings.from_env().mode == live.LIVE_DEFAULT_MODE == "hidden"
+    fake = FakeGemini(b"\0\0" * 2400)
+    app = start_app(fake.start())
+    app.live_settings.mode = "hidden"
+    import urllib.error
+    import urllib.request
+    with serving(app) as base:
+        r = json.loads(urllib.request.urlopen(base + "/api/live/check").read())
+        assert r["ok"] and r["model"] == "gemini-3.8-live" and "test-key-123" not in json.dumps(r)
+        with pytest.raises(urllib.error.HTTPError) as e:
+            urllib.request.urlopen(base + "/api/live/check")
+        assert e.value.code == 429
+        cfg = json.loads(urllib.request.urlopen(base + "/api/config").read())
+        assert cfg["live"]["enabled"] and not cfg["live"]["visible"] and "test-key-123" not in json.dumps(cfg)

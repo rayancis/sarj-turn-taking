@@ -167,6 +167,10 @@
   function init(cfg) {
     window.SARJ_CONFIG = cfg;
     const live = cfg.live || {};
+    // feature flag: shown to everyone only in "on" mode; in "hidden" mode only with ?live=1 (controlled test)
+    const forced = new URLSearchParams(location.search).get("live") === "1";
+    $("live-panel").hidden = !(live.visible || (forced && live.enabled));
+    if ($("live-panel").hidden) return;
     $("live-start").onclick = start;
     $("live-end").onclick = end;
     if (!live.enabled) {

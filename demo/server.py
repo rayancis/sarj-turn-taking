@@ -808,6 +808,16 @@ def make_handler(app: DemoApp):
             path = urlparse(self.path).path
             if path == "/api/live":
                 return self._live()
+            if path == "/api/live/check":                # model availability, at most once per 30 s, no secrets
+                g = app.live_gate
+                if not g.status().get("enabled") and not app.live_settings.api_key:
+                    return self._json({"ok": False, "error": g.status()["reason"]})
+                if app.live_settings.mode == "off":
+                    return self._json({"ok": False, "error": "switched off"})
+                if time.monotonic() - g.last_check < 30:
+                    return self._error(429, "checked less than 30 s ago")
+                g.last_check = time.monotonic()
+                return self._json(g.check())
             if path == "/healthz":
                 return self._json({"ok": True})
             if path == "/robots.txt":
