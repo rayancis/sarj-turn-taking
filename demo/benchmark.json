@@ -1,5 +1,18 @@
 {
-  "source": "independent speed-1.0 verification pending",
-  "scope": "24 original synthetic dev recordings; bounded v3 requires a new measurement",
-  "rows": []
+  "source": "experiments/evidence/runs.json",
+  "scope": "official scorer, real-time harness at speed 1.0, all 24 original competition development recordings (synthetic; not the hidden set)",
+  "rows": [
+    {
+      "model": "v3",
+      "run": "v3-a8c93bb-rt",
+      "commit": "a8c93bb",
+      "revision": "v3-coldseed-1",
+      "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+      "core": 96.38,
+      "R": 0.951,
+      "S": 0.969,
+      "false_stops": 1,
+      "misses": 0
+    }
+  ]
 }

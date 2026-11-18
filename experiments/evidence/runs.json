@@ -277,6 +277,216 @@
     "log.jsonl": "84cf99b66b435ae62ea46e1987393ffb0fb9c17a1c8acb5a7ebebceaa4227ff8",
     "report.md": "73a880d9cd65482840664df4a8e280b178af4b67fc3a3b8b993b9a2e82a5ae4e"
    }
+  },
+  "v3-a8c93bb-rt": {
+   "system_commit": "a8c93bb (rayancis/sarj-turn-taking, claude/great-galileo-uonrdh)",
+   "command": "python -m ttbench.play --system demo/models/sarj_v3/my_system.py --calls all --name claude-v3-a8c93bb-rt",
+   "configuration": "tt/config.py defaults (revision v3-coldseed-1; words layer on)",
+   "concurrent_load": "none (tests, browsers and containers stopped)",
+   "host": "Claude Code cloud container, Linux 6.18 x86_64, 4 vCPU Intel Xeon @ 2.30GHz, Python 3.13.18",
+   "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+   "packages": {
+    "numpy": "2.5.5",
+    "websockets": "17.4",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.9.0"
+   },
+   "model": {
+    "file": "models/faster-whisper-tiny (Systran/faster-whisper-tiny @ d90ca5fe)",
+    "sha256": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1"
+   },
+   "harness_version": "0.1.0",
+   "completed": true,
+   "frames_sent": 29651,
+   "max_send_lag_ms": 0.03,
+   "protocol_errors": 0,
+   "core": 96.37754492967528,
+   "R": 0.9509166666666666,
+   "S": 0.96875,
+   "misses": 0,
+   "false_stops": 1,
+   "files_sha256": {
+    "run.json": "695f0daebf0fe92f6a053087e7f75245ef1d1fadc90c83bc98e7e4e32b896965",
+    "score.json": "2c6cde1274691383bc20a198c15e7a5f87a0e47a0c52741fe08c4d3ed8664382",
+    "log.jsonl": "603545b6f474ea5b141bc60e857163d24a3c2eed86174006db74a06049d8a5ed",
+    "report.md": "86afda241e449ff0565fb8d4ee7385397d3950fadc540d2d0489c76b3f9d2246"
+   },
+   "note": "Current pinned source. Repeat: v3-a8c93bb-rt2.",
+   "stop_latency_after_evident_ms": {
+    "median": 251.5,
+    "p90": 871.9
+   },
+   "rtt_summary_ms": {
+    "median": 0.85,
+    "max": 3.86,
+    "n": 119
+   },
+   "official_score_recomputed_exactly": true,
+   "files_pinned": {
+    "demo/models/sarj_v3/tt/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "demo/models/sarj_v3/tt/assets.py": "3fac6bd8c3221724c7f4c76b1d36914855777126f16e3a33cba58000d49fa5eb",
+    "demo/models/sarj_v3/tt/config.py": "beda56ca7d99a747f22e9f63e22de6dc8014e404c2bfe2ef01607f6af3e980da",
+    "demo/models/sarj_v3/tt/decider.py": "40d7ee2245d3b39660363fa6b860ae85a596ae561632ac12b62351d2ebd41449",
+    "demo/models/sarj_v3/tt/frontend.py": "870eb174121d3c99eba9e8399bc4c73bed1e860ae22c5c275638fa93d2185e58",
+    "demo/models/sarj_v3/tt/prefix.py": "1559dd15e907b006132f76e3365a51632a6f65acaf32ceff3c49076eabe3daa8",
+    "demo/models/sarj_v3/tt/words.py": "e7102cddb7e238e05663fba12efc59b23984b11fcfa13df66569587a60c62115",
+    "demo/models/sarj_v3/model-assets.json": "f6912fea0c41d2a01608bf28456bfbc57b954a7e2d31512a296d0e0382db82d4"
+   },
+   "log_written_utc": "2026-11-18T22:35:21Z"
+  },
+  "v3-a8c93bb-rt2": {
+   "system_commit": "a8c93bb",
+   "command": "python -m ttbench.play --system demo/models/sarj_v3/my_system.py --calls all --name claude-v3-a8c93bb-rt2",
+   "configuration": "same as v3-a8c93bb-rt",
+   "concurrent_load": "none (tests, browsers and containers stopped)",
+   "host": "Claude Code cloud container, Linux 6.18 x86_64, 4 vCPU Intel Xeon @ 2.30GHz, Python 3.13.18",
+   "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+   "packages": {
+    "numpy": "2.5.5",
+    "websockets": "17.4",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.9.0"
+   },
+   "model": {
+    "file": "models/faster-whisper-tiny (Systran/faster-whisper-tiny @ d90ca5fe)",
+    "sha256": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1"
+   },
+   "harness_version": "0.1.0",
+   "completed": true,
+   "frames_sent": 29651,
+   "max_send_lag_ms": 0.03,
+   "protocol_errors": 0,
+   "core": 97.17474813521116,
+   "R": 0.9684666666666666,
+   "S": 0.96875,
+   "misses": 0,
+   "false_stops": 1,
+   "files_sha256": {
+    "run.json": "77118b4c634e7c96efe5541430036903a893951833e64a93355b737419e91723",
+    "score.json": "65d276107590427fa1cebf167223cb5ea3dd5ac33891afb733d2a23c3b7ae829",
+    "log.jsonl": "fa5d78dba62fbb4e9436ab7181105d6a7fa8dcfdd0f742098ab983090b5a4116",
+    "report.md": "c0b09f226f31fc267840c0b286cf0fe4075c3d29fa751005b5fc999904cfa9b3"
+   },
+   "note": "Repeat of the same source on the same host; difference = Whisper timing jitter.",
+   "stop_latency_after_evident_ms": {
+    "median": 252.0,
+    "p90": 872.0
+   },
+   "rtt_summary_ms": {
+    "median": 0.93,
+    "max": 4.97,
+    "n": 119
+   },
+   "official_score_recomputed_exactly": true,
+   "log_written_utc": "2026-11-18T22:45:16Z"
+  },
+  "v3-feba8ee-rt": {
+   "system_commit": "feba8ee",
+   "command": "python -m ttbench.play --system demo/models/sarj_v3/my_system.py --calls all --name claude-v3-feba8ee-rt",
+   "configuration": "first-frame noise floor for every call (rejected)",
+   "concurrent_load": "none (tests, browsers and containers stopped)",
+   "host": "Claude Code cloud container, Linux 6.18 x86_64, 4 vCPU Intel Xeon @ 2.30GHz, Python 3.13.18",
+   "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+   "packages": {
+    "numpy": "2.5.5",
+    "websockets": "17.4",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.9.0"
+   },
+   "model": {
+    "file": "models/faster-whisper-tiny (Systran/faster-whisper-tiny @ d90ca5fe)",
+    "sha256": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1"
+   },
+   "harness_version": "0.1.0",
+   "completed": true,
+   "frames_sent": 29651,
+   "max_send_lag_ms": 0.02,
+   "protocol_errors": 0,
+   "core": 95.08915467831375,
+   "R": 0.8965166666666666,
+   "S": 1.0,
+   "misses": 1,
+   "false_stops": 0,
+   "files_sha256": {
+    "run.json": "2b9294555e996727cdddc2be33ed6a77fe13c38ae3a82dad61c808ab55076fb6",
+    "score.json": "9ceb9e4204c9a00c645a8ed6f1761718e54ca5c15d248bf41a00b3a67a55df54",
+    "log.jsonl": "9b73ea59c86ee01e81ec4670afebe33f5552c794f300d732dc0b310e39974498",
+    "report.md": "1391dea1df2733c151e9baf65b0260cb253fb32e63f7aad5c10f66d35bc98a32"
+   },
+   "note": "REJECTED: GI-D03 missed. Not the current source.",
+   "log_written_utc": "2026-11-18T21:51:02Z"
+  },
+  "v3-feba8ee-rt2": {
+   "system_commit": "feba8ee",
+   "command": "python -m ttbench.play --system demo/models/sarj_v3/my_system.py --calls all --name claude-v3-feba8ee-rt2",
+   "configuration": "same as v3-feba8ee-rt (rejected)",
+   "concurrent_load": "none (tests, browsers and containers stopped)",
+   "host": "Claude Code cloud container, Linux 6.18 x86_64, 4 vCPU Intel Xeon @ 2.30GHz, Python 3.13.18",
+   "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+   "packages": {
+    "numpy": "2.5.5",
+    "websockets": "17.4",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.9.0"
+   },
+   "model": {
+    "file": "models/faster-whisper-tiny (Systran/faster-whisper-tiny @ d90ca5fe)",
+    "sha256": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1"
+   },
+   "harness_version": "0.1.0",
+   "completed": true,
+   "frames_sent": 29651,
+   "max_send_lag_ms": 0.02,
+   "protocol_errors": 0,
+   "core": 94.83449573297264,
+   "R": 0.8914416666666667,
+   "S": 1.0,
+   "misses": 1,
+   "false_stops": 0,
+   "files_sha256": {
+    "run.json": "9f15edd86495172be31dab5f8eeff7caa1ce79bdb3c7b7880e64087266ddd688",
+    "score.json": "dea6b6b292974f8042bd2a72a8387bdcf37908eca635f406c200698e9db27d13",
+    "log.jsonl": "d4cc98172f3f0d13596f9885f63ab72c7f44e9239b0fd8be43f543d41b755fd0",
+    "report.md": "cd627805f84820251426f77952c0eb91104a13f3548dafb002928a7c6ed96d9e"
+   },
+   "note": "REJECTED: GI-D03 missed again.",
+   "log_written_utc": "2026-11-18T22:07:44Z"
+  },
+  "v3-feba8ee-legacyfloor-rt": {
+   "system_commit": "feba8ee with TT_CFG=noise_init_first_frame=0",
+   "command": "python -m ttbench.play --system demo/models/sarj_v3/my_system.py --calls all --name claude-v3-feba8ee-legacyfloor-rt",
+   "configuration": "original -90 dB floor (same-host control)",
+   "concurrent_load": "none (tests, browsers and containers stopped)",
+   "host": "Claude Code cloud container, Linux 6.18 x86_64, 4 vCPU Intel Xeon @ 2.30GHz, Python 3.13.18",
+   "my_system_sha256": "c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d",
+   "packages": {
+    "numpy": "2.5.5",
+    "websockets": "17.4",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.9.0"
+   },
+   "model": {
+    "file": "models/faster-whisper-tiny (Systran/faster-whisper-tiny @ d90ca5fe)",
+    "sha256": "dcb76c6586fc06cbdac6dd21f14cfd129cc4cdd9dce19bf4ffa62e59cbe6e6d1"
+   },
+   "harness_version": "0.1.0",
+   "completed": true,
+   "frames_sent": 29651,
+   "max_send_lag_ms": 21.17,
+   "protocol_errors": 0,
+   "core": 96.49618666845855,
+   "R": 0.9535083333333333,
+   "S": 0.96875,
+   "misses": 0,
+   "false_stops": 1,
+   "files_sha256": {
+    "run.json": "3dae23da6345740b39f58eca8dda2a2f48a346ffe3f5b67ffc7da6a33613f936",
+    "score.json": "b20f28022639827f76133be508b8057e19953f5d59fe17f8ff10457afb63bb46",
+    "log.jsonl": "68749b42190212db5513638d28be992647bf0363b3ee8536aea5690ae37345dd",
+    "report.md": "dab149fdd23b49693d3dd138e90da2bc6c93261170c86e2d865b7966ae797229"
+   },
+   "note": "Control: the pre-fix floor on this host. max_send_lag 21.17 ms is above the kit 20 ms caution level.",
+   "log_written_utc": "2026-11-18T22:17:39Z"
   }
  }
 }
