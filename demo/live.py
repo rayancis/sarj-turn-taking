@@ -68,6 +68,29 @@ def loudness_db(samples: np.ndarray) -> float:
     return 20 * np.log10(rms + 1e-12)
 
 
+KEY_NAMES = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
+
+
+def find_api_key(env) -> tuple[str | None, str | None]:
+    """(variable name, key). Accepts GEMINI_API_KEY or GOOGLE_API_KEY, tolerating case, spaces around the name and
+    quotes or spaces around the value (common when pasting into a hosting dashboard). The key is never logged."""
+    for name in KEY_NAMES:
+        v = (env.get(name) or "").strip().strip("'\"").strip()
+        if v:
+            return name, v
+    for k, v in env.items():
+        if k.strip().upper().replace("-", "_") in KEY_NAMES:
+            v = (v or "").strip().strip("'\"").strip()
+            if v:
+                return k, v
+    return None, None
+
+
+def similar_key_names(env) -> list[str]:
+    """Names (never values) of variables that look like a Gemini key, for diagnosing a misnamed variable."""
+    return sorted(repr(k) for k in env if "GEMINI" in k.upper() or "GOOGLE" in k.upper())
+
+
 @dataclass
 class LiveSettings:
     api_key: str | None = None
@@ -80,12 +103,14 @@ class LiveSettings:
     per_day: int = 100
     verify_model: bool = True
     mode: str = LIVE_DEFAULT_MODE
+    key_variable: str | None = None
 
     @classmethod
     def from_env(cls) -> "LiveSettings":
         e = os.environ
         url = e.get("GEMINI_LIVE_URL") or LIVE_URL
-        return cls(api_key=e.get("GEMINI_API_KEY") or None, url=url, model=e.get("GEMINI_LIVE_MODEL") or None,
+        key_name, key = find_api_key(e)
+        return cls(api_key=key, key_variable=key_name, url=url, model=e.get("GEMINI_LIVE_MODEL") or None,
                    voice=e.get("GEMINI_LIVE_VOICE") or None,
                    max_concurrent=int(e.get("LIVE_MAX_CONCURRENT", "2")), max_seconds=int(e.get("LIVE_MAX_SECONDS", "180")),
                    per_hour=int(e.get("LIVE_PER_HOUR", "30")), per_day=int(e.get("LIVE_PER_DAY", "100")),

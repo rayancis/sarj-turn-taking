@@ -327,3 +327,12 @@ def test_feature_flag_and_model_check(monkeypatch):
         assert e.value.code == 429
         cfg = json.loads(urllib.request.urlopen(base + "/api/config").read())
         assert cfg["live"]["enabled"] and not cfg["live"]["visible"] and "test-key-123" not in json.dumps(cfg)
+
+
+def test_key_is_found_despite_common_dashboard_mistakes():
+    assert live.find_api_key({"GEMINI_API_KEY": "abc"}) == ("GEMINI_API_KEY", "abc")
+    assert live.find_api_key({"GOOGLE_API_KEY": " abc\n"}) == ("GOOGLE_API_KEY", "abc")
+    assert live.find_api_key({"gemini_api_key ": '"abc"'}) == ("gemini_api_key ", "abc")
+    assert live.find_api_key({"GEMINI_API_KEY": "  "}) == (None, None)
+    names = live.similar_key_names({"GEMINI_KEY": "secret-value", "PATH": "/bin"})
+    assert names == ["'GEMINI_KEY'"] and "secret-value" not in json.dumps(names)
