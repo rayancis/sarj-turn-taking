@@ -12,4 +12,4 @@ services:
     autoDeploy: true
     envVars:
       - key: SARJ_DEMO_MAX_SESSIONS
-        value: "12"
+        value: "12"   # = 4 simultaneous playbacks x 3 detectors; measured peak 408 MB with 3 playbacks (512 MB plan)

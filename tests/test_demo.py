@@ -91,17 +91,30 @@ def dev_app():
     return demo.DemoApp(DEV, demo.DEFAULT_MODELS)
 
 
-def test_exactly_two_pinned_detectors(dev_app):
-    """Baseline and P3 only, each the exact file of its recorded run (experiments/evidence/runs.json)."""
-    assert list(dev_app.models) == ["p3", "baseline"]
+def test_exactly_three_pinned_detectors(dev_app):
+    """Baseline, P3 and SARJ v3, each the exact files of its recorded run (experiments/evidence/runs.json)."""
+    assert list(dev_app.models) == ["p3", "v3", "baseline"]
     runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
-    p3, base = dev_app.models["p3"], dev_app.models["baseline"]
-    assert p3.available and base.available, (p3.error, base.error)
+    p3, base, v3 = dev_app.models["p3"], dev_app.models["baseline"], dev_app.models["v3"]
+    assert p3.available and base.available and v3.available, (p3.error, base.error, v3.error)
     assert p3.sha256 == runs["p3-6b4eece-rt"]["my_system_sha256"] == demo.P3_SHA256
     assert base.sha256 == runs["baseline-bd2a3f0-rt"]["my_system_sha256"] == demo.BASELINE_SHA256
+    assert v3.sha256 == runs["v3-18471a8-rt"]["my_system_sha256"] == demo.V3_SHA256
+    assert runs["v3-18471a8-rt"]["files_pinned"] == demo.V3_FILES
     assert (p3.name, p3.revision, base.name, base.revision) == ("P3 Hybrid", "b32cfc2", "Baseline", "bd2a3f0")
+    assert (v3.name, v3.revision) == ("SARJ v3", "18471a8")
     assert p3.new_system().vad is not None                   # P3 really runs the neural VAD ...
     assert not hasattr(base.new_system(), "vad")             # ... and Baseline is the plain loudness rule
+    assert hasattr(v3.new_system(), "dec")                   # ... and v3 is the tt/ decider
+
+
+def test_v3_refuses_a_changed_module(tmp_path, monkeypatch):
+    """A multi-file detector is pinned file by file: editing any tt/ module disables it instead of running it."""
+    spec = dict(demo.DEFAULT_MODELS["v3"])
+    rel = next(iter(spec["files"]))
+    spec["files"] = {**spec["files"], rel: "0" * 64}
+    m = demo.Model("v3", spec)
+    assert not m.available and "not the pinned" in m.error
 
 
 def test_p3_files_are_the_audited_phase3_files():
@@ -214,13 +227,13 @@ def test_api_real_stop_and_real_keep(dev_app):
 
 
 def test_config_reports_recorded_benchmarks_not_live_scores(dev_app):
-    """Exactly the two recorded dev-set rows, equal to experiments/evidence/runs.json; no other version anywhere."""
+    """Exactly the three recorded dev-set rows, equal to experiments/evidence/runs.json; no other version anywhere."""
     cfg = dev_app.config()
     assert len(cfg["scenarios"]) == 24
     rows = {r["model"]: r for r in cfg["benchmark"]["rows"]}
-    assert set(rows) == {"baseline", "p3"}
+    assert set(rows) == {"baseline", "p3", "v3"}
     runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
-    for model, run in (("baseline", "baseline-bd2a3f0-rt"), ("p3", "p3-6b4eece-rt")):
+    for model, run in (("baseline", "baseline-bd2a3f0-rt"), ("p3", "p3-6b4eece-rt"), ("v3", "v3-18471a8-rt")):
         r = runs[run]
         assert rows[model]["core"] == round(r["core"], 2) and rows[model]["R"] == round(r["R"], 3)
         assert rows[model]["S"] == round(r["S"], 3)

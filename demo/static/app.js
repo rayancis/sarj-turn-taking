@@ -1,22 +1,24 @@
 "use strict";
-// SARJ demo page: Baseline vs P3 on the same audio.
+// SARJ demo page: Baseline vs P3 vs SARJ v3 on the same audio (v3 is shown only when the server has it).
 // The audio clock (one AudioContext for both channels) is the master: its playhead decides which 20 ms frames the
 // server feeds to BOTH real detectors (each in its own session; plus a small look-ahead on the hosted site, to absorb
 // network delay). Decisions come back from the server and are applied when playback reaches the frame time at which
 // the detector issued them. The selected detector's STOP silences the agent you hear. Nothing is pre-scripted.
 
 const $ = (id) => document.getElementById(id);
-const DETS = ["baseline", "p3"];                   // display order: left, right
-const NAMES = { baseline: "Baseline", p3: "P3" };
+let DETS = ["baseline", "p3", "v3"];               // display order, left to right; init() drops unavailable optional ones
+const NAMES = { baseline: "Baseline", p3: "P3", v3: "SARJ v3" };
+const REQUIRED = ["baseline", "p3"];               // the page refuses to run without these two (as before)
 
 const freshDet = () => ({ session: null, fedMs: 0, done: false, decisions: [], pending: [], score: null,
   meanOnFrameUs: null, streamEndMs: 0 });
+const freshDets = () => Object.fromEntries(DETS.map((id) => [id, freshDet()]));
 
 const S = {
   config: null, models: {}, listen: "p3", scenId: null, timeline: null, audio: null,
   ctx: null, nodes: null, sources: null, t0: 0, started: false, playing: false, ended: false,
   gen: 0, loopGen: null, busy: false, staticLayer: null, verdictKey: "", agentMuted: false,
-  det: { baseline: freshDet(), p3: freshDet() }, rtts: [], lookahead: 0, pollMs: 15,
+  det: freshDets(), rtts: [], lookahead: 0, pollMs: 15,
 };
 
 // ------------------------------------------------------------------------------------------------ helpers
@@ -145,14 +147,14 @@ async function newSessions() {
   stopSources();
   for (const id of DETS) closeSession(S.det[id].session);
   Object.assign(S, { started: false, playing: false, ended: false, agentMuted: false, rtts: [], verdictKey: "",
-    det: { baseline: freshDet(), p3: freshDet() } });
+    det: freshDets() });
   if (S.nodes) S.nodes.agent.gain.gain.value = 1;
   $("log").innerHTML = "";
   renderEvents(); renderTiming(); updatePlayButton();
   const rs = await Promise.all(DETS.map((id) => api("/api/session", { scenario: S.scenId, model: id })));
   if (gen !== S.gen) { rs.forEach((r) => closeSession(r.session_id)); return; }
   DETS.forEach((id, i) => { S.det[id].session = rs[i].session_id; S.det[id].streamEndMs = rs[i].stream_end_ms; });
-  addLog(0, "info", `Fresh detectors: ${rs.map((r) => `${esc(r.model.name)} @ ${esc(r.model.revision || "?")}`).join(" and ")}`, "ctl");
+  addLog(0, "info", `Fresh detectors: ${rs.map((r) => `${esc(r.model.name)} @ ${esc(r.model.revision || "?")}`).join(", ")}`, "ctl");
   updatePlayButton();
 }
 
@@ -308,7 +310,7 @@ async function loadScenario(id) {
 }
 
 function changeListen(id) {
-  // Both detectors keep running: this only chooses whose STOP silences the agent you hear.
+  // All detectors keep running: this only chooses whose STOP silences the agent you hear.
   S.listen = id;
   renderModelChip();
   S.agentMuted = null;                            // unknown: the next updateMute() always applies the new detector's state
@@ -464,7 +466,7 @@ function renderScenarioCard() {
   const cr = S.timeline.credits || [];
   $("scen-credits").textContent = cr.length ? `Audio: ${cr.map((c) => `${c.attribution} (${c.license})`).join(" · ")}` : "";
   const gt = S.timeline.ground_truth;
-  $("scenario-info").innerHTML = own ? "Your own audio: no ground-truth labels, so there is no official verdict. Compare the two detectors' decisions."
+  $("scenario-info").innerHTML = own ? "Your own audio: no ground-truth labels, so there is no official verdict. Compare the detectors' decisions."
     : `<b>${esc(s.id)}</b> · ${esc(s.category_name)} · ${esc(gt.subtype)} · ${esc(s.acoustic.join(" + "))} · labels: ${esc(gt.label_status)}`;
   if (!own) {                                       // default start of an uploaded caller file: 1 s into the agent's longest turn
     const u = [...S.timeline.protocol.agent_utterances].sort((a, b) => (b.end_ms - b.start_ms) - (a.end_ms - a.start_ms))[0];
@@ -533,7 +535,7 @@ async function submitOwnAudio(samples16k, offsetMs, how) {
   S.own = { id: data.scenario_id, collection: "custom", agent_from: data.agent_from, acoustic: [], category_name: "Your own audio",
     title: `Your audio with the agent of ${data.agent_from}`, expected: [],
     explanation: `${how}: ${sec1(data.caller_ms)} s of your audio as the caller, starting at ${sec1(data.offset_ms)} s; the agent is the ` +
-      `original agent of ${data.agent_from}. No labels: compare what Baseline and P3 decide. Not stored; deleted within ` +
+      `original agent of ${data.agent_from}. No labels: compare what the detectors decide. Not stored; deleted within ` +
       `${Math.round(((S.config.custom && S.config.custom.ttl_s) || 900) / 60)} minutes.` };
   let opt = $("scenario").querySelector("option[data-own]");
   if (!opt) {
@@ -548,7 +550,7 @@ async function submitOwnAudio(samples16k, offsetMs, how) {
   opt.textContent = `Your audio · agent of ${data.agent_from}`;
   $("scenario").value = S.own.id;
   await loadScenario(S.own.id);
-  ownStatus("Ready: press Play to hear your audio with the agent and see both detectors' decisions.");
+  ownStatus("Ready: press Play to hear your audio with the agent and see every detector's decisions.");
 }
 
 async function uploadOwn(file) {
@@ -667,21 +669,23 @@ function headline() {
   if (!S.timeline) return null;
   const evs = S.timeline.ground_truth.events;
   const out = [];
+  const list = (ids) => ids.map((id) => NAMES[id]).join(", ").replace(/, ([^,]*)$/, " and $1");
   evs.forEach((ev, i) => {
-    const b = S.det.baseline.score && S.det.baseline.score.events[i], p = S.det.p3.score && S.det.p3.score.events[i];
-    if (!shown(b) || !shown(p) || ev.kind !== "interruption") return;
+    const res = Object.fromEntries(DETS.map((id) => [id, S.det[id].score && S.det[id].score.events[i]]));
+    if (DETS.some((id) => !shown(res[id])) || ev.kind !== "interruption") return;
     const ok = (r) => (r.credit ?? 0) >= 1;
+    const mine = res[S.listen];                    // the detector you hear decides the colour of the line
     if (ev.expected === "KEEP") {
-      if (!ok(b) && ok(p)) out.push(["good", "Baseline stopped falsely; P3 correctly kept talking."]);
-      else if (ok(b) && ok(p)) out.push(["good", "Both correctly kept talking."]);
-      else if (!ok(b) && !ok(p)) out.push(["bad", "Both stopped falsely: the agent should have kept talking."]);
-      else out.push(["bad", "P3 stopped falsely; Baseline kept talking."]);
+      const good = DETS.filter((id) => ok(res[id])), bad = DETS.filter((id) => !ok(res[id]));
+      if (!bad.length) out.push(["good", `All ${DETS.length} correctly kept talking.`]);
+      else if (!good.length) out.push(["bad", `All ${DETS.length} stopped falsely: the agent should have kept talking.`]);
+      else out.push([ok(mine) ? "good" : "bad", `${list(bad)} stopped falsely; ${list(good)} correctly kept talking.`]);
     } else if (ev.expected === "STOP") {
-      const pt = p.outcome === "yield" ? `P3 detected it ${Math.round(p.latency_ms || 0)} ms after the intent was evident` : "P3 missed it";
-      const bt = b.outcome === "yield" ? `Baseline ${Math.round(b.latency_ms || 0)} ms` : "Baseline missed it";
-      out.push([p.outcome === "yield" ? "good" : "bad", `Genuine interruption: ${pt} (${bt}).`]);
+      const parts = DETS.map((id) => (res[id].outcome === "yield"
+        ? `${NAMES[id]} ${Math.round(res[id].latency_ms || 0)} ms after the intent was evident` : `${NAMES[id]} missed it`));
+      out.push([mine.outcome === "yield" ? "good" : "bad", `Genuine interruption: ${parts.join("; ")}.`]);
     } else {
-      out.push(["neutral", `Ambiguous event: Baseline credit ${b.credit}, P3 credit ${p.credit}.`]);
+      out.push(["neutral", `Ambiguous event: ${DETS.map((id) => `${NAMES[id]} credit ${res[id].credit}`).join(", ")}.`]);
     }
   });
   return out.length ? out : null;
@@ -699,8 +703,8 @@ function renderEvents() {
     return `<tr><td>${esc(ev.event_id.split(".").pop())}<br><small>${esc(ev.kind)}</small></td>` +
       `<td><span class="pill ${esc(ev.expected)}">${exp}</span></td>` +
       `<td><span dir="rtl" lang="ar">${esc(words || "–")}</span><br><small>${when}</small></td>` +
-      `<td>${cell("baseline")}</td><td>${cell("p3")}</td></tr>`;
-  }).join("") || `<tr><td colspan="5" class="pending">No labels for your own audio: compare the two detectors' decisions in the timeline and the log.</td></tr>`;
+      DETS.map((id) => `<td>${cell(id)}</td>`).join("") + "</tr>";
+  }).join("") || `<tr><td colspan="${3 + DETS.length}" class="pending">No labels for your own audio: compare the detectors' decisions in the timeline and the log.</td></tr>`;
   const parts = DETS.map((id) => {
     const p = S.ended && gt.events.length && S.det[id].score && S.det[id].score.protected;
     return p ? `${NAMES[id]}: ${p.spurious_stops.length ? p.spurious_stops.map((x) => `${sec(x)} s`).join(", ") : "none"}` : null;
@@ -719,15 +723,19 @@ function renderBench() {
   $("bench-panel").hidden = !b;
   if (!b) return;
   const row = (m) => b.rows.find((r) => r.model === m) || {};
-  const B = row("baseline"), P = row("p3");
+  const R = DETS.map(row);
   const f = (x, d) => (x === null || x === undefined ? "–" : Number(x).toFixed(d));
-  const lines = [["Official dev Core", f(B.core, 2), f(P.core, 2)], ["Responsiveness", f(B.R, 3), f(P.R, 3)],
-    ["Restraint", f(B.S, 3), f(P.S, 3)], ["False-stop scoring events", B.false_stops, P.false_stops],
-    ["Missed genuine interruptions", B.misses, P.misses]];
-  $("bench").innerHTML = lines.map(([k, x, y]) => `<tr><td>${k}</td><td class="num">${esc(x)}</td><td class="num"><b>${esc(y)}</b></td></tr>`).join("");
+  const lines = [["Official dev Core", R.map((r) => f(r.core, 2))], ["Responsiveness", R.map((r) => f(r.R, 3))],
+    ["Restraint", R.map((r) => f(r.S, 3))], ["False-stop scoring events", R.map((r) => r.false_stops ?? "–")],
+    ["Missed genuine interruptions", R.map((r) => r.misses ?? "–")]];
+  $("bench-head").innerHTML = "<th>Metric</th>" + DETS.map((id) => `<th class="num">${esc(NAMES[id])}</th>`).join("");
+  $("bench").innerHTML = lines.map(([k, xs]) => `<tr><td>${k}</td>` +
+    xs.map((x, i) => `<td class="num">${DETS[i] === "baseline" ? esc(x) : `<b>${esc(x)}</b>`}</td>`).join("") + "</tr>").join("");
   $("bench-note").textContent = `Source: ${b.source}; ${b.scope}. These numbers come from the 24 original competition development ` +
     "recordings, not from the additional Phase 3 research scenarios. The Phase 3 holdout result is not an official competition score. " +
-    "P3 is experimental, with known limitations: occasional delayed responses and missed quiet interruptions on the additional data.";
+    "P3 is experimental, with known limitations: occasional delayed responses and missed quiet interruptions on the additional data." +
+    (DETS.includes("v3") ? " SARJ v3 (acoustics + Arabic words layer with offline Whisper tiny) was measured with the same official real-time " +
+      "harness; on this hosted site its speech recognition runs on a small shared CPU, so its words can arrive later than in that measurement." : "");
 }
 
 function renderCredits() {
@@ -739,8 +747,15 @@ function renderCredits() {
 }
 
 // ------------------------------------------------------------------------------------------------ timeline canvas
-const LANES = { left: 70, right: 10, axis: 18, agent: [22, 70], caller: [96, 70], dets: { baseline: [172, 22], p3: [198, 22] }, labels: [226, 44] };
-const H = 278;
+const LANES = { left: 70, right: 10, axis: 18, agent: [22, 70], caller: [96, 70], dets: {}, labels: [0, 44] };
+function layoutLanes() {                         // one 22 px lane per detector under the caller channel, then labels
+  let y = 172;
+  LANES.dets = {};
+  for (const id of DETS) { LANES.dets[id] = [y, 22]; y += 26; }
+  LANES.labels = [y + 2, 44];
+  H = y + 2 + 44 + 8;                             // canvas height follows the number of detector lanes
+}
+let H = 278;
 
 function canvasSize() {
   const cv = $("timeline");
@@ -794,7 +809,7 @@ function buildStaticLayer() {
   }
   g.fillStyle = css("--text"); g.font = "600 11px system-ui, sans-serif";
   g.fillText("Agent", 6, LANES.agent[0] + 4); g.fillText("Caller", 6, LANES.caller[0] + 4);
-  g.fillText("Baseline", 6, LANES.dets.baseline[0] + 5); g.fillText("P3", 6, LANES.dets.p3[0] + 5);
+  for (const id of DETS) g.fillText(NAMES[id], 6, LANES.dets[id][0] + 5);
   g.fillText("Labels", 6, ly + 4);
   g.fillStyle = css("--muted"); g.font = "10px system-ui, sans-serif";
   g.fillText("channel 0", 6, LANES.agent[0] + 18); g.fillText("channel 1", 6, LANES.caller[0] + 18);
@@ -876,12 +891,20 @@ async function init() {
   S.lookahead = S.config.lookahead_ms || 0;
   S.pollMs = S.config.poll_ms || 15;
   const msel = $("model");
-  const order = ["p3", "baseline"];
+  const order = ["v3", "p3", "baseline"];
   msel.innerHTML = order.filter((id) => S.models[id]).map((id) => { const m = S.models[id];
     return `<option value="${esc(id)}" ${m.available ? "" : "disabled"}>${esc(m.name)} · ${esc(m.revision || "?")}${m.available ? "" : " (unavailable)"}</option>`; }).join("");
-  if (!DETS.every((id) => S.models[id] && S.models[id].available)) {
-    showError("Both detectors must be available; see the server console."); return;
+  if (!REQUIRED.every((id) => S.models[id] && S.models[id].available)) {
+    showError("Baseline and P3 must be available; see the server console."); return;
   }
+  // optional detectors (SARJ v3) join only when the server has them loaded
+  DETS = DETS.filter((id) => REQUIRED.includes(id) || (S.models[id] && S.models[id].available));
+  S.det = freshDets();
+  for (const id of ["v3"]) { const c = $(`card-${id}`); if (c) c.hidden = !DETS.includes(id); }
+  $("events-head").innerHTML = "<th>Event</th><th>Expected</th><th>Caller</th>" + DETS.map((id) => `<th>${esc(NAMES[id])}</th>`).join("");
+  $("duel").style.setProperty("--dets", String(DETS.length));
+  layoutLanes();
+  if (DETS.includes("v3")) S.listen = "v3";
   msel.value = S.listen;
   const pub = S.config.mode === "public";
   const dev = collection("dev");

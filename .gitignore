@@ -40,3 +40,4 @@ data/hidden/
 # ESC-50 clips individually CC0 / CC BY). No competition data, no private recordings.
 !data/extra/xdev/audio/*.wav
 !data/extra/holdout/audio/*.wav
+demo/models/sarj_v3/models/

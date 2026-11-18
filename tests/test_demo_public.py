@@ -179,13 +179,13 @@ def test_pinned_baseline_is_the_recorded_baseline_file():
 
 # ------------------------------------------------------------------------------------------------ exposure
 @needs_audio
-def test_public_config_offers_two_detectors_and_hides_internals(app):
+def test_public_config_offers_three_detectors_and_hides_internals(app):
     cfg = app.config()
     assert cfg["mode"] == "public"
-    assert [m["id"] for m in cfg["models"]] == ["p3", "baseline"]
+    assert [m["id"] for m in cfg["models"]] == ["p3", "v3", "baseline"]
     for m in cfg["models"]:
         assert set(m) == {"id", "name", "revision", "about", "dirty", "available"} and m["available"]
-    assert {r["model"] for r in cfg["benchmark"]["rows"]} == {"baseline", "p3"}
+    assert {r["model"] for r in cfg["benchmark"]["rows"]} == {"baseline", "p3", "v3"}
     text = json.dumps(cfg, ensure_ascii=False)
     for secret in (str(KIT), "data/dev", "sha256", "GI-D51", "-H5", "E01b", "e566234", "runs.json\": {"):
         assert secret not in text, secret

@@ -6,3 +6,5 @@ onnxruntime==1.29.0
 flatbuffers==25.12.19
 packaging==26.3
 protobuf==7.36.2
+# SARJ v3 words layer: Whisper tiny on CPU (CTranslate2, int8). MIT licences (faster-whisper, CTranslate2, Whisper).
+faster-whisper==1.2.1

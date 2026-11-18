@@ -8,8 +8,9 @@ Local (presenter laptop, competition dev calls, 127.0.0.1 only):
 Public (hosted site, see demo/DEPLOY.md):
     python demo/server.py --public             # 0.0.0.0:$PORT, publicly licensed collections only, limits on
 
-Two detectors, pinned by file hash so a label can never run other code: Baseline (the kit's starter detector,
-bd2a3f0) and P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2). The demo shows the 24 original
+Three detectors, pinned by file hash so a label can never run other code: Baseline (the kit's starter detector,
+bd2a3f0), P3 Hybrid (Silero VAD + caller-relative loudness, Phase 3 commit b32cfc2) and SARJ v3 (acoustics + Arabic
+words layer, demo/models/sarj_v3, every file pinned). The demo shows the 24 original
 competition recordings (data/dev), publicly since the competition supervisor's written permission (2026-11-17,
 recorded in demo/collections.json); public mode serves a collection only with such a record and never starts with
 no playable scenario (demo/DEPLOY.md). The 50 Phase 3 research scenarios stay in the repository, not in the demo.
@@ -87,9 +88,24 @@ SECURITY_HEADERS = {
 # only ever run the audited P3 code, and "Baseline" only the original starter detector.
 P3_SHA256 = "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf"        # b32cfc2 (= 6b4eece)
 BASELINE_SHA256 = "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830"  # bd2a3f0 (= kit 0915ace)
+# SARJ v3 (leenalotaibi-source/sarj, branch claude/sarj-turn-taking-system-xwvrh0): my_system.py plus its tt/ package,
+# every file pinned. Words layer: faster-whisper tiny, loaded from demo/models/sarj_v3/models/faster-whisper-tiny
+# (downloaded at image build, see demo/Dockerfile); without it the detector runs on acoustics alone and says so.
+V3_SHA256 = "09e5b65a117895dc15ce75a700cb48e313cd121c7ac1738559e320606cfcd1b8"
+V3_FILES = {
+    "demo/models/sarj_v3/tt/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "demo/models/sarj_v3/tt/config.py": "6dfbbe3fe26e2502287545dd6a53b51f96069da1fa3e4266cf4107252b599778",
+    "demo/models/sarj_v3/tt/decider.py": "5e59028e2225717d48e115f077b470fd07057794241a25fb91f71cf6e6567a80",
+    "demo/models/sarj_v3/tt/frontend.py": "85a3b2715c1c12d3c4b183e8a99515d1a30a10a596eb6e43a18ac5f86cae22b7",
+    "demo/models/sarj_v3/tt/prefix.py": "1559dd15e907b006132f76e3365a51632a6f65acaf32ceff3c49076eabe3daa8",
+    "demo/models/sarj_v3/tt/words.py": "c77aaf471db0676c9c6653ae5e06b646bfd46dd61a59330c22dadde417b70785",
+}
 DEFAULT_MODELS = {
     "p3": {"source": "file:my_system.py", "sha256": P3_SHA256, "name": "P3 Hybrid", "revision": "b32cfc2",
            "about": "Phase 3: Silero VAD speech frames + caller-relative loudness (experimental)"},
+    "v3": {"source": "file:demo/models/sarj_v3/my_system.py", "sha256": V3_SHA256, "files": V3_FILES,
+           "name": "SARJ v3", "revision": "18471a8",
+           "about": "Echo-aware acoustics, caller-relative level, leaky speech evidence + Arabic stop/keep words"},
     "baseline": {"source": "file:demo/models/baseline_bd2a3f0.py", "sha256": BASELINE_SHA256, "name": "Baseline",
                  "revision": "bd2a3f0", "about": "The kit's starter detector: any caller sound for 200 ms stops the agent"},
 }
@@ -137,7 +153,7 @@ class Settings:
     port: int = DEFAULT_PORT
     collections: tuple = ("dev",)       # keys in demo/collections.json: the demo shows the 24 competition recordings only
     data_dir: Path | None = None        # instead of collections: one folder (tests, ad-hoc local use)
-    max_sessions: int = 16              # detector sessions held in memory (each playback runs two: Baseline and P3)
+    max_sessions: int = 24              # detector sessions held in memory (each playback runs three: Baseline, P3, v3)
     evict_idle_s: float = 0.0           # at capacity, an older session may be dropped once idle this long
     session_idle_s: float = 3600.0      # sessions idle longer than this are dropped
     lookahead_ms: int = 0               # feed the detector this far ahead of playback (hides network delay)
@@ -208,8 +224,9 @@ class Model:
             spec = source
             source, sha256 = spec["source"], spec.get("sha256", sha256)
             name, self.about, pinned_rev = spec.get("name", name), spec.get("about", ""), spec.get("revision")
+            extra_files = spec.get("files", {})
         else:
-            self.about, pinned_rev = "", None
+            self.about, pinned_rev, extra_files = "", None, {}
         self.id, self.source, self.pinned = model_id, source, sha256
         self.available, self.error = False, None
         self.revision, self.dirty, self.name, self.sha256 = None, False, name or model_id, None
@@ -220,12 +237,19 @@ class Model:
             if sha256 and self.sha256 != sha256:
                 raise RuntimeError(f"{source} is not the pinned {self.name} file (sha256 {self.sha256[:12]}…, "
                                    f"expected {sha256[:12]}…)")
+            for rel, want in extra_files.items():     # a multi-file detector: every module it imports is pinned too
+                got = hashlib.sha256((KIT / rel).read_bytes()).hexdigest()
+                if got != want:
+                    raise RuntimeError(f"{rel} is not the pinned {self.name} file (sha256 {got[:12]}…, expected {want[:12]}…)")
             code = raw.decode("utf-8")
             module = types.ModuleType(f"sarj_demo_model_{re.sub(r'[^0-9A-Za-z_]', '_', model_id)}")
             module.__file__ = origin
             exec(compile(code, origin, "exec"), module.__dict__)  # noqa: S102 - our own repository's system file
             self._cls = module.MySystem
-            self._cls()                     # load any model (P3: the Silero ONNX session) now, not mid-demo
+            first = self._cls()             # load any model (P3: the Silero ONNX session) now, not mid-demo
+            note = getattr(first, "demo_note", "")
+            if note:                        # e.g. SARJ v3 reports whether its words layer really loaded
+                self.about = f"{self.about} ({note})" if self.about else note
             self.available = True
         except Exception as e:  # noqa: BLE001 - shown in the page instead of crashing the demo
             self.error = f"{type(e).__name__}: {e}"

@@ -23,6 +23,17 @@
       "S": 0.546,
       "false_stops": 10,
       "misses": 0
+    },
+    {
+      "model": "v3",
+      "run": "v3-18471a8-rt",
+      "commit": "18471a8",
+      "my_system_sha256": "09e5b65a117895dc15ce75a700cb48e313cd121c7ac1738559e320606cfcd1b8",
+      "core": 96.38,
+      "R": 0.951,
+      "S": 0.969,
+      "false_stops": 1,
+      "misses": 0
     }
   ]
 }

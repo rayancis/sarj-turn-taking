@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SARJ Detector Demo</title>
-<meta name="description" content="Play a call and compare two interruption detectors, Baseline and P3, on the same audio.">
+<meta name="description" content="Play a call and compare interruption detectors (Baseline, P3 and SARJ v3) on the same audio.">
 <meta property="og:title" content="SARJ interruption detector: Baseline vs P3">
-<meta property="og:description" content="Play a call and watch two real detectors decide when the agent should stop talking.">
+<meta property="og:description" content="Play a call and watch real detectors decide when the agent should stop talking.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +14,7 @@
 <header class="top">
   <div>
     <h1>SARJ interruption detector</h1>
-    <p class="sub" id="subtitle">Play a call and compare two real detectors, Baseline and P3, on the same audio. Work in progress by a
+    <p class="sub" id="subtitle">Play a call and compare real detectors (Baseline, P3 and SARJ v3) on the same audio. Work in progress by a
       university team: not the competition submission.</p>
   </div>
   <div class="chips">
@@ -51,7 +51,7 @@
   <section class="panel own" id="own-panel">
     <div class="panel-head"><h2>Test your own audio</h2><span class="tag gt">processed in memory · not stored</span></div>
     <p class="note own-help">Your audio becomes the <b>caller</b>; the <b>agent</b> is the original agent of the scenario selected above.
-      Both detectors then run on it, exactly as on the 24 scenarios. <b>Record</b> plays the agent while you speak, so you can
+      All detectors then run on it, exactly as on the 24 scenarios. <b>Record</b> plays the agent while you speak, so you can
       interrupt it naturally (headphones help: the agent's voice should not leak into your microphone). <b>Upload</b> takes a
       recording of the caller side only. Your audio is used only for this test, held in the server's memory and deleted within
       15 minutes; it is never saved to disk or logged. There are no labels for your own audio.</p>
@@ -64,9 +64,10 @@
   </section>
 
   <section class="panel status-panel">
-    <div class="duel">
+    <div class="duel" id="duel">
       <div class="det-card" id="card-baseline"><div class="det-name">Baseline</div><div class="det-status" id="st-baseline">–</div></div>
       <div class="det-card" id="card-p3"><div class="det-name">P3 Hybrid</div><div class="det-status" id="st-p3">–</div></div>
+      <div class="det-card" id="card-v3" hidden><div class="det-name">SARJ v3</div><div class="det-status" id="st-v3">–</div></div>
     </div>
     <div id="headline" class="headline" hidden></div>
     <div class="utt" id="utt-text" dir="rtl" lang="ar"></div>
@@ -89,7 +90,7 @@
       </div>
     </div>
     <canvas id="timeline" height="290"></canvas>
-    <p class="note">Waveforms show the original recording. Both detectors always receive this original audio (open loop, as in the
+    <p class="note">Waveforms show the original recording. All detectors always receive this original audio (open loop, as in the
       official harness); muting the agent after a STOP changes only what you hear.</p>
   </section>
 
@@ -99,7 +100,7 @@
       <div id="scenario-info" class="scen-info"></div>
       <div class="table-wrap">
         <table class="events">
-          <thead><tr><th>Event</th><th>Expected</th><th>Caller</th><th>Baseline</th><th>P3</th></tr></thead>
+          <thead><tr id="events-head"><th>Event</th><th>Expected</th><th>Caller</th><th>Baseline</th><th>P3</th></tr></thead>
           <tbody id="events"></tbody>
         </table>
       </div>
@@ -168,7 +169,7 @@
     <div class="panel-head"><h2>Official dev-set results</h2><span class="tag gt">recorded earlier, not live</span></div>
     <div class="table-wrap">
       <table class="bench">
-        <thead><tr><th>Metric</th><th class="num">Baseline</th><th class="num">P3</th></tr></thead>
+        <thead><tr id="bench-head"><th>Metric</th><th class="num">Baseline</th><th class="num">P3</th></tr></thead>
         <tbody id="bench"></tbody>
       </table>
     </div>
@@ -179,7 +180,7 @@
     <summary>How decisions reach this page</summary>
     <ol>
       <li>The page plays the call's two channels (agent and caller) from one audio clock and regularly reports its playhead to the server.</li>
-      <li>The server runs both detectors, each in its own session, on the same frames. For each 20 ms frame it does what the kit's
+      <li>The server runs every detector, each in its own session, on the same frames. For each 20 ms frame it does what the kit's
         harness and server do: the same control messages (<code>scenario_start</code>, <code>agent_utterance_start/end</code>) in the
         same order, then the 1,280-byte stereo frame, into <code>MySystem.on_frame</code> of that detector, imported unchanged and
         checked against its file hash. On the hosted site the server may run up to 0.8 s ahead of what you hear, so network delay

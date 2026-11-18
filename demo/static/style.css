@@ -137,7 +137,7 @@ code { font-size: 12px; }
 .scen-head h2 { font-size: 17px; }
 .scen-expl { margin: 8px 0 0; font-size: 14px; }
 .tag.private { background: var(--stop-soft); color: var(--stop); border: 1px solid var(--stop); }
-.duel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.duel { display: grid; grid-template-columns: repeat(var(--dets, 2), 1fr); gap: 12px; }
 .det-card { border: 1px solid var(--line); border-left: 5px solid var(--muted); border-radius: 8px; padding: 10px 14px; background: var(--bg); }
 .det-card.speaking { border-left-color: var(--agent); }
 .det-card.stopped { border-left-color: var(--stop); background: var(--stop-soft); }
@@ -153,6 +153,7 @@ code { font-size: 12px; }
 .headline.bad { border-left: 5px solid var(--stop); }
 .who { font-size: 11px; font-weight: 700; color: var(--muted); }
 .who.p3 { color: var(--accent); }
+.who.v3 { color: var(--keep, #2e9e5b); }
 #credits p { font-size: 13px; margin: 8px 0; }
 #credits a, .scen-card a { color: var(--accent); word-break: break-all; }
 @media (max-width: 640px) {
