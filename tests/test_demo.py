@@ -97,7 +97,7 @@ def test_only_verified_v3_is_exposed(dev_app):
     assert model.available, model.error
     assert model.sha256 == demo.V3_SHA256
     assert model.new_system().production_ready
-    assert model.name == "SARJ v3" and model.revision == "v3-bounded-1"
+    assert model.name == "SARJ v3" and model.revision == "v3-coldstart-1"
 
 
 def test_v3_refuses_a_changed_module(tmp_path, monkeypatch):

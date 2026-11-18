@@ -108,6 +108,7 @@ class Frontend:
         self.agent_hist = collections.deque([np.full(self.nb, FLOOR)] * L, maxlen=L)
         self._reset_echo()
         self.noise = np.full(self.nb, FLOOR * 10)
+        self.noise_frames = 0
         self.prev_caller = np.zeros(n, dtype=np.float32)
         self.prev_shape = None
         self._rise_noise = 10 ** (self.cfg.noise_rise_db_per_s * self.cfg.frame_ms / 1000 / 10)
@@ -191,6 +192,12 @@ class Frontend:
 
         # noise floor of the raw caller channel (minimum statistics: fast down,
         # slow up). Stationary noise must not be mistaken for echo below.
+        if self.noise_frames == 0 and cfg.noise_init_first_frame:
+            # minimum statistics falls within a few frames, so starting high is
+            # safe even if the first frame holds speech or echo; starting at
+            # -90 dB is not, because the floor may only rise slowly
+            self.noise = Pc.copy()
+        self.noise_frames += 1
         down = Pc < self.noise
         self.noise = np.where(down, 0.8 * self.noise + 0.2 * Pc, self.noise * self._rise_noise)
         self.noise = np.maximum(self.noise, FLOOR)

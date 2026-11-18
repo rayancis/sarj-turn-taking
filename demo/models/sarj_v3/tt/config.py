@@ -19,6 +19,11 @@ class Config:
 
     # ---- noise floor (frontend) ----
     noise_rise_db_per_s: float = 3.0
+    # Start the floor at the first caller frame of a call instead of -90 dB. The floor
+    # falls fast and rises 3 dB/s, so from -90 dB it needed >10 s to reach street or
+    # car noise, and a detector that had not heard the caller yet took that noise
+    # for speech (cold-start false STOP). False keeps the original behaviour.
+    noise_init_first_frame: bool = True
 
     # ---- frame-level speech evidence ----
     snr_on_db: float = 9.0               # excess-over-noise needed for a speech frame

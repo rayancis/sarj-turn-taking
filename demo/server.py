@@ -95,9 +95,9 @@ V3_SHA256 = 'c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d'
 V3_FILES = {
     "demo/models/sarj_v3/tt/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "demo/models/sarj_v3/tt/assets.py": "3fac6bd8c3221724c7f4c76b1d36914855777126f16e3a33cba58000d49fa5eb",
-    "demo/models/sarj_v3/tt/config.py": "6dfbbe3fe26e2502287545dd6a53b51f96069da1fa3e4266cf4107252b599778",
+    "demo/models/sarj_v3/tt/config.py": "ca103dfb99213df277bd43876a8f637f54e1d3d80ea051559227a41b12dcace4",
     "demo/models/sarj_v3/tt/decider.py": "a0cfd165385439ac94cc9113a31e163a4a26f56a2223f080ab8e9466b171547e",
-    "demo/models/sarj_v3/tt/frontend.py": "85a3b2715c1c12d3c4b183e8a99515d1a30a10a596eb6e43a18ac5f86cae22b7",
+    "demo/models/sarj_v3/tt/frontend.py": "b229cb681aada0cfad6aadf1f8596ffef2bf9cb0c0be08f3bcf5c83596cb00a3",
     "demo/models/sarj_v3/tt/prefix.py": "1559dd15e907b006132f76e3365a51632a6f65acaf32ceff3c49076eabe3daa8",
     "demo/models/sarj_v3/tt/words.py": "e7102cddb7e238e05663fba12efc59b23984b11fcfa13df66569587a60c62115",
     "demo/models/sarj_v3/model-assets.json": "f6912fea0c41d2a01608bf28456bfbc57b954a7e2d31512a296d0e0382db82d4",
@@ -105,7 +105,7 @@ V3_FILES = {
 }
 DEFAULT_MODELS = {
     "v3": {"source": "file:demo/models/sarj_v3/my_system.py", "sha256": V3_SHA256, "files": V3_FILES,
-           "name": "SARJ v3", "revision": "v3-bounded-1",
+           "name": "SARJ v3", "revision": "v3-coldstart-1",
            "about": "Echo-aware acoustics, caller-relative speech evidence and pinned offline Whisper tiny"},
 }
 KNOWN_SOURCES = {v["sha256"]: (v["name"], v["revision"]) for v in {**HISTORICAL_MODELS, **DEFAULT_MODELS}.values()}
