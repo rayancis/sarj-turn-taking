@@ -32,7 +32,9 @@ Stop with Ctrl+C. If port 8770 is busy: `demo\server.py --port 8771`. The select
    during playback. The two cards and the timeline lanes show both detectors' real decisions all the time.
 4. **Test your own audio**: record while the agent speaks, or upload a caller recording; both detectors run on it
    (no labels; your audio is kept in memory only and deleted within 15 minutes).
-5. The ground-truth panel shows the labels (never given to the detectors) and the official scorer's verdict for each
+5. **Live AI Conversation** (needs `GEMINI_API_KEY`): talk to a Gemini voice agent in Arabic; SARJ (P3) decides
+   when you interrupted it, Baseline runs in shadow. Setup and evidence: DEPLOY.md.
+6. The ground-truth panel shows the labels (never given to the detectors) and the official scorer's verdict for each
    detector, revealed once nothing later can change it, plus a one-line comparison.
 
 ## How a decision reaches the page

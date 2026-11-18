@@ -175,3 +175,31 @@ code { font-size: 12px; }
 .own-status { margin-top: 8px; font-size: 13px; font-weight: 600; min-height: 18px; }
 .own-status.bad { color: var(--stop); }
 @media (max-width: 640px) { .own-row > * { flex: 1 1 100%; text-align: center; } }
+
+/* --- live AI conversation --- */
+.consent { display: block; margin: 8px 0; font-size: 13px; font-weight: 600; }
+.lamps { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 6px; }
+.lamp { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--muted); }
+.lamp::before { content: "●"; margin-right: 6px; color: var(--line); }
+.lamp.on { color: var(--text); }
+#live-mic.on::before { color: var(--keep); }
+#live-agent.on::before { color: var(--agent); }
+#live-user.on::before { color: var(--caller); }
+.live-status { font-weight: 700; margin: 6px 0 12px; min-height: 20px; }
+.live-status.ok { color: var(--keep); }
+.live-status.bad { color: var(--stop); }
+.live-status.stop { color: var(--stop); }
+.live-grid { margin-top: 10px; }
+.live-grid h3 { font-size: 13px; margin: 0 0 6px; }
+.captions { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  background: var(--bg); font-size: 14px; }
+.cap { margin: 4px 0; }
+.cap.agent b { color: var(--agent); }
+.cap.user b { color: var(--caller); }
+.log tr.ctrl td { font-weight: 700; }
+.log tr.shadow td, .log tr.turn td { color: var(--muted); }
+.events-log { font-size: 12px; white-space: pre-wrap; background: var(--bg); padding: 8px; border-radius: 6px; max-height: 220px; overflow: auto; }
+.evidence summary { cursor: pointer; font-weight: 600; margin-top: 10px; }
+.live-summary { margin-top: 12px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); }
+.live-summary h3 { font-size: 14px; margin: 0 0 6px; }

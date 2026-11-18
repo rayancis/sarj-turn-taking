@@ -15,7 +15,7 @@ COPY my_system.py neural_vad.py ./
 COPY models/silero_vad.onnx models/SILERO_VAD_LICENSE models/
 COPY demo/models/ demo/models/
 # The demo itself.
-COPY demo/server.py demo/collections.json demo/benchmark.json demo/
+COPY demo/server.py demo/live.py demo/collections.json demo/benchmark.json demo/
 COPY demo/static/ demo/static/
 # The 24 original competition recordings, published with the supervisor's permission (demo/collections.json).
 # Only the manifest, labels and audio; the 50 Phase 3 research scenarios (data/extra) are not part of the demo.

@@ -872,6 +872,7 @@ async function init() {
     S.config = await api("/api/config");
   } catch (e) { showError(`Cannot reach the demo server: ${e.message}`); return; }
   for (const m of S.config.models) S.models[m.id] = m;
+  if (window.sarjLive) window.sarjLive.init(S.config);
   S.lookahead = S.config.lookahead_ms || 0;
   S.pollMs = S.config.poll_ms || 15;
   const msel = $("model");

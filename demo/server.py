@@ -62,6 +62,8 @@ from ttbench.protocol import FRAME_MS, FRAME_SAMPLES, SAMPLE_RATE, validate_clie
 from ttbench.score import DEFAULT_THRESHOLDS, score_scenario  # noqa: E402
 from ttbench.server import _as_messages  # noqa: E402
 
+import live  # noqa: E402  (demo/live.py: Gemini Live agent with SARJ-controlled barge-in)
+
 HOST = "127.0.0.1"
 DEFAULT_PORT = 8770
 STATIC = HERE / "static"
@@ -597,6 +599,9 @@ class DemoApp:
         # "Test your own audio": scenarios built from a visitor's recording, kept in memory only (never written to
         # disk or logged), under an unguessable id, and dropped after custom_ttl_s.
         self.custom: dict[str, tuple] = {}
+        # Live AI conversation (demo/live.py): configured from the environment; disabled without GEMINI_API_KEY.
+        self.live_settings = live.LiveSettings.from_env()
+        self.live_gate = live.LiveGate(self.live_settings)
         self.custom_bucket = TokenBucket(s.custom_per_min / 60, max(3.0, s.custom_per_min / 4)) \
             if s.custom_per_min else None
 
@@ -691,7 +696,8 @@ class DemoApp:
                 "attribution": credits,
                 "models": [m.describe(public=s.public) for m in self.models.values()],
                 "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark(),
-                "custom": {"max_s": s.custom_max_s, "ttl_s": s.custom_ttl_s}}
+                "custom": {"max_s": s.custom_max_s, "ttl_s": s.custom_ttl_s},
+                "live": self.live_gate.status()}
 
     @staticmethod
     def public_benchmark() -> dict | None:
@@ -774,6 +780,10 @@ def make_handler(app: DemoApp):
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", cache)
             for k, v in SECURITY_HEADERS.items():
+                if k == "Content-Security-Policy":       # the live agent's WebSocket: this host only
+                    host = re.sub(r"[^A-Za-z0-9.:\-\[\]]", "", self.headers.get("Host", ""))
+                    v = v.replace("connect-src 'self'", f"connect-src 'self' wss://{host} ws://{host}" if host else
+                                  "connect-src 'self'")
                 self.send_header(k, v)
             if public:
                 self.send_header("X-Robots-Tag", "noindex, nofollow")
@@ -796,6 +806,8 @@ def make_handler(app: DemoApp):
 
         def do_GET(self):  # noqa: N802
             path = urlparse(self.path).path
+            if path == "/api/live":
+                return self._live()
             if path == "/healthz":
                 return self._json({"ok": True})
             if path == "/robots.txt":
@@ -821,6 +833,25 @@ def make_handler(app: DemoApp):
             if m and (STATIC / name).is_file():
                 return self._send(200, (STATIC / name).read_bytes(), STATIC_TYPES[m.group(1)], "no-cache")
             return self._error(404, "not found")
+
+        def _live(self):
+            """WebSocket for the live agent (same-origin only)."""
+            h = self.headers
+            origin_host = urlparse(h.get("Origin", "")).netloc
+            if h.get("Upgrade", "").lower() != "websocket" or not h.get("Sec-WebSocket-Key") \
+                    or h.get("Sec-WebSocket-Version") != "13":
+                return self._error(400, "WebSocket upgrade expected")
+            if not origin_host or origin_host != h.get("Host"):
+                return self._error(403, "cross-origin WebSocket refused")
+            self.send_response(101, "Switching Protocols")
+            self.send_header("Upgrade", "websocket")
+            self.send_header("Connection", "Upgrade")
+            self.send_header("Sec-WebSocket-Accept", live.ServerWebSocket.accept_key(h["Sec-WebSocket-Key"]))
+            self.end_headers()
+            self.wfile.flush()
+            self.close_connection = True
+            ws = live.ServerWebSocket(self.rfile, self.wfile)
+            live.serve_live(ws, app.models, app.live_gate, app.live_settings)
 
         def do_POST(self):  # noqa: N802
             url = urlparse(self.path)

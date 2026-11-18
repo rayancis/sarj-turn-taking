@@ -199,10 +199,9 @@ def test_no_repository_file_is_reachable(app):
     tracked = subprocess.run(["git", "ls-files"], cwd=KIT, capture_output=True, text=True).stdout.split()
     if not tracked:
         tracked = ["my_system.py", "data/dev/manifest.json", "experiments/evidence/runs.json", "ttbench/score.py"]
-    allowed = {"demo/static/index.html", "demo/static/app.js", "demo/static/style.css"}
     probes = []
     for f in tracked:
-        if f in allowed:
+        if f.startswith("demo/static/"):            # the page's own files are meant to be served
             continue
         name = f.split("/")[-1]
         probes += [f"/{f}", f"/{name}", f"/static/{name}", f"/..%2F{f}", f"/%2e%2e/{f}"]
@@ -247,6 +246,7 @@ def test_image_contains_only_whitelisted_paths():
     assert not any(p.startswith(("data/extra", "experiments", "baseline", "tests", ".git", "demo/public_data")) for p in flat)
     assert {p for p in flat if p.startswith("data")} == {"data/dev/manifest.json", "data/dev/labels/", "data/dev/audio/"}
     assert "models/silero_vad.onnx" in flat and "models/SILERO_VAD_LICENSE" in flat and "neural_vad.py" in flat
+    assert "demo/live.py" in flat
     req = (KIT / "demo" / "requirements-public.txt").read_text(encoding="utf-8")
     assert "onnxruntime==1.29.0" in req and "numpy==2.5.5" in req
     render = (KIT / "render.yaml").read_text(encoding="utf-8")

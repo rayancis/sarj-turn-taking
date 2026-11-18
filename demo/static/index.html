@@ -122,6 +122,48 @@
     </section>
   </div>
 
+  <section class="panel live-panel" id="live-panel">
+    <div class="panel-head"><h2>Live AI Conversation</h2><span class="tag live">your voice goes to Google Gemini</span></div>
+    <p class="note own-help">Talk to a Gemini voice agent in Arabic, in real time. Gemini's own interruption detection is
+      switched off: <b>SARJ decides when you have interrupted the agent</b> (P3 by default; Baseline runs in shadow on the
+      same audio). While the agent speaks, your microphone goes only to SARJ; Gemini hears you on your own turns and after a
+      SARJ STOP. A short «إيه» should not stop it. Use headphones: with loudspeakers the agent's voice reaches your microphone.</p>
+    <p class="note own-help"><b>Privacy:</b> in this mode your microphone audio and the conversation are sent, through this
+      site's server, to Google's Gemini API (free tier: Google may use the content to improve its products). This site does not
+      store them. Conversations are time-limited.</p>
+    <label class="consent"><input type="checkbox" id="live-consent"> I understand that my voice is sent to Google Gemini.</label>
+    <div class="own-row">
+      <label class="offset">Controller
+        <select id="live-controller"><option value="p3">P3 Hybrid (default)</option><option value="baseline">Baseline</option></select>
+      </label>
+      <button id="live-start" class="primary">Start conversation</button>
+      <button id="live-end" disabled>End conversation</button>
+      <span id="live-timer" class="offset"></span>
+    </div>
+    <div class="lamps"><span class="lamp" id="live-mic">Microphone</span><span class="lamp" id="live-agent">Agent speaking</span>
+      <span class="lamp" id="live-user">You speaking</span></div>
+    <div id="live-status" class="live-status" aria-live="polite"></div>
+    <div class="duel">
+      <div class="det-card"><div class="det-name">P3 Hybrid</div><div class="det-status" id="live-p3-last">–</div></div>
+      <div class="det-card"><div class="det-name">Baseline</div><div class="det-status" id="live-baseline-last">–</div></div>
+    </div>
+    <p class="note">Controlling the agent: <b id="live-controller-shown">–</b>. Live decisions have no labels: no accuracy or
+      benchmark score is computed for them.</p>
+    <div class="grid live-grid">
+      <div>
+        <h3>Decisions</h3>
+        <div class="log-wrap"><table class="log"><thead><tr><th>Time</th><th>Detector</th><th>Decision</th><th>Effect</th></tr></thead>
+          <tbody id="live-decisions"></tbody></table></div>
+      </div>
+      <div>
+        <h3>Captions</h3>
+        <div id="live-captions" class="captions" dir="auto"></div>
+      </div>
+    </div>
+    <details class="evidence"><summary>Event log (evidence of who interrupted)</summary><pre id="live-events" class="events-log"></pre></details>
+    <div id="live-summary" class="live-summary" hidden></div>
+  </section>
+
   <section class="panel" id="bench-panel" hidden>
     <div class="panel-head"><h2>Official dev-set results</h2><span class="tag gt">recorded earlier, not live</span></div>
     <div class="table-wrap">
@@ -153,6 +195,7 @@
     <div id="credits"></div>
   </details>
 </main>
+<script src="live.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
