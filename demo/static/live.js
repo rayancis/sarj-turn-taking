@@ -1,5 +1,5 @@
 "use strict";
-// Live AI conversation: Gemini Live speaks; SARJ (P3 by default) decides when the caller has interrupted it.
+// Live AI conversation: Gemini Live speaks; SARJ v3 decides when the caller has interrupted it.
 // The page plays the agent, captures the microphone and streams synchronised 20 ms kit frames
 // [agent as actually played, caller] to the server, which runs both detectors and talks to Gemini.
 (() => {
@@ -20,7 +20,7 @@
   function addDecision(m) {
     if (m.decision !== "STOP" && m.decision !== "TAKE_TURN") return;
     const tr = document.createElement("tr");
-    const who = m.model === "p3" ? "P3" : "Baseline";
+    const who = "SARJ v3";
     const role = m.decision === "STOP"
       ? (m.controls ? `<b>controlled the agent</b>${m.utt ? ` (agent turn ${m.utt})` : ""}` : "shadow only: did not control")
       : (m.controls ? "end of the caller's turn → sent to Gemini" : "end of turn (shadow)");
@@ -54,11 +54,11 @@
     $("live-summary").hidden = false;
     $("live-summary").innerHTML =
       `<h3>What happened in this conversation</h3><ul>` +
-      `<li>Ended: ${esc(reason)}; ${esc(s.duration_s)} s of audio streamed; controller: <b>${s.controller === "p3" ? "P3" : "Baseline"}</b>.</li>` +
-      `<li>STOP decisions: P3 ${s.stops.p3}, Baseline ${s.stops.baseline}. Barge-ins executed (controller STOP while the agent spoke): <b>${s.barge_ins}</b>.</li>` +
+      `<li>Ended: ${esc(reason)}; ${esc(s.duration_s)} s of audio streamed; controller: <b>${"SARJ v3"}</b>.</li>` +
+      `<li>STOP decisions: SARJ v3 ${s.stops.v3}. Barge-ins executed (controller STOP while the agent spoke): <b>${s.barge_ins}</b>.</li>` +
       `<li>Agent audio stopped after the controller's STOP: ${pb.n ? `median ${pb.median} ms, max ${pb.max} ms (measured in the played audio)` : "–"}.</li>` +
       `<li>Gemini interruptions: ${s.gemini_interrupted}, of which <b>${s.gemini_interrupted_unrequested}</b> without an activity signal from SARJ` +
-      ` (Gemini's own voice detection is disabled). ${s.sarj_controlled_every_barge_in ? "Every interruption was SARJ's decision." : "Check the event log."}</li>` +
+      ` (Gemini's own voice detection is disabled). ${s.sarj_controlled_every_barge_in ? "Every agent barge-in matched a v3 STOP; idle-turn signals are separate." : "Check the event log."}</li>` +
       `<li>Caller audio sent to Gemini: ${(s.caller_audio_to_gemini_ms / 1000).toFixed(1)} s (only during your turns and after a STOP); agent audio received: ${(s.agent_audio_ms / 1000).toFixed(1)} s.</li>` +
       `</ul><p class="note">Live conversations have no ground-truth labels: these are counts of real decisions, not accuracy or benchmark scores.</p>`;
   }
@@ -71,7 +71,7 @@
     $("live-summary").hidden = true;
     $("live-decisions").innerHTML = "";
     $("live-captions").innerHTML = "";
-    $("live-p3-last").textContent = $("live-baseline-last").textContent = "–";
+    $("live-v3-last").textContent = "–";
     setStatus("Asking for the microphone…");
     try {
       try { if (navigator.audioSession) navigator.audioSession.type = "play-and-record"; } catch (_) { /* ignore */ }
@@ -87,7 +87,7 @@
       setStatus("Connecting to the agent…");
       L.ws = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/live`);
       L.ws.binaryType = "arraybuffer";
-      L.ws.onopen = () => L.ws.send(JSON.stringify({ type: "start", controller: $("live-controller").value }));
+      L.ws.onopen = () => L.ws.send(JSON.stringify({ type: "start", controller: "v3" }));
       L.ws.onmessage = (e) => onMessage(e.data);
       L.ws.onclose = () => { if (L.ws) { setStatus("Disconnected. Press Start to talk again.", "bad"); cleanup(); } };
       L.ws.onerror = () => setStatus("Connection error.", "bad");
@@ -115,14 +115,14 @@
     if (m.type === "ready") {
       L.ready = true; L.t0 = performance.now(); L.maxSeconds = m.max_seconds;
       setStatus(`Connected (${m.model}). Speak in Arabic; interrupt the agent whenever you like.`, "ok");
-      $("live-controller-shown").textContent = m.controller === "p3" ? "P3 Hybrid" : "Baseline";
+      $("live-controller-shown").textContent = "SARJ v3";
       L.timer = setInterval(() => {
         const left = Math.max(0, L.maxSeconds - (performance.now() - L.t0) / 1000);
         $("live-timer").textContent = `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, "0")} left`;
       }, 500);
     } else if (m.type === "flush") {                   // SARJ said STOP: silence the agent now
       L.node.port.postMessage({ flush: m.gen & 0xFF });
-      setStatus(`${m.by === "p3" ? "P3" : "Baseline"} detected an interruption: agent stopped. Go ahead.`, "stop");
+      setStatus(`${"SARJ v3"} detected an interruption: agent stopped. Go ahead.`, "stop");
     } else if (m.type === "decision") {
       addDecision(m);
     } else if (m.type === "caption") {

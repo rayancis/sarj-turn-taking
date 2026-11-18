@@ -29,7 +29,8 @@ def prepared(words=None, **cfg):
     d.run_start_abs = 220.0
     d.run_speech = 200.0
     d.run_gap = 0.0
-    d.run_levels = [-20.0]
+    d.run_levels.clear()
+    d.run_levels.append(-20.0)
     d.t = 400.0
     return d
 
@@ -37,7 +38,7 @@ def prepared(words=None, **cfg):
 def test_stale_asr_cannot_stop_new_state(kind):
     w = Deferred()
     old = prepared(w)
-    req = (id(old), old.utt_seq, old.run_seq)
+    req = (old.request_token, old.utt_seq, old.run_seq)
     if kind == 'scenario':
         current = prepared(w)
     else:
@@ -53,7 +54,7 @@ def test_stale_asr_cannot_stop_new_state(kind):
 def test_current_word_can_stop_but_no_duplicate_stop():
     w = Deferred()
     d = prepared(w)
-    w.result = ((id(d), d.utt_seq, d.run_seq), 'توقف')
+    w.result = ((d.request_token, d.utt_seq, d.run_seq), 'توقف')
     assert d.frame(Z, Z) == 'STOP'
     assert d.frame(Z, Z) is None
     d.agent_end()
@@ -65,7 +66,7 @@ def test_late_stop_word_ignored_after_silence_limit():
     d.fe = SimpleNamespace(process=lambda a, c: SimpleNamespace(
         is_speech=False, snr_db=0.0, excess_db=-90.0, agent_db=-20.0, flux=0.0))
     d.run_gap = d.cfg.word_stop_max_gap_ms + 20
-    w.result = ((id(d), d.utt_seq, d.run_seq), 'توقف')
+    w.result = ((d.request_token, d.utt_seq, d.run_seq), 'توقف')
     assert d.frame(Z, Z) is None
 
 def test_resume_waits_for_silence_then_rearms_stop():

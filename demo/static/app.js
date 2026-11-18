@@ -1,21 +1,21 @@
 "use strict";
-// SARJ demo page: Baseline vs P3 vs SARJ v3 on the same audio (v3 is shown only when the server has it).
+// SARJ v3 is the sole production detector.
 // The audio clock (one AudioContext for both channels) is the master: its playhead decides which 20 ms frames the
-// server feeds to BOTH real detectors (each in its own session; plus a small look-ahead on the hosted site, to absorb
+// server feeds to the detector (each in its own session; plus a small look-ahead on the hosted site, to absorb
 // network delay). Decisions come back from the server and are applied when playback reaches the frame time at which
 // the detector issued them. The selected detector's STOP silences the agent you hear. Nothing is pre-scripted.
 
 const $ = (id) => document.getElementById(id);
-let DETS = ["baseline", "p3", "v3"];               // display order, left to right; init() drops unavailable optional ones
-const NAMES = { baseline: "Baseline", p3: "P3", v3: "SARJ v3" };
-const REQUIRED = ["baseline", "p3"];               // the page refuses to run without these two (as before)
+let DETS = ["v3"];               // display order, left to right; init() drops unavailable optional ones
+const NAMES = { v3: "SARJ v3" };
+const REQUIRED = ["v3"];               // fail visibly if v3 is unavailable
 
 const freshDet = () => ({ session: null, fedMs: 0, done: false, decisions: [], pending: [], score: null,
   meanOnFrameUs: null, streamEndMs: 0 });
 const freshDets = () => Object.fromEntries(DETS.map((id) => [id, freshDet()]));
 
 const S = {
-  config: null, models: {}, listen: "p3", scenId: null, timeline: null, audio: null,
+  config: null, models: {}, listen: "v3", scenId: null, timeline: null, audio: null,
   ctx: null, nodes: null, sources: null, t0: 0, started: false, playing: false, ended: false,
   gen: 0, loopGen: null, busy: false, staticLayer: null, verdictKey: "", agentMuted: false,
   det: freshDets(), rtts: [], lookahead: 0, pollMs: 15,
@@ -168,7 +168,7 @@ async function advanceOne(gen, id, toMs) {
   const receivedAt = playhead();
   Object.assign(d, { fedMs: r.fed_ms, done: r.done, score: r.score, meanOnFrameUs: r.mean_on_frame_us });
   // Hold everything until playback reaches its stream time (immediately, when there is no look-ahead).
-  if (id === "p3") for (const p of r.protocol) d.pending.push({ at: p.stream_ms, kind: "ctl", item: p });
+  if (id === "v3") for (const p of r.protocol) d.pending.push({ at: p.stream_ms, kind: "ctl", item: p });
   for (const x of r.decisions) {
     x.det = id;
     x.earlyMs = x.stream_ms - receivedAt;           // > 0: arrived before playback needed it
@@ -730,10 +730,10 @@ function renderBench() {
     ["Missed genuine interruptions", R.map((r) => r.misses ?? "–")]];
   $("bench-head").innerHTML = "<th>Metric</th>" + DETS.map((id) => `<th class="num">${esc(NAMES[id])}</th>`).join("");
   $("bench").innerHTML = lines.map(([k, xs]) => `<tr><td>${k}</td>` +
-    xs.map((x, i) => `<td class="num">${DETS[i] === "baseline" ? esc(x) : `<b>${esc(x)}</b>`}</td>`).join("") + "</tr>").join("");
+    xs.map((x, i) => `<td class="num"><b>${esc(x)}</b></td>`).join("") + "</tr>").join("");
   $("bench-note").textContent = `Source: ${b.source}; ${b.scope}. These numbers come from the 24 original competition development ` +
-    "recordings, not from the additional Phase 3 research scenarios. The Phase 3 holdout result is not an official competition score. " +
-    "P3 is experimental, with known limitations: occasional delayed responses and missed quiet interruptions on the additional data." +
+    "recordings, not from the additional Phase 3 research scenarios. " +
+    "These 24 synthetic calls are diagnostic examples, not evidence of generalization. " +
     (DETS.includes("v3") ? " SARJ v3 (acoustics + Arabic words layer with offline Whisper tiny) was measured with the same official real-time " +
       "harness; on this hosted site its speech recognition runs on a small shared CPU, so its words can arrive later than in that measurement." : "");
 }
@@ -891,11 +891,11 @@ async function init() {
   S.lookahead = S.config.lookahead_ms || 0;
   S.pollMs = S.config.poll_ms || 15;
   const msel = $("model");
-  const order = ["v3", "p3", "baseline"];
+  const order = ["v3"];
   msel.innerHTML = order.filter((id) => S.models[id]).map((id) => { const m = S.models[id];
     return `<option value="${esc(id)}" ${m.available ? "" : "disabled"}>${esc(m.name)} · ${esc(m.revision || "?")}${m.available ? "" : " (unavailable)"}</option>`; }).join("");
   if (!REQUIRED.every((id) => S.models[id] && S.models[id].available)) {
-    showError("Baseline and P3 must be available; see the server console."); return;
+    showError("SARJ v3 is unavailable. Please try again later."); return;
   }
   // optional detectors (SARJ v3) join only when the server has them loaded
   DETS = DETS.filter((id) => REQUIRED.includes(id) || (S.models[id] && S.models[id].available));

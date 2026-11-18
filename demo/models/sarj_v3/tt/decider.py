@@ -102,6 +102,7 @@ class Decider:
     def __init__(self, cfg: Optional[Config] = None, words=None):
         self.cfg = cfg or Config()
         self.words = words          # WordsWorker (tt/words.py) or None
+        self.request_token = object()  # retained by pending requests; cannot alias a later scenario's id()
         self.audio = collections.deque(maxlen=int(self.cfg.asr_window_ms // self.cfg.frame_ms) + 20)
         self.utt_seq = 0
         self.run_seq = 0
@@ -109,7 +110,7 @@ class Decider:
         self.fe = Frontend(self.cfg)
         self.caller_ref_db = None   # caller's own speaking level (near-field)
         self._ref_levels = collections.deque(maxlen=500)
-        self.log = []               # (t_ms, event, details) for failure analysis
+        self.log = collections.deque(maxlen=128)  # bounded, in-memory diagnostics
         self.agent_on = False
         self.plan = AgentPlan()
         self.prefix_sink = None     # training: list that receives (abs_ms, run_start_abs_ms, vec)
@@ -133,11 +134,12 @@ class Decider:
         self.run_speech = 0.0
         self.run_gap = 1e9
         self.run_start = None
-        self.run_levels = []
-        self.run_flux = []
+        self.run_levels = collections.deque(maxlen=500)
+        self.run_flux = collections.deque(maxlen=500)
         self.last_agent_voice_t = 0.0
         self.run_in_pause = False
-        self.run_frames = []
+        self.run_frames = collections.deque(maxlen=500)
+        self.run_frame_count = 0
         self.run_ctx = (False, False, False, 0.0)
         self.clf_adjust = 0.0
         self.word_verdict = None
@@ -181,6 +183,11 @@ class Decider:
         if f.agent_db > -50:
             self.last_agent_voice_t = t
 
+        # A terminal STOP cannot produce another action in this utterance.
+        # Keep the bounded frontend/audio state current, without retaining unused run history.
+        if self.stopped and not cfg.resume:
+            return None
+
         # ---- run tracking (speech frames with short gaps tolerated) ----
         speech = f.is_speech and t > cfg.min_ms_after_agent_start
         if speech and self._is_background(f):
@@ -190,10 +197,11 @@ class Decider:
             if self.run_gap > cfg.hangover_ms and self.run_speech <= 0:
                 self.run_start = t
                 self.run_speech = 0.0
-                self.run_levels = []
-                self.run_flux = []
+                self.run_levels = collections.deque(maxlen=500)
+                self.run_flux = collections.deque(maxlen=500)
                 self.run_in_pause = (t - self.last_agent_voice_t) > 150
-                self.run_frames = []
+                self.run_frames = collections.deque(maxlen=500)
+                self.run_frame_count = 0
                 self.run_ctx = self.context(t)
                 self.clf_adjust = 0.0
                 self.run_start_abs = self.abs_t
@@ -211,8 +219,11 @@ class Decider:
                 # ("لا … لا … لحظة") add up; isolated sounds fade out
                 self.run_speech = max(0.0, self.run_speech - cfg.leak_rate * cfg.frame_ms)
         if self.run_start is not None and self.run_gap <= cfg.hangover_ms:
-            self.run_frames.append(f)
-            n_ms = len(self.run_frames) * cfg.frame_ms
+            self.run_frame_count = min(self.run_frame_count + 1, 501)
+            # These features are only used by the optional prefix classifier/training hook.
+            if self.clf is not None or self.prefix_sink is not None:
+                self.run_frames.append(f)
+            n_ms = self.run_frame_count * cfg.frame_ms
             if self.clf is not None and n_ms == self.clf.prefix_ms:
                 p = self.clf.p_interrupt(prefix_vector(self.run_frames, self.caller_ref_db, *self.run_ctx))
                 self.clf_adjust = -cfg.clf_gain_ms * (2 * p - 1)
@@ -285,7 +296,7 @@ class Decider:
         frames = [a for (ts, a) in self.audio if ts > t0]
         if not frames:
             return False
-        req = (id(self), self.utt_seq, self.run_seq)
+        req = (self.request_token, self.utt_seq, self.run_seq)
         if self.words.submit(req, np.concatenate(frames), self.abs_t,
                              t0_ms=max(t0, self.abs_t - cfg.asr_window_ms), t1_ms=self.abs_t):
             self.last_submit = self.abs_t
@@ -297,7 +308,7 @@ class Decider:
         if res is None:
             return
         req, text = res
-        if req != (id(self), self.utt_seq, self.run_seq):
+        if req != (self.request_token, self.utt_seq, self.run_seq):
             return  # stale: an earlier run, utterance or call
         v = classify(text)
         if v is not None and not (self.word_verdict == "stop" and v != "stop"):

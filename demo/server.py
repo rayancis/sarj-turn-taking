@@ -83,33 +83,32 @@ SECURITY_HEADERS = {
     "Permissions-Policy": "camera=(), microphone=(self), geolocation=()",   # microphone: "test your own audio"
 }
 
-# The two detectors of the demo, each pinned to the SHA-256 of its exact file (as recorded in
-# experiments/evidence/runs.json). If a file does not match its pin the detector is disabled, so the label "P3" can
-# only ever run the audited P3 code, and "Baseline" only the original starter detector.
-P3_SHA256 = "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf"        # b32cfc2 (= 6b4eece)
-BASELINE_SHA256 = "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830"  # bd2a3f0 (= kit 0915ace)
-# SARJ v3 (leenalotaibi-source/sarj, branch claude/sarj-turn-taking-system-xwvrh0): my_system.py plus its tt/ package,
-# every file pinned. Words layer: faster-whisper tiny, loaded from demo/models/sarj_v3/models/faster-whisper-tiny
-# (downloaded at image build, see demo/Dockerfile); without it the detector runs on acoustics alone and says so.
-V3_SHA256 = "09e5b65a117895dc15ce75a700cb48e313cd121c7ac1738559e320606cfcd1b8"
+# Historical sources remain available explicitly to offline audit tools, never public defaults.
+P3_SHA256 = "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf"
+BASELINE_SHA256 = "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830"
+HISTORICAL_MODELS = {
+    "p3": {"source": "file:my_system.py", "sha256": P3_SHA256, "name": "P3 Hybrid", "revision": "b32cfc2"},
+    "baseline": {"source": "file:demo/models/baseline_bd2a3f0.py", "sha256": BASELINE_SHA256,
+                 "name": "Baseline", "revision": "bd2a3f0"},
+}
+V3_SHA256 = 'c23be9bee6f45cfbfbfb92d3f710bc146f4c1e27ed6bfc360155a2d1078e3a4d'
 V3_FILES = {
     "demo/models/sarj_v3/tt/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "demo/models/sarj_v3/tt/assets.py": "3fac6bd8c3221724c7f4c76b1d36914855777126f16e3a33cba58000d49fa5eb",
     "demo/models/sarj_v3/tt/config.py": "6dfbbe3fe26e2502287545dd6a53b51f96069da1fa3e4266cf4107252b599778",
-    "demo/models/sarj_v3/tt/decider.py": "5e59028e2225717d48e115f077b470fd07057794241a25fb91f71cf6e6567a80",
+    "demo/models/sarj_v3/tt/decider.py": "a0cfd165385439ac94cc9113a31e163a4a26f56a2223f080ab8e9466b171547e",
     "demo/models/sarj_v3/tt/frontend.py": "85a3b2715c1c12d3c4b183e8a99515d1a30a10a596eb6e43a18ac5f86cae22b7",
     "demo/models/sarj_v3/tt/prefix.py": "1559dd15e907b006132f76e3365a51632a6f65acaf32ceff3c49076eabe3daa8",
-    "demo/models/sarj_v3/tt/words.py": "c77aaf471db0676c9c6653ae5e06b646bfd46dd61a59330c22dadde417b70785",
+    "demo/models/sarj_v3/tt/words.py": "e7102cddb7e238e05663fba12efc59b23984b11fcfa13df66569587a60c62115",
+    "demo/models/sarj_v3/model-assets.json": "f6912fea0c41d2a01608bf28456bfbc57b954a7e2d31512a296d0e0382db82d4",
+    "demo/models/sarj_v3/WHISPER_LICENSE": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d"
 }
 DEFAULT_MODELS = {
-    "p3": {"source": "file:my_system.py", "sha256": P3_SHA256, "name": "P3 Hybrid", "revision": "b32cfc2",
-           "about": "Phase 3: Silero VAD speech frames + caller-relative loudness (experimental)"},
     "v3": {"source": "file:demo/models/sarj_v3/my_system.py", "sha256": V3_SHA256, "files": V3_FILES,
-           "name": "SARJ v3", "revision": "18471a8",
-           "about": "Echo-aware acoustics, caller-relative level, leaky speech evidence + Arabic stop/keep words"},
-    "baseline": {"source": "file:demo/models/baseline_bd2a3f0.py", "sha256": BASELINE_SHA256, "name": "Baseline",
-                 "revision": "bd2a3f0", "about": "The kit's starter detector: any caller sound for 200 ms stops the agent"},
+           "name": "SARJ v3", "revision": "v3-bounded-1",
+           "about": "Echo-aware acoustics, caller-relative speech evidence and pinned offline Whisper tiny"},
 }
-KNOWN_SOURCES = {v["sha256"]: (v["name"], v["revision"]) for v in DEFAULT_MODELS.values()}
+KNOWN_SOURCES = {v["sha256"]: (v["name"], v["revision"]) for v in {**HISTORICAL_MODELS, **DEFAULT_MODELS}.values()}
 CATEGORY_NAMES = {"GI": "Genuine interruptions", "OV": "Overlap: talking at the same time",
                   "BC": "Acknowledgements (backchannels)", "NV": "Non-speech sounds: cough, laugh, knock, echo",
                   "BG": "Background speech and noise", "HT": "Hesitation", "AM": "Ambiguous words",
@@ -153,7 +152,7 @@ class Settings:
     port: int = DEFAULT_PORT
     collections: tuple = ("dev",)       # keys in demo/collections.json: the demo shows the 24 competition recordings only
     data_dir: Path | None = None        # instead of collections: one folder (tests, ad-hoc local use)
-    max_sessions: int = 24              # detector sessions held in memory (each playback runs three: Baseline, P3, v3)
+    max_sessions: int = 4              # one SARJ v3 session per playback
     evict_idle_s: float = 0.0           # at capacity, an older session may be dropped once idle this long
     session_idle_s: float = 3600.0      # sessions idle longer than this are dropped
     lookahead_ms: int = 0               # feed the detector this far ahead of playback (hides network delay)
@@ -173,7 +172,7 @@ class Settings:
         env = os.environ
         return cls(public=True, host="0.0.0.0", port=port or int(env.get("PORT", "10000")),
                    collections=("dev",),   # served only once public hosting is authorised (demo/collections.json)
-                   max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "16")), evict_idle_s=60.0,
+                   max_sessions=max_sessions or int(env.get("SARJ_DEMO_MAX_SESSIONS", "4")), evict_idle_s=60.0,
                    session_idle_s=600.0, lookahead_ms=800, poll_ms=100, sessions_per_min=80.0, advance_per_s=20.0,
                    pace=1.5, max_body=2048, max_connections=64, custom_per_min=20.0)
 
@@ -246,7 +245,9 @@ class Model:
             module.__file__ = origin
             exec(compile(code, origin, "exec"), module.__dict__)  # noqa: S102 - our own repository's system file
             self._cls = module.MySystem
-            first = self._cls()             # load any model (P3: the Silero ONNX session) now, not mid-demo
+            first = self._cls()             # verified model loaded once before serving requests
+            if model_id == "v3" and not getattr(first, "production_ready", False):
+                raise RuntimeError("SARJ v3 requires its verified words layer; no production fallback")
             note = getattr(first, "demo_note", "")
             if note:                        # e.g. SARJ v3 reports whether its words layer really loaded
                 self.about = f"{self.about} ({note})" if self.about else note
@@ -714,6 +715,9 @@ class DemoApp:
         register = load_register() if REGISTER.is_file() else {}
         shown = {c.key for c in self.data.collections}
         credits = [a for a in register.get("attribution", []) if not a.get("applies_to") or set(a["applies_to"]) & shown]
+        live_status = self.live_gate.status()
+        if "v3" in self.models and not self.models["v3"].available:
+            live_status = {"enabled": False, "visible": False, "reason": "SARJ v3 is unavailable."}
         return {"mode": "public" if s.public else "local", "frame_ms": FRAME_MS,
                 "lookahead_ms": s.lookahead_ms, "poll_ms": s.poll_ms,
                 "collections": [c.info(public=s.public) for c in self.data.collections],
@@ -721,7 +725,7 @@ class DemoApp:
                 "models": [m.describe(public=s.public) for m in self.models.values()],
                 "scenarios": self.data.summary(), "benchmark": self.public_benchmark() if s.public else benchmark(),
                 "custom": {"max_s": s.custom_max_s, "ttl_s": s.custom_ttl_s},
-                "live": self.live_gate.status()}
+                "live": live_status}
 
     @staticmethod
     def public_benchmark() -> dict | None:
@@ -734,8 +738,10 @@ class DemoApp:
         s = self.settings
         scen = self.scenario(scenario_id)
         model = self.models.get(model_id)
-        if model is None or not model.available:
+        if model is None:
             raise KeyError(f"model {model_id!r} is not available")
+        if not model.available:
+            raise Refused(503, "SARJ v3 is unavailable; please try again later.")
         if self.create_bucket and not self.create_bucket.take():
             raise Refused(429, "Many people are starting the demo right now. Please try again in a few seconds.")
         now = time.monotonic()
@@ -844,7 +850,10 @@ def make_handler(app: DemoApp):
                 g.last_check = time.monotonic()
                 return self._json({**g.check(), "key_variable": app.live_settings.key_variable})
             if path == "/healthz":
-                return self._json({"ok": True})
+                ok = bool(app.models) and all(m.available for m in app.models.values())
+                return self._json({"ok": ok, "detector": "v3"}, 200 if ok else 503)
+            if path == "/favicon.ico":
+                return self._send(204, b"", "image/x-icon")
             if path == "/robots.txt":
                 return self._send(200, b"User-agent: *\nDisallow: /\n", "text/plain; charset=utf-8")
             if path == "/api/config":
@@ -984,6 +993,8 @@ def main(argv: list[str] | None = None) -> int:
     settings = Settings.for_public(a.port) if a.public else Settings(port=a.port or DEFAULT_PORT)
     if a.public and a.data is not None:
         raise SystemExit("--data is local-only; the public site serves the collections in demo/collections.json")
+    if a.public and a.model:
+        raise SystemExit("extra models are local-only; public mode runs SARJ v3 exclusively")
     app = DemoApp(a.data, parse_models(a.model), settings)
     for m in app.models.values():
         d = m.describe()

@@ -20,6 +20,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.goto(URL + (URL.includes("?") ? "&" : "?") + "live=1");   // the section is hidden unless LIVE_MODE=on
   await page.waitForFunction(() => window.SARJ_CONFIG, null, { timeout: 30000 });
   const cfg = await page.evaluate(() => window.SARJ_CONFIG.live);
+  check("v3 is the sole live controller", await page.locator("#live-controller").count() === 0);
   check("live agent available", !!cfg.enabled, cfg.enabled ? `model ${cfg.model}` : cfg.reason);
   await page.check("#live-consent");
   await page.click("#live-start");
@@ -44,7 +45,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const stopped = ev.find((e) => e.kind === "agent_playback_stopped");
   const ctrlStops = s.decisions.filter((d) => /STOP/.test(d) && /controlled/.test(d));
   if (EXPECT === "stop") {
-    check("P3 STOP controlled the agent", ctrlStops.length > 0, ctrlStops[0]);
+    check("SARJ v3 STOP controlled the agent", ctrlStops.length > 0, ctrlStops[0]);
     check("Gemini got activityStart right after the STOP", !!stop, stop ? `${stop.t_ms} ms` : "none");
     check("the played agent audio stopped right after the STOP", !!stopped && stopped.after_stop_ms <= 200,
       stopped ? `${stopped.after_stop_ms} ms after STOP (in the played audio)` : "not stopped");

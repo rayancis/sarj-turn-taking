@@ -1,10 +1,25 @@
-# Runtime of the hosted demo only, fully pinned (numpy/websockets as requirements-lock.txt; onnxruntime as tested
-# for P3 in experiments/P3-phase3-report.md). onnxruntime runs models/silero_vad.onnx for the P3 detector.
-numpy==2.5.5
-websockets==17.4
-onnxruntime==1.29.0
+# Complete pinned runtime closure; test/build tooling is separate.
+anyio==4.16.0
+av==19.0.2
+click==8.5.1
+ctranslate2==4.9.0
+faster-whisper==1.2.1
+filelock==4.2.12
 flatbuffers==25.12.19
+fsspec==2026.9.0
+h11==0.16.0
+hf-xet==1.8.0
+httpcore2==2.16.2
+httpx2==2.16.2
+huggingface_hub==2.4.0
+idna==3.20
+numpy==2.5.5
+onnxruntime==1.29.0
 packaging==26.3
 protobuf==7.36.2
-# SARJ v3 words layer: Whisper tiny on CPU (CTranslate2, int8). MIT licences (faster-whisper, CTranslate2, Whisper).
-faster-whisper==1.2.1
+PyYAML==6.0.3
+tokenizers==0.23.3
+tqdm==4.70.1
+truststore==0.10.5
+typing_extensions==4.16.0
+websockets==17.4

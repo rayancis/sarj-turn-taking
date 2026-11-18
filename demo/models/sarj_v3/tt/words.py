@@ -101,7 +101,10 @@ class FasterWhisperBackend:
 
     def __init__(self, model_dir: str, threads: int = 2):
         from faster_whisper import WhisperModel  # optional dependency
-        self.model = WhisperModel(model_dir, device="cpu", compute_type="int8", cpu_threads=threads)
+        from .assets import verify_assets
+        verify_assets(model_dir)
+        self.model = WhisperModel(model_dir, device="cpu", compute_type="int8", cpu_threads=threads,
+                                  local_files_only=True)
         self.transcribe(np.zeros(16000, dtype=np.int16))  # warm-up before the call starts
 
     def transcribe(self, audio: np.ndarray, **_ctx) -> str:

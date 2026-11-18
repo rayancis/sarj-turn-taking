@@ -6,8 +6,7 @@ Who decides what (the point of the demo):
   sends (official API: realtimeInputConfig.automaticActivityDetection.disabled, activityHandling
   START_OF_ACTIVITY_INTERRUPTS).
 - While the agent is speaking, the caller's microphone audio is NOT sent to Gemini. It goes, together with the agent
-  audio the browser actually played in the same 20 ms frame, to the SARJ detectors (P3 controls by default; Baseline
-  runs in shadow on the identical frames). Only when the controlling detector returns STOP does this module flush
+  audio the browser actually played in the same 20 ms frame, to SARJ v3 alone. Only when the controlling detector returns STOP does this module flush
   the browser's playback, send activityStart (which cancels any ongoing generation) and stream the caller's audio,
   starting with a bounded pre-roll so the beginning of the interruption is not lost. No STOP: the agent keeps talking
   and Gemini never hears the caller (a backchannel stays a backchannel).
@@ -47,9 +46,9 @@ PREFERRED_MODELS = ("gemini-3.8-live", "gemini-3.1-flash-live-preview")   # offi
 LIVE_DEFAULT_MODE = "hidden"
 FRAME_BYTES = FRAME_SAMPLES * 2 * 2
 OUT_RATE = 24000                    # Gemini Live output: 16-bit PCM, 24 kHz, mono
-LOUD_DB = -42.0                     # the kit's loudness rule (also P3's end-of-turn rule)
+LOUD_DB = -42.0                     # the kit's loudness rule (idle caller-turn gate)
 PRE_ROLL_IDLE_MS = 400              # audio sent before activityStart when the caller starts a turn
-PRE_ROLL_BARGE_MS = 1500            # ... and when SARJ stops the agent (P3 can take up to ~1.4 s on soft speech)
+PRE_ROLL_BARGE_MS = 1500            # ... and when SARJ stops the agent (bounded caller pre-roll)
 QUIET_FALLBACK_MS = 1500            # end the caller's turn after this much quiet if no TAKE_TURN came
 MAX_USER_TURN_MS = 20000
 SEND_EVERY_FRAMES = 2               # caller audio to Gemini in 40 ms chunks (docs: 20-40 ms)
@@ -104,6 +103,7 @@ class LiveSettings:
     verify_model: bool = True
     mode: str = LIVE_DEFAULT_MODE
     key_variable: str | None = None
+    v3_verified: bool = False  # set only after genuine connection + v3-controlled interruption validation
 
     @classmethod
     def from_env(cls) -> "LiveSettings":
@@ -115,7 +115,8 @@ class LiveSettings:
                    max_concurrent=int(e.get("LIVE_MAX_CONCURRENT", "2")), max_seconds=int(e.get("LIVE_MAX_SECONDS", "180")),
                    per_hour=int(e.get("LIVE_PER_HOUR", "30")), per_day=int(e.get("LIVE_PER_DAY", "100")),
                    verify_model=url == LIVE_URL,
-                   mode=(e.get("LIVE_MODE") or LIVE_DEFAULT_MODE).strip().lower())
+                   mode=(e.get("LIVE_MODE") or LIVE_DEFAULT_MODE).strip().lower(),
+                   v3_verified=e.get("LIVE_V3_VERIFIED") == "1")
 
 
 class LiveGate:
@@ -142,7 +143,7 @@ class LiveGate:
         if not self.s.api_key:
             return {"enabled": False, "visible": False,
                     "reason": "The live agent is not configured on this server (no Gemini API key)."}
-        visible = self.s.mode == "on"
+        visible = self.s.mode == "on" and self.s.v3_verified
         if now < self.cooldown_until:
             return {"enabled": False, "visible": visible, "reason": self.cooldown_reason}
         return {"enabled": True, "visible": visible, "model": self.model or PREFERRED_MODELS[0],
@@ -393,12 +394,16 @@ class Turn:
 
 
 class LiveSession:
-    def __init__(self, ws: ServerWebSocket, models: dict, gate: LiveGate, controller: str = "p3",
+    def __init__(self, ws: ServerWebSocket, models: dict, gate: LiveGate, controller: str = "v3",
                  clock=time.monotonic):
         self.ws, self.gate, self.clock = ws, gate, clock
-        self.controller = controller if controller in ("p3", "baseline") else "p3"
+        if controller != "v3":
+            raise LiveRefused("Only SARJ v3 can control this conversation.")
+        if "v3" not in models or not models["v3"].available:
+            raise LiveRefused("SARJ v3 is unavailable; the conversation cannot start.")
+        self.controller = "v3"
         self.models = models
-        self.detectors = {mid: models[mid].new_system() for mid in ("p3", "baseline")}
+        self.detectors = {mid: models[mid].new_system() for mid in ("v3",)}
         for d in self.detectors.values():
             d.on_scenario_start({"use_case": "live conversation", "language": "ar"})
         self.t0 = clock()
@@ -419,13 +424,14 @@ class LiveSession:
         self.lock = threading.RLock()
         self.ended = False
         self.end_reason = ""
-        self.log: list[dict] = []
-        self.stats = {"frames": 0, "stops": {"p3": 0, "baseline": 0}, "barge_ins": 0, "activity_start_after_stop": 0,
+        self.log = deque(maxlen=512)
+        self.stats = {"frames": 0, "stops": {"v3": 0}, "barge_ins": 0, "activity_start_after_stop": 0,
                       "activity_start_turn": 0, "activity_end": 0, "gemini_interrupted": 0,
                       "gemini_interrupted_unrequested": 0, "agent_audio_ms": 0, "caller_audio_to_gemini_ms": 0,
-                      "playback_stop_ms": []}
+                      "playback_stop_ms": deque(maxlen=128)}
         self.pending_stop_frame: int | None = None
         self.requested_interrupt = 0
+        self.requested_interrupt_cause = None
         self.drop_old = False
 
     # ---- helpers
@@ -477,10 +483,13 @@ class LiveSession:
             # follow an activityStart we sent. Anything else would be Gemini interrupting on its own.
             self.stats["gemini_interrupted"] += 1
             requested = self.requested_interrupt > 0
+            cause = self.requested_interrupt_cause if requested else None
             self.requested_interrupt = 0
+            self.requested_interrupt_cause = None
             if not requested:
                 self.stats["gemini_interrupted_unrequested"] += 1
-            self.event("gemini_interrupted", requested_by_us=requested)
+            self.event("gemini_interrupted", requested_by_us=requested,
+                       authorization="v3_STOP" if cause == "barge_in" else ("idle_turn" if cause else "none"))
             if self.turn:
                 self.turn.interrupted = True
         for part in (sc.get("modelTurn") or {}).get("parts", []):
@@ -493,6 +502,9 @@ class LiveSession:
                 if self.user_open:              # a response to a turn we have not finished: never play over the caller
                     continue
                 self.gen += 1
+                # A manual activity signal for an earlier response cannot authorize an interruption of this one.
+                self.requested_interrupt = 0
+                self.requested_interrupt_cause = None
                 self.turn = Turn(self.gen)
                 self.awaiting_reply = False
                 self.event("agent_response_started", gen=self.gen)
@@ -541,12 +553,13 @@ class LiveSession:
             self.user_open, self.user_open_frame, self.user_open_by = True, self.n, why
             self.quiet_frames = 0
             self.requested_interrupt += 1
+            self.requested_interrupt_cause = why
             self.stats["activity_start_after_stop" if why == "barge_in" else "activity_start_turn"] += 1
         else:
             self.user_open = False
             self.stats["activity_end"] += 1
             self.awaiting_reply = True
-        self.event(kind, why=why)
+        self.event(kind, why=why, authorization="v3_STOP" if why == "barge_in" else "idle_turn")
 
     def _send_caller(self, frames: list[bytes]) -> None:
         self.out_buf += b"".join(frames)
@@ -588,7 +601,7 @@ class LiveSession:
                 self.event("agent_utterance_start", utt=self.utt, gen=self.turn.gen)
             elif self.agent_talking and not playing and queue_empty and self.turn and self.turn.complete:
                 self._end_utterance("played to the end")
-            # both detectors, identical frame
+            # Sole production detector, using the synchronized played-agent/caller frame
             decisions = {}
             for mid, d in self.detectors.items():
                 for m in _as_messages(d.on_frame(agent, caller)):
@@ -655,7 +668,8 @@ class LiveSession:
                                             "median": sorted(stops)[len(stops) // 2] if stops else None}
         s["controller"] = self.controller
         s["duration_s"] = round(self.n * FRAME_MS / 1000, 1)
-        s["sarj_controlled_every_barge_in"] = s["gemini_interrupted_unrequested"] == 0
+        s["sarj_controlled_every_barge_in"] = (s["gemini_interrupted_unrequested"] == 0
+                                                and s["barge_ins"] == s["activity_start_after_stop"])
         return s
 
     def end(self, reason: str) -> None:
@@ -680,12 +694,20 @@ def serve_live(ws: ServerWebSocket, models: dict, gate: LiveGate, settings: Live
         if start.get("type") != "start":
             ws.send_json({"type": "error", "message": "expected a start message", "fatal": True})
             return
+        if start.get("controller", "v3") != "v3" or "v3" not in models or not models["v3"].available:
+            ws.send_json({"type": "error", "message": "Only an available SARJ v3 can start this conversation.", "fatal": True})
+            return
         try:
             gate.acquire()
         except LiveRefused as e:
             ws.send_json({"type": "error", "message": str(e), "fatal": True})
             return
-        session = LiveSession(ws, models, gate, start.get("controller", "p3"))
+        try:
+            session = LiveSession(ws, models, gate, "v3")
+        except Exception as exc:
+            gate.release()
+            ws.send_json({"type": "error", "message": f"SARJ v3 could not start: {type(exc).__name__}", "fatal": True})
+            return
         try:
             try:
                 session.connect(settings)

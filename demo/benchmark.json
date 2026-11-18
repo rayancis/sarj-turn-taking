@@ -1,39 +1,5 @@
 {
-  "source": "experiments/evidence/runs.json",
-  "scope": "official scorer, real-time harness at speed 1.0, all 24 original competition development recordings (not the 50 additional scenarios)",
-  "rows": [
-    {
-      "model": "baseline",
-      "run": "baseline-bd2a3f0-rt",
-      "commit": "bd2a3f0",
-      "my_system_sha256": "85a8fa0ca7c6e0f92a01fb929877cf0eff36cb0d53749cceaeaf9b6de97fd830",
-      "core": 41.04,
-      "R": 0.806,
-      "S": 0.219,
-      "false_stops": 25,
-      "misses": 2
-    },
-    {
-      "model": "p3",
-      "run": "p3-6b4eece-rt",
-      "commit": "6b4eece",
-      "my_system_sha256": "8066ae363967adebb61e4bb9841d816b1d7b130bda837c66c826c5be1ef9d4bf",
-      "core": 73.41,
-      "R": 0.993,
-      "S": 0.546,
-      "false_stops": 10,
-      "misses": 0
-    },
-    {
-      "model": "v3",
-      "run": "v3-18471a8-rt",
-      "commit": "18471a8",
-      "my_system_sha256": "09e5b65a117895dc15ce75a700cb48e313cd121c7ac1738559e320606cfcd1b8",
-      "core": 96.38,
-      "R": 0.951,
-      "S": 0.969,
-      "false_stops": 1,
-      "misses": 0
-    }
-  ]
+  "source": "independent speed-1.0 verification pending",
+  "scope": "24 original synthetic dev recordings; bounded v3 requires a new measurement",
+  "rows": []
 }

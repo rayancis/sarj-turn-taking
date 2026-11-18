@@ -138,10 +138,10 @@ def test_every_audio_component_has_a_redistributable_licence():
 
 # ------------------------------------------------------------------------------------------------ real behaviour
 @needs_audio
-@pytest.mark.parametrize("model_id", list(demo.DEFAULT_MODELS))
+@pytest.mark.parametrize("model_id", list(demo.HISTORICAL_MODELS))
 def test_research_scenarios_decisions_equal_offline_replay(research, model_id):
     app = research
-    model = app.models[model_id]
+    model = demo.Model(model_id, demo.HISTORICAL_MODELS[model_id])
     assert model.available, model.error
     rng = random.Random(11)
     for sid, scen in app.data.scenarios.items():
@@ -158,7 +158,7 @@ def test_demo_p3_reproduces_the_recorded_phase3_xdev_result(app):
     recorded = json.loads((KIT / "experiments" / "phase3-final" / "results.json").read_text(encoding="utf-8"))
     want = recorded["P3"]["result"]["xdev"]
     scenarios = lay_out_stream(load_split(SPLITS["xdev"]))
-    log, meta = replay(app.models["p3"].new_system, scenarios)
+    log, meta = replay(demo.Model("p3", demo.HISTORICAL_MODELS["p3"]).new_system, scenarios)
     labels, th = load_labels(SPLITS["xdev"])
     got = score(labels, meta, log, th)
     assert got["core"]["core_score"] == pytest.approx(want["core"], abs=1e-9)
@@ -182,10 +182,10 @@ def test_pinned_baseline_is_the_recorded_baseline_file():
 def test_public_config_offers_three_detectors_and_hides_internals(app):
     cfg = app.config()
     assert cfg["mode"] == "public"
-    assert [m["id"] for m in cfg["models"]] == ["p3", "v3", "baseline"]
+    assert [m["id"] for m in cfg["models"]] == ["v3"]
     for m in cfg["models"]:
         assert set(m) == {"id", "name", "revision", "about", "dirty", "available"} and m["available"]
-    assert {r["model"] for r in cfg["benchmark"]["rows"]} == {"baseline", "p3", "v3"}
+    assert all(r["model"] == "v3" for r in cfg["benchmark"]["rows"])
     text = json.dumps(cfg, ensure_ascii=False)
     for secret in (str(KIT), "data/dev", "sha256", "GI-D51", "-H5", "E01b", "e566234", "runs.json\": {"):
         assert secret not in text, secret
@@ -245,7 +245,8 @@ def test_image_contains_only_whitelisted_paths():
     flat = [p for c in copies for p in c]
     assert not any(p.startswith(("data/extra", "experiments", "baseline", "tests", ".git", "demo/public_data")) for p in flat)
     assert {p for p in flat if p.startswith("data")} == {"data/dev/manifest.json", "data/dev/labels/", "data/dev/audio/"}
-    assert "models/silero_vad.onnx" in flat and "models/SILERO_VAD_LICENSE" in flat and "neural_vad.py" in flat
+    assert "demo/models/sarj_v3/" in flat
+    assert "my_system.py" not in flat and "neural_vad.py" not in flat and "demo/models/" not in flat
     assert "demo/live.py" in flat
     req = (KIT / "demo" / "requirements-public.txt").read_text(encoding="utf-8")
     assert "onnxruntime==1.29.0" in req and "numpy==2.5.5" in req
@@ -257,20 +258,20 @@ def test_image_contains_only_whitelisted_paths():
 @needs_audio
 def test_capacity_eviction_and_rate_limits():
     app = public_app(max_sessions=2, evict_idle_s=60.0, sessions_per_min=600.0)
-    a = app.new_session("GI-D01", "p3")["session_id"]
-    app.new_session("GI-D01", "baseline")
+    a = app.new_session("GI-D01", "v3")["session_id"]
+    app.new_session("GI-D01", "v3")
     with pytest.raises(demo.Refused) as e:                       # both active: the next visitor is told to wait
-        app.new_session("GI-D01", "p3")
+        app.new_session("GI-D01", "v3")
     assert e.value.status == 503
     app.sessions[a].last_seen -= 120                             # one went idle: it can be replaced
-    app.new_session("GI-D01", "p3")
+    app.new_session("GI-D01", "v3")
     assert a not in app.sessions
 
     app = public_app(sessions_per_min=60.0)
     statuses = []
     for _ in range(40):
         try:
-            app.new_session("GI-D01", "baseline")
+            app.new_session("GI-D01", "v3")
             statuses.append(200)
         except demo.Refused as err:
             statuses.append(err.status)
@@ -280,7 +281,7 @@ def test_capacity_eviction_and_rate_limits():
 @needs_audio
 def test_advance_is_paced_and_rate_limited():
     app = public_app(advance_per_s=5.0)
-    sid = app.new_session("GI-D01", "p3")["session_id"]
+    sid = app.new_session("GI-D01", "v3")["session_id"]
     r = app.advance(sid, 1e9)                                   # cannot run the whole call at once
     assert not r["done"] and r["fed_ms"] <= app.settings.lookahead_ms + 1000 + 200
     with pytest.raises(demo.Refused) as e:
@@ -294,11 +295,11 @@ def test_reset_and_repeated_playback_give_identical_results(app):
     """Each playback is a fresh detector (P3's VAD state included): replaying a call gives the same decisions."""
     runs = []
     for _ in range(3):
-        for model in ("p3", "baseline"):
+        for model in ("v3",):
             sess = demo.DetectorSession(app.models[model], app.data.scenarios["GI-D02"])
             sess.advance(1e9)
             runs.append((model, [(d["stream_ms"], d["decision"]) for d in sess.decisions]))
-    assert runs[0::2] == [runs[0]] * 3 and runs[1::2] == [runs[1]] * 3
+    assert len(runs) == 3 and all(r == runs[0] for r in runs)
 
 
 @needs_audio
@@ -306,7 +307,7 @@ def test_http_limits(app):
     with serving(app) as base:
         big = {"to_ms": 1, "pad": "x" * 5000}
         assert status(base + "/api/session", big) == 413
-        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "p3"})
+        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "v3"})
         assert status(base + f"/api/session/{s['session_id']}/close", {}) == 200
         assert status(base + f"/api/session/{s['session_id']}/advance", {"to_ms": 10}) == 404
         req = urllib.request.Request(base + "/healthz", method="HEAD")

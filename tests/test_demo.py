@@ -91,21 +91,13 @@ def dev_app():
     return demo.DemoApp(DEV, demo.DEFAULT_MODELS)
 
 
-def test_exactly_three_pinned_detectors(dev_app):
-    """Baseline, P3 and SARJ v3, each the exact files of its recorded run (experiments/evidence/runs.json)."""
-    assert list(dev_app.models) == ["p3", "v3", "baseline"]
-    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
-    p3, base, v3 = dev_app.models["p3"], dev_app.models["baseline"], dev_app.models["v3"]
-    assert p3.available and base.available and v3.available, (p3.error, base.error, v3.error)
-    assert p3.sha256 == runs["p3-6b4eece-rt"]["my_system_sha256"] == demo.P3_SHA256
-    assert base.sha256 == runs["baseline-bd2a3f0-rt"]["my_system_sha256"] == demo.BASELINE_SHA256
-    assert v3.sha256 == runs["v3-18471a8-rt"]["my_system_sha256"] == demo.V3_SHA256
-    assert runs["v3-18471a8-rt"]["files_pinned"] == demo.V3_FILES
-    assert (p3.name, p3.revision, base.name, base.revision) == ("P3 Hybrid", "b32cfc2", "Baseline", "bd2a3f0")
-    assert (v3.name, v3.revision) == ("SARJ v3", "18471a8")
-    assert p3.new_system().vad is not None                   # P3 really runs the neural VAD ...
-    assert not hasattr(base.new_system(), "vad")             # ... and Baseline is the plain loudness rule
-    assert hasattr(v3.new_system(), "dec")                   # ... and v3 is the tt/ decider
+def test_only_verified_v3_is_exposed(dev_app):
+    assert list(dev_app.models) == ["v3"]
+    model = dev_app.models["v3"]
+    assert model.available, model.error
+    assert model.sha256 == demo.V3_SHA256
+    assert model.new_system().production_ready
+    assert model.name == "SARJ v3" and model.revision == "v3-bounded-1"
 
 
 def test_v3_refuses_a_changed_module(tmp_path, monkeypatch):
@@ -154,15 +146,15 @@ def test_demo_shows_exactly_the_24_original_recordings():
 
 
 def test_a_label_cannot_run_other_code(tmp_path):
-    wrong = demo.Model("p3", {**demo.DEFAULT_MODELS["p3"], "source": "file:demo/models/baseline_bd2a3f0.py"})
+    wrong = demo.Model("p3", {**demo.HISTORICAL_MODELS["p3"], "source": "file:demo/models/baseline_bd2a3f0.py"})
     assert not wrong.available and "not the pinned" in wrong.error
 
 
-@pytest.mark.parametrize("model_id", list(demo.DEFAULT_MODELS))
+@pytest.mark.parametrize("model_id", list(demo.HISTORICAL_MODELS))
 def test_demo_decisions_equal_offline_replay_on_every_dev_call(dev_app, model_id):
     """Uneven polling, pauses and stale playheads never change what the detector decides, on all 24 calls; and an
     event's verdict, once shown, never differs from the final official verdict."""
-    model = dev_app.models[model_id]
+    model = demo.Model(model_id, demo.HISTORICAL_MODELS[model_id])
     if not model.available:
         pytest.skip(model.error)
     rng = random.Random(7)
@@ -189,7 +181,7 @@ def test_demo_decisions_equal_offline_replay_on_every_dev_call(dev_app, model_id
 def test_demo_matches_the_recorded_realtime_runs(dev_app, model_id, run):
     """Per call, the demo gives the decisions the official real-time harness recorded for that commit in one full
     session (arrival time = frame time + processing/network delay, so 0-20 ms later)."""
-    model = dev_app.models[model_id]
+    model = demo.Model(model_id, demo.HISTORICAL_MODELS[model_id])
     if not model.available:
         pytest.skip(model.error)
     folder = KIT / "experiments" / "evidence" / run
@@ -213,36 +205,26 @@ def test_api_real_stop_and_real_keep(dev_app):
     """Through HTTP: GI-D01 gets a real P3 STOP inside the interruption; NV-D01 (a cough): P3 keeps talking while
     the Baseline stops (its recorded false stop)."""
     with serving(dev_app) as base:
-        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "p3"})
+        s = post(base, "/api/session", {"scenario": "GI-D01", "model": "v3"})
         r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
         stops = [d for d in r["decisions"] if d["decision"] == "STOP"]
         assert r["done"] and len(stops) == 1 and stops[0]["utt_id"] is not None
         ev = r["score"]["events"][0]
         assert ev["closed"] and ev["outcome"] == "yield" and ev["credit"] > 0
 
-        for model, outcome in (("p3", "kept"), ("baseline", "false_stop")):
+        for model, outcome in (("v3", "kept"),):
             s = post(base, "/api/session", {"scenario": "NV-D01", "model": model})
             r = post(base, f"/api/session/{s['session_id']}/advance", {"to_ms": s["stream_end_ms"]})
             assert r["score"]["events"][0]["outcome"] == outcome, model
 
 
-def test_config_reports_recorded_benchmarks_not_live_scores(dev_app):
-    """Exactly the three recorded dev-set rows, equal to experiments/evidence/runs.json; no other version anywhere."""
+def test_config_reports_current_v3_benchmark_only(dev_app):
     cfg = dev_app.config()
     assert len(cfg["scenarios"]) == 24
-    rows = {r["model"]: r for r in cfg["benchmark"]["rows"]}
-    assert set(rows) == {"baseline", "p3", "v3"}
-    runs = json.loads((KIT / "experiments" / "evidence" / "runs.json").read_text(encoding="utf-8"))["runs"]
-    for model, run in (("baseline", "baseline-bd2a3f0-rt"), ("p3", "p3-6b4eece-rt"), ("v3", "v3-18471a8-rt")):
-        r = runs[run]
-        assert rows[model]["core"] == round(r["core"], 2) and rows[model]["R"] == round(r["R"], 3)
-        assert rows[model]["S"] == round(r["S"], 3)
-        assert (rows[model]["false_stops"], rows[model]["misses"]) == (r["false_stops"], r["misses"])
-    assert (rows["baseline"]["core"], rows["p3"]["core"]) == (41.04, 73.41)
-    page = json.dumps(cfg) + "".join((KIT / "demo" / "static" / f).read_text(encoding="utf-8")
-                                     for f in ("index.html", "app.js"))
-    for gone in ("E01b", "e566234", "E01 ", "8f08311", "82.0"):
-        assert gone not in page, gone
+    assert all(r["model"] == "v3" for r in cfg["benchmark"]["rows"])
+    # Historical records are retained independently, not advertised as the changed detector's result.
+    runs = json.loads((KIT / "experiments/evidence/runs.json").read_text())["runs"]
+    assert round(runs["v3-18471a8-rt"]["core"], 2) == 96.38
 
 
 def test_timeline_keeps_ground_truth_apart_from_protocol_input(dev_app):
@@ -319,8 +301,9 @@ def test_unavailable_versions_are_reported(tmp_path, tiny):
     (tmp_path / "broken.py").write_text("def nope(:\n", encoding="utf-8")
     assert not demo.Model("broken", f"file:{tmp_path / 'broken.py'}").available
     app = demo.DemoApp(tiny, {"ghost": "git:0000000:my_system.py"})
-    with pytest.raises(KeyError):
+    with pytest.raises(demo.Refused) as e:
         app.new_session("GI-D90", "ghost")
+    assert e.value.status == 503
 
 
 def test_http_surface(tmp_path, tiny):

@@ -12,4 +12,8 @@ services:
     autoDeploy: true
     envVars:
       - key: SARJ_DEMO_MAX_SESSIONS
-        value: "12"   # = 4 simultaneous playbacks x 3 detectors; measured peak 408 MB with 3 playbacks (512 MB plan)
+        value: "4"  # conservative local limit; Render load validation is still required
+      - key: LIVE_MODE
+        value: hidden
+      - key: LIVE_V3_VERIFIED
+        value: "0"

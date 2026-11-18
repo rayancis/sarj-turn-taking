@@ -63,7 +63,7 @@ class StubGemini:
         self.sent.append((self.s.n, {"audio_bytes": len(pcm)}))
 
 
-def drive(models, sid, controller="p3"):
+def drive(models, sid, controller="v3"):
     """Feed a dev scenario to LiveSession as the browser would: agent channel = what is played, flags from the
     agent utterances; the agent stops being played after a barge-in flush."""
     scen = load_split(DEV, [sid])[0]
@@ -103,29 +103,43 @@ def first_stop_frame(model, sid):
     return stops[0] if stops else None
 
 
-@pytest.mark.parametrize("sid", ["GI-D01", "GI-D02", "GI-D03", "OV-D01", "AM-D02", "DV-D03"])
-def test_live_loop_stops_on_the_same_frame_as_the_offline_replay(models, sid):
-    want = first_stop_frame(models["p3"], sid)
-    assert want is not None
-    s, ws = drive(models, sid)
-    stops = [m for m in ws.json if m.get("type") == "decision" and m["model"] == "p3" and m["decision"] == "STOP"]
+@pytest.mark.parametrize("want", [12, 30, 90, 150])
+def test_live_loop_executes_only_the_authorized_stop_frame(want):
+    """Transport contract, independent of asynchronous ASR speed. Full v3 is evaluated at speed 1.0 separately."""
+    from types import SimpleNamespace
+    class Scheduled:
+        def __init__(self): self.n = 0
+        def on_scenario_start(self, context): pass
+        def on_agent_start(self, *args): pass
+        def on_agent_end(self): pass
+        def on_frame(self, agent, caller):
+            n, self.n = self.n, self.n + 1
+            return 'STOP' if n == want else None
+    model = SimpleNamespace(available=True, new_system=Scheduled)
+    ws = StubWS()
+    gate = live.LiveGate(live.LiveSettings(api_key='test', verify_model=False))
+    s = live.LiveSession(ws, {'v3': model}, gate)
+    s.gemini = StubGemini(s)
+    s.turn = live.Turn(gen=1)
+    pcm = np.full((320, 2), 1000, dtype='<i2').tobytes()
+    for _ in range(want + 1):
+        s.on_frame(b'\x01' + pcm)
+    stops = [m for m in ws.json if m.get("type") == "decision" and m["model"] == "v3" and m["decision"] == "STOP"]
     assert stops and stops[0]["frame"] == want and stops[0]["controls"], (sid, want, stops[:1])
     flush = [m for m in ws.json if m.get("type") == "flush"]
-    assert flush and flush[0]["frame"] == want and flush[0]["by"] == "p3"
+    assert flush and flush[0]["frame"] == want and flush[0]["by"] == "v3"
     # Gemini: activityStart at that very frame, then the pre-roll (up to 1.5 s of the caller before the decision)
     at = [(n, m) for n, m in s.gemini.sent if n == want]
     assert at[0][1] == {"realtimeInput": {"activityStart": {}}}
     assert at[1][1]["audio_bytes"] == min(want + 1, live.PRE_ROLL_BARGE_MS // 20) * 640
     # nothing of the caller reached Gemini while the agent was speaking before the STOP
-    a, b = next((u["start_ms"] // 20, math.ceil(u["end_ms"] / 20)) for u in load_split(DEV, [sid])[0].label["agent_utterances"]
-                if u["start_ms"] // 20 <= want < math.ceil(u["end_ms"] / 20))
-    assert not [m for n, m in s.gemini.sent if a <= n < want and ("audio_bytes" in m or "activityStart" in
+    assert not [m for n, m in s.gemini.sent if n < want and ("audio_bytes" in m or "activityStart" in
                                                                   m.get("realtimeInput", {}))]
 
 
 @pytest.mark.parametrize("sid", ["NV-D01", "BC-D01", "NV-D02", "AM-D01"])
 def test_backchannels_and_noises_never_reach_gemini_while_the_agent_speaks(models, sid):
-    assert first_stop_frame(models["p3"], sid) is None
+    assert first_stop_frame(models["v3"], sid) is None
     s, ws = drive(models, sid)
     assert s.stats["barge_ins"] == 0 and not [m for m in ws.json if m.get("type") == "flush"]
     utts = [(u["start_ms"] // 20, math.ceil(u["end_ms"] / 20)) for u in load_split(DEV, [sid])[0].label["agent_utterances"]]
@@ -134,16 +148,26 @@ def test_backchannels_and_noises_never_reach_gemini_while_the_agent_speaks(model
     assert during == [], during[:3]
 
 
-def test_baseline_in_shadow_never_controls_and_can_be_made_the_controller(models):
-    s, ws = drive(models, "NV-D01")                         # the cough: Baseline stops, P3 does not
-    base = [m for m in ws.json if m.get("type") == "decision" and m["model"] == "baseline" and m["decision"] == "STOP"]
-    assert base and not base[0]["controls"] and s.stats["barge_ins"] == 0
-    s, ws = drive(models, "NV-D01", controller="baseline")
-    flush = [m for m in ws.json if m.get("type") == "flush"]
-    assert flush and flush[0]["by"] == "baseline" and flush[0]["frame"] == first_stop_frame(models["baseline"], "NV-D01")
+def test_legacy_controllers_are_rejected(models):
+    gate = live.LiveGate(live.LiveSettings(api_key="x", verify_model=False))
+    for controller in ("p3", "baseline", "unknown"):
+        with pytest.raises(live.LiveRefused, match="Only SARJ v3"):
+            live.LiveSession(StubWS(), models, gate, controller)
+
+def test_rejected_controller_cannot_consume_live_capacity_or_connect_to_google():
+    from websockets.sync.client import connect
+    fake = FakeGemini(b'\0\0' * 2400)
+    app = start_app(fake.start())
+    with serving(app) as base:
+        for controller in ('p3', 'baseline', 'unknown'):
+            with connect(base.replace('http', 'ws') + '/api/live', origin=base, proxy=None) as ws:
+                ws.send(json.dumps({'type':'start','controller':controller}))
+                msg=json.loads(ws.recv())
+                assert msg['type']=='error' and msg['fatal']
+    assert app.live_gate.active == 0 and not app.live_gate.starts
+    assert 'setup' not in fake.kinds()
 
 
-# ------------------------------------------------------------------------------------------------ over the wire
 def start_app(fake_url, **live_kw):
     app = demo.DemoApp(None, demo.DEFAULT_MODELS, demo.Settings.for_public(port=1))
     app.live_settings = live.LiveSettings(api_key="test-key-123", url=fake_url, model="gemini-3.8-live", verify_model=False,
@@ -152,7 +176,7 @@ def start_app(fake_url, **live_kw):
     return app
 
 
-def converse(base, caller16k, seconds=12.0, speed=4.0, controller="p3"):
+def converse(base, caller16k, seconds=12.0, speed=4.0, controller="v3"):
     """A simulated browser: plays what it receives (24 -> 16 kHz), sends [played agent, caller] frames."""
     from websockets.sync.client import connect
     cm = connect(base.replace("http", "ws") + "/api/live", origin=base, proxy=None, open_timeout=10)
@@ -255,6 +279,21 @@ def test_real_protocol_backchannel_keeps_the_agent_talking():
     assert fake.audio_outside_activity == 0
     assert all(e["t"] >= done for e in starts) or not starts
 
+@pytest.mark.parametrize('sid,gain,should_stop', [('GI-D01', .5, True), ('BG-D02', 1., False)])
+def test_real_v3_worker_over_realtime_wire_for_quiet_speech_and_background(sid, gain, should_stop):
+    start_s, dur = agent_from(sid)
+    fake = FakeGemini(agent_audio_24k(DEV / 'audio' / f'{sid}.wav', start_s, dur))
+    app = start_app(fake.start())
+    caller = (caller_from(sid, start_s).astype(np.float32) * gain).astype(np.int16)
+    with serving(app) as base:
+        msgs = converse(base, caller, seconds=dur + 1, speed=1.)
+    decisions = [m for m in msgs if m.get('type') == 'decision' and m['decision'] == 'STOP' and m['controls']]
+    summary = next(m for m in msgs if m.get('type') == 'ended')['summary']
+    assert all(m['model'] == 'v3' for m in decisions)
+    assert bool(decisions) == should_stop
+    assert summary['barge_ins'] == int(should_stop)
+    assert summary['gemini_interrupted_unrequested'] == 0
+
 
 def test_limits_errors_and_origin():
     fake = FakeGemini(agent_audio_24k(DEV / "audio" / "GI-D01.wav", 7.9, 2.0))
@@ -303,15 +342,31 @@ def test_an_unrequested_interruption_would_be_reported(models):
     s.on_gemini({"serverContent": {"interrupted": True}})                 # this one SARJ asked for
     assert s.summary()["gemini_interrupted_unrequested"] == 1 and s.summary()["gemini_interrupted"] == 2
 
+def test_old_idle_activity_cannot_authorize_interrupting_a_new_response(models):
+    import base64
+    ws = StubWS()
+    s = live.LiveSession(ws, models, live.LiveGate(live.LiveSettings(api_key='x', verify_model=False)))
+    s.gemini = StubGemini(s)
+    s._send_activity('activityStart', 'caller_turn')
+    s._send_activity('activityEnd', 'silence fallback')
+    s.on_gemini({'serverContent':{'modelTurn':{'parts':[{'inlineData':{
+        'mimeType':'audio/pcm;rate=24000','data':base64.b64encode(b'\0\0'*480).decode()}}]}}})
+    s.on_gemini({'serverContent':{'interrupted':True}})
+    assert s.summary()['gemini_interrupted_unrequested'] == 1
+    event=next(m for m in reversed(ws.json) if m.get('kind')=='gemini_interrupted')
+    assert event['authorization']=='none'
+
 
 def test_feature_flag_and_model_check(monkeypatch):
     """LIVE_MODE: off = unavailable; hidden = works but not shown by default; on = shown. The model check never
     reveals the key and is rate-limited."""
-    for mode, enabled, visible in (("off", False, False), ("hidden", True, False), ("on", True, True)):
+    for mode, enabled, visible in (("off", False, False), ("hidden", True, False), ("on", True, False)):
         monkeypatch.setenv("LIVE_MODE", mode)
         monkeypatch.setenv("GEMINI_API_KEY", "secret-key-xyz")
         st = live.LiveGate(live.LiveSettings.from_env()).status()
         assert (st["enabled"], st["visible"]) == (enabled, visible), mode
+    monkeypatch.setenv("LIVE_V3_VERIFIED", "1")
+    assert live.LiveGate(live.LiveSettings.from_env()).status()["visible"]
     monkeypatch.delenv("LIVE_MODE")
     assert live.LiveSettings.from_env().mode == live.LIVE_DEFAULT_MODE == "hidden"
     fake = FakeGemini(b"\0\0" * 2400)

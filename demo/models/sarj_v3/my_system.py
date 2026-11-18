@@ -47,8 +47,9 @@ class MySystem(System):
         self.cfg = _config_from_env()
         self.words = self._load_words()      # loaded once, before the first call
         # one line for dashboards / the demo page: which layers are really running
-        self.demo_note = ("acoustics + words (Whisper tiny, offline)" if self.words is not None
-                          else "acoustics only (words layer off or ASR model missing)")
+        self.production_ready = self.words is not None
+        self.demo_note = ("acoustics + words (pinned Whisper tiny, offline)" if self.words is not None
+                          else "diagnostic acoustics-only mode; unavailable for production")
         self.dec = Decider(self.cfg, words=self.words)
         self.debug = bool(os.environ.get("TT_DEBUG"))
         self._slow = 0
@@ -63,10 +64,8 @@ class MySystem(System):
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
         try:
             return WordsWorker(shared_backend(path))
-        except Exception:
-            # no model / no faster-whisper: run on acoustics alone, never crash
-            print(f"[tt] words layer disabled: cannot load ASR from {path}", file=sys.stderr)
-            return None
+        except Exception as exc:
+            raise RuntimeError('SARJ v3 requires the verified local Whisper model') from exc
 
     def on_scenario_start(self, context=None):
         """New call: fresh echo/noise/caller-level state (one connection serves many calls)."""

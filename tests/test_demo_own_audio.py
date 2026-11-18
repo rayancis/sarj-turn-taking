@@ -36,6 +36,12 @@ def caller_pcm(app, sid) -> bytes:
 
 def decisions(app, model, scen):
     sess = demo.DetectorSession(app.models[model], scen)
+    # This is a PCM/protocol transformation-equivalence check, not an ASR timing benchmark.
+    # A controlled delayed recognizer makes the two identical streams comparable independent of CPU scheduling.
+    from types import SimpleNamespace
+    from tt.words import WordsWorker
+    worker = WordsWorker(SimpleNamespace(transcribe=lambda audio, **kwargs: ''), sync=True, latency_ms=200)
+    sess.system.words = sess.system.dec.words = worker
     sess.advance(1e9)
     return [(d["stream_ms"], d["decision"]) for d in sess.decisions]
 
@@ -48,7 +54,7 @@ def test_own_audio_equal_to_the_original_caller_gives_the_original_decisions(app
     own, orig = app.scenario(r["scenario_id"]), app.data.scenarios[sid]
     assert np.array_equal(own.audio, orig.audio)
     assert own.label["agent_utterances"] == orig.label["agent_utterances"]
-    for model in ("baseline", "p3"):
+    for model in ("v3",):
         assert decisions(app, model, own) == decisions(app, model, orig), (sid, model)
 
 
@@ -77,7 +83,7 @@ def test_http_round_trip_and_privacy(app):
             assert (w.getnchannels(), w.getframerate()) == (2, 16000)
         tl = json.loads(urllib.request.urlopen(f"{base}/api/scenario/{cid}").read())
         assert tl["ground_truth"]["events"] == [] and tl["custom"]["agent_from"] == "NV-D01"
-        s = post(base, "/api/session", {"scenario": cid, "model": "baseline"})
+        s = post(base, "/api/session", {"scenario": cid, "model": "v3"})
         assert s["scenario_id"] == cid
         home = urllib.request.urlopen(base + "/")
         assert "microphone=(self)" in home.headers["Permissions-Policy"]
@@ -126,7 +132,7 @@ def test_own_audio_is_never_written_to_disk(app, monkeypatch):
     monkeypatch.setattr(Path, "write_bytes", lambda *a, **k: (_ for _ in ()).throw(AssertionError("write_bytes")))
     r = app.create_custom("NV-D01", 0, caller_pcm(app, "NV-D01"))
     assert app.audio_bytes(r["scenario_id"])[:4] == b"RIFF"
-    assert decisions(app, "p3", app.scenario(r["scenario_id"])) == decisions(app, "p3", app.data.scenarios["NV-D01"])
+    assert decisions(app, "v3", app.scenario(r["scenario_id"])) == decisions(app, "v3", app.data.scenarios["NV-D01"])
 
 
 def _post_raw(url, body):

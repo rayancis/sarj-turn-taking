@@ -46,153 +46,72 @@ async function testAudio() {
   const own = await testAudio();
   const browser = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required", "--use-fake-ui-for-media-stream",
     "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${own.mic}`] });
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = [];
+  page.on("pageerror", e => errors.push(String(e)));
+  page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
   if (LATENCY) {
     const cdp = await page.context().newCDPSession(page);
     await cdp.send("Network.enable");
-    await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: LATENCY, downloadThroughput: -1, uploadThroughput: -1 });
+    await cdp.send("Network.emulateNetworkConditions", { offline:false, latency:LATENCY, downloadThroughput:-1, uploadThroughput:-1 });
   }
-  const consoleErrors = [];
-  page.on("console", (m) => {                       // (the deliberate 404 probe for GI-D51 below is not an error)
-    if (m.type() === "error" && !(m.location().url || "").includes("GI-D51")) consoleErrors.push(m.text());
-  });
-  page.on("pageerror", (e) => consoleErrors.push(String(e)));
-  const snap = () => page.evaluate(() => window.sarjDemo.snapshot());
-  const waitFor = async (pred, timeoutMs, stepMs = 50) => {
-    const end = Date.now() + timeoutMs;
-    for (;;) { const s = await snap(); if (pred(s)) return s; if (Date.now() > end) return null; await sleep(stepMs); }
+  const snap=()=>page.evaluate(()=>window.sarjDemo.snapshot());
+  const wait=async(pred, timeout=60000)=>{
+    const until=Date.now()+timeout;
+    while(Date.now()<until) { const s=await snap(); if(pred(s)) return s; await sleep(100); }
+    throw Error("browser state did not arrive: "+JSON.stringify(await snap()));
   };
-  const ready = (s) => s.sessions && s.sessions.p3 && s.sessions.baseline && !s.started;
-  const select = async (value) => {
-    const old = (await snap()).session;
-    await page.selectOption("#scenario", value);
-    return waitFor((s) => s.session !== old && ready(s), 20000);
-  };
-  const playToEnd = async () => { await page.click("#play"); return waitFor((x) => x.ended && x.done, 60000, 200); };
-
-  const t0 = Date.now();
-  const resp = await page.goto(URL);
-  check("page served", resp && resp.ok(), `${resp && resp.status()} ${resp && resp.headers()["content-type"]}, ${Date.now() - t0} ms`);
-  let s = await waitFor(ready, 90000, 200);           // a sleeping free host may need ~1 min to wake
-  check("page loads with a Baseline and a P3 session", !!s, s ? `${s.scenario}` : "no sessions");
-  const cfg = await page.evaluate(() => fetch("/api/config").then((r) => r.json()));
-  const options = await page.$$eval("#model option", (os) => os.map((o) => o.textContent));
-  check("exactly two detectors: P3 and Baseline", options.length === 2 && /^P3/.test(options[0]) && /^Baseline/.test(options[1]) &&
-    cfg.models.map((m) => m.id).join() === "p3,baseline", options.join(" | "));
-  const body = await page.content();
-  check("no E01b anywhere on the page", !/E01b|e566234/.test(body + JSON.stringify(cfg)));
-  console.log(`mode ${cfg.mode}, look-ahead ${cfg.lookahead_ms} ms, ${cfg.scenarios.length} scenarios in ${cfg.collections.map((c) => c.key).join(", ")}`);
-  const entries = await page.$$eval("#scenario option", (os) => os.map((o) => o.value));
-  check("selector lists exactly the 24 original competition recordings", entries.length === 24 &&
-    entries.every((id) => /^[A-Z]{2}-D0[1-3]$/.test(id)) && cfg.scenarios.every((x) => x.collection === "dev"),
-    `${entries.length} entries: ${entries.slice(0, 4).join(", ")} …`);
-  const research = await page.evaluate(() => fetch("/api/audio/GI-D51.wav").then((r) => r.status));
-  check("Phase 3 research scenarios are not served", research === 404);
-
-  // 1. A cough (KEEP): Baseline stops falsely, P3 keeps talking. Pause/resume on the way.
-  await select("NV-D01");
-  await page.click("#play");
-  const leads = [];
-  for (let i = 0; i < 15; i++) { await sleep(150); const x = await snap(); leads.push((x.fedMs - 20) - x.playheadMs); }
-  check("both detectors are fed in step with the audio clock", leads.every((l) => l <= cfg.lookahead_ms + 20 && l > -40),
-    `last fed frame minus playhead: ${Math.min(...leads).toFixed(0)} .. ${Math.max(...leads).toFixed(0)} ms`);
-  check("agent and caller play from one clock", (await snap()).sources.join() === "agent,caller");
-  await page.click("#play");
-  await sleep(300 + 2 * LATENCY);
-  const p1 = await snap();
-  await sleep(1200);
-  const p2 = await snap();
-  check("pause freezes playhead and both feeds", p1.ctxState === "suspended" && Math.abs(p2.playheadMs - p1.playheadMs) < 1 && p2.fedMs === p1.fedMs,
-    `playhead ${p1.playheadMs.toFixed(1)} -> ${p2.playheadMs.toFixed(1)} ms`);
-  await page.click("#play");
-  // switch whose decisions you hear to Baseline before its STOP arrives
-  await page.selectOption("#model", "baseline");
-  const bstop = await waitFor((x) => x.decisions.baseline.some((d) => d.decision === "STOP"), 30000);
-  await sleep(150);
-  const m = await snap();
-  const bd = bstop && bstop.decisions.baseline.find((d) => d.decision === "STOP");
-  check("Baseline's real STOP silences the agent you hear; caller continues", !!bd && m.agentMuted && m.agentGain < 0.05 && m.callerGain === 1,
-    bd ? `STOP at ${bd.stream_ms} ms, shown ${bd.pageDelayMs.toFixed(1)} ms after its frame; agent gain ${m.agentGain.toFixed(3)}` : "no STOP");
-  await page.selectOption("#model", "p3");
-  await sleep(150);
-  const m2 = await snap();
-  check("switching to P3 (no STOP) brings the agent back, same playback", !m2.agentMuted && m2.agentGain > 0.9 && m2.playing);
-  await page.screenshot({ path: `${SHOTS}/demo-compare-live.png`, fullPage: true });
-  const end = await waitFor((x) => x.ended && x.done, 40000, 200);
-  check("cough: Baseline false stop, P3 kept talking (official scorer)", !!end && end.events.baseline[0].outcome === "false_stop" &&
-    end.events.p3[0].outcome === "kept" && /Baseline stopped falsely; P3 correctly kept talking/.test(end.headline),
-    end ? `${end.events.baseline[0].outcome} / ${end.events.p3[0].outcome}; "${end.headline}"` : "not finished");
-  await page.screenshot({ path: `${SHOTS}/demo-compare-done.png`, fullPage: true });
-
-  // 2. Reset clears state; replay gives the same decisions.
-  const key = (x) => JSON.stringify(Object.fromEntries(Object.entries(x.decisions).map(([k, v]) => [k, v.map((d) => [d.stream_ms, d.decision])])));
-  const first = key(end);
-  await page.click("#reset");
-  const r = await waitFor((x) => ready(x) && x.decisions.p3.length === 0 && x.decisions.baseline.length === 0, 15000);
-  check("reset clears decisions and returns to 0", !!r && r.playheadMs === 0 && r.session !== end.session);
-  const again = await playToEnd();
-  check("repeated playback gives identical decisions", !!again && key(again) === first, first);
-
-  // 3. Genuine interruption: P3 detects it; scenario switch mid-playback clears state.
-  await page.click("#reset");
-  await waitFor(ready, 15000);
-  await page.click("#play");
-  await sleep(800);
-  const before = await snap();
-  await select("GI-D01");
-  const after = await snap();
-  check("switching scenario stops playback and starts fresh detectors", !after.playing && after.decisions.p3.length === 0 &&
-    after.fedMs === 0 && after.session !== before.session && after.scenario === "GI-D01");
-  await page.click("#play");
-  const gstop = await waitFor((x) => x.decisions.p3.some((d) => d.decision === "STOP"), 30000);
-  const gd = gstop && gstop.decisions.p3.find((d) => d.decision === "STOP");
-  await sleep(150);
-  const gm = await snap();
-  check("P3's real STOP on a genuine interruption silences the agent", !!gd && gm.agentMuted && gm.agentGain < 0.05 && gm.callerGain === 1,
-    gd ? `P3 STOP at ${gd.stream_ms} ms, shown ${gd.pageDelayMs.toFixed(1)} ms after its frame` : "no STOP");
-  if (gd && LATENCY) check(`STOP applied on time despite ${LATENCY} ms latency`, gd.pageDelayMs < 40, `${gd.pageDelayMs.toFixed(1)} ms`);
-  await page.screenshot({ path: `${SHOTS}/demo-interruption.png`, fullPage: true });
-  const g = await waitFor((x) => x.ended && x.done, 40000, 200);
-  check("genuine interruption detected by P3 (official scorer)", !!g && g.events.p3[0].outcome === "yield" && /P3 detected it/.test(g.headline),
-    g ? `"${g.headline}"` : "not finished");
-
-  // 4. Test your own audio: upload (48 kHz stereo, resampled in the page) and record (fake microphone).
-  await page.fill("#offset", "0");
-  await page.setInputFiles("#upload", own.upload);
-  const up = await waitFor((x) => x.scenario && x.scenario.startsWith("U") && ready(x), 30000, 200);
-  check("upload creates a private own-audio scenario", !!up && /^U[0-9a-f]{32}$/.test(up.scenario),
-    up ? `${up.scenario.slice(0, 9)}…, status: ${await page.textContent("#own-status")}` : await page.textContent("#own-status"));
-  const upEnd = up && await playToEnd();
-  const upStop = upEnd && upEnd.decisions.p3.find((d) => d.decision === "STOP");
-  check("own upload: both detectors decide on it; P3 stops for the interruption (≈16.88 s as on GI-D01)",
-    !!upStop && Math.abs(upStop.stream_ms - 16880) <= 200 && upEnd.decisions.baseline.some((d) => d.decision === "STOP"),
-    upEnd ? `P3 ${JSON.stringify(upEnd.decisions.p3.map((d) => d.stream_ms))}, Baseline ${JSON.stringify(upEnd.decisions.baseline.map((d) => d.stream_ms))}` : "no result");
-  check("own audio: no labels, no verdict", !!upEnd && upEnd.events.p3.length === 0 && /No labels/.test(await page.textContent("#events")));
-  await page.screenshot({ path: `${SHOTS}/demo-own-upload.png`, fullPage: true });
-
-  await select("GI-D01");
-  await page.click("#rec");
-  const recBusy = await page.waitForFunction(() => document.getElementById("rec").textContent === "Stop recording", null,
-    { timeout: 15000 }).then(() => true, () => false);
-  check("recording starts (microphone + agent playback)", recBusy, await page.textContent("#own-status"));
-  const rec = await waitFor((x) => x.scenario && x.scenario.startsWith("U") && x.scenario !== (up && up.scenario) && ready(x), 60000, 300);
-  check("recording creates an own-audio scenario", !!rec, rec ? await page.textContent("#own-status") : await page.textContent("#own-status"));
-  const recEnd = rec && await playToEnd();
-  const recStop = recEnd && recEnd.decisions.p3.find((d) => d.decision === "STOP");
-  check("own recording: P3 stops during the agent's turn", !!recStop && recStop.utt_id === "A1",
-    recEnd ? `P3 ${JSON.stringify(recEnd.decisions.p3.map((d) => [d.stream_ms, d.utt_id]))}, Baseline ${JSON.stringify(recEnd.decisions.baseline.map((d) => d.stream_ms))}` : "no result");
-
-  // 5. Phone-sized layout.
-  const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
-  await phone.goto(URL);
-  await phone.waitForFunction(() => window.sarjDemo && window.sarjDemo.snapshot().sessions.p3, null, { timeout: 30000 });
-  const overflow = await phone.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  check("phone layout fits the screen width", overflow <= 0, `horizontal overflow ${overflow} px`);
-  await phone.screenshot({ path: `${SHOTS}/demo-phone.png`, fullPage: true });
-
-  check("no browser console errors", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
+  const ready=s=>s.sessions?.v3 && !s.started;
+  const select=async id=>{ const old=(await snap()).session; await page.selectOption("#scenario",id);
+    return wait(s=>s.scenario===id && s.session!==old && ready(s)); };
+  const end=async()=>{ await page.click("#play"); return wait(s=>s.ended&&s.done); };
+  const r=await page.goto(URL);
+  await wait(ready);
+  const cfg=await page.evaluate(()=>fetch('/api/config').then(r=>r.json()));
+  check("page served",r.ok());
+  check("only SARJ v3 is exposed and active",cfg.models.length===1 && cfg.models[0].id==='v3' && cfg.models[0].available &&
+    Object.keys((await snap()).sessions).join()==='v3' && (await snap()).listen==='v3');
+  check("no legacy detector controls or visible comparisons",!/Baseline|P3/.test(await page.locator('body').innerText()) &&
+    await page.locator('#card-baseline,#card-p3,#live-controller').count()===0);
+  check("24 original scenarios",cfg.scenarios.length===24 && cfg.scenarios.every(s=>s.collection==='dev'));
+  check("favicon does not fail",await page.evaluate(()=>fetch('/favicon.ico').then(r=>r.status))===204);
+  check("live remains hidden without validation",await page.locator('#live-panel').isHidden());
+  await select('NV-D01');
+  await page.click('#play'); await wait(s=>s.playing); await sleep(1200);
+  await page.click('#play'); await sleep(300+2*LATENCY);
+  const paused=await snap(); await sleep(500); const paused2=await snap();
+  check("pause freezes audio and detector feed",!paused.playing && paused2.fedMs===paused.fedMs && Math.abs(paused2.playheadMs-paused.playheadMs)<1);
+  const cough=await end();
+  check("cough keeps agent speaking",cough.events.v3[0].outcome==='kept' && !cough.decisions.v3.some(d=>d.decision==='STOP'));
+  await page.click('#reset'); const reset=await wait(ready);
+  check("reset creates fresh sole-v3 session",reset.session!==cough.session && reset.playheadMs===0 && reset.decisions.v3.length===0);
+  await select('BC-D02'); const bc=await end();
+  check("acknowledgements keep agent speaking",bc.events.v3.every(e=>e.credit===1) && !bc.decisions.v3.some(d=>d.decision==='STOP'));
+  await select('GI-D01'); await page.click('#play');
+  const stop=await wait(s=>s.decisions.v3.some(d=>d.decision==='STOP'));
+  await sleep(200); const muted=await snap();
+  check("v3 STOP mutes agent while caller continues",muted.agentMuted && muted.agentGain<0.05 && muted.callerGain===1);
+  const genuine=await wait(s=>s.ended&&s.done);
+  check("official event scorer confirms genuine interruption",genuine.events.v3[0].outcome==='yield');
+  await page.screenshot({path:`${SHOTS}/v3-production.png`,fullPage:true});
+  await page.setInputFiles('#upload',own.upload);
+  const uploaded=await wait(s=>s.scenario?.startsWith('U')&&ready(s));
+  const upEnd=await end();
+  check("upload runs only v3 and has no official labels",Object.keys(upEnd.decisions).join()==='v3' && upEnd.events.v3.length===0 &&
+    upEnd.decisions.v3.some(d=>d.decision==='STOP'));
+  await select('GI-D01'); await page.click('#rec');
+  await page.waitForFunction(()=>document.getElementById('rec').textContent==='Stop recording',null,{timeout:15000});
+  const rec=await wait(s=>s.scenario?.startsWith('U') && s.scenario!==uploaded.scenario && ready(s));
+  const recEnd=await end();
+  check("microphone workflow runs only v3",Object.keys(recEnd.decisions).join()==='v3' && recEnd.decisions.v3.some(d=>d.decision==='STOP'));
+  const phone=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await phone.goto(URL); await phone.waitForFunction(()=>window.sarjDemo?.snapshot().sessions.v3);
+  check("mobile fits screen",await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await phone.screenshot({path:`${SHOTS}/v3-phone.png`,fullPage:true});
+  check("no browser errors",errors.length===0,errors.join(' | '));
   await browser.close();
-  const failed = results.filter((x) => !x.ok).length;
-  console.log(`\n${results.length - failed}/${results.length} browser checks passed`);
-  process.exit(failed ? 1 : 0);
-})().catch((e) => { console.error(e); process.exit(2); });
+  fs.unlinkSync(own.upload); fs.unlinkSync(own.mic); fs.rmdirSync(path.dirname(own.mic));
+  const failures=results.filter(r=>!r.ok).length;
+  console.log(`${results.length-failures}/${results.length} browser checks passed`);
+  process.exit(failures?1:0);
+})().catch(e=>{console.error(e);process.exit(2)});
